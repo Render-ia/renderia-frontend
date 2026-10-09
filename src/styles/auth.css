@@ -1,0 +1,210 @@
+/*
+ * Login and registration. The left panel is a cyanotype: white lines on
+ * prussian blue, the way construction blueprints were printed.
+ */
+.auth {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(22rem, 1fr);
+  min-height: 100vh;
+}
+
+.auth__blueprint {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-8);
+  padding: var(--space-8);
+  background-color: #1d4e6e;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: #eef4f7;
+}
+
+.auth__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-lg);
+  font-weight: 750;
+  font-stretch: 118%;
+}
+
+.auth__brand .logo-mark {
+  color: #eef4f7;
+}
+
+.auth__drawing {
+  display: grid;
+  place-items: center;
+}
+
+.auth__drawing .plan {
+  max-width: 34rem;
+}
+
+.auth__blueprint .plan__walls path {
+  stroke: #eef4f7;
+}
+
+.auth__blueprint .plan__openings path {
+  stroke: rgba(238, 244, 247, 0.6);
+}
+
+.auth__blueprint .plan__columns rect {
+  fill: var(--color-survey);
+  stroke: #eef4f7;
+}
+
+.auth__blueprint .plan__dimension path {
+  stroke: rgba(238, 244, 247, 0.75);
+}
+
+.auth__blueprint .plan__dimension text {
+  fill: #eef4f7;
+}
+
+.auth__tagline {
+  max-width: 30ch;
+  font-size: var(--font-size-xl);
+  font-weight: 650;
+  font-stretch: 112%;
+  line-height: 1.2;
+}
+
+.auth__panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: var(--space-8) clamp(var(--space-4), 6vw, var(--space-12));
+  background: var(--color-paper-raised);
+}
+
+.auth__form {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 24rem;
+}
+
+.auth__lead {
+  margin-top: calc(var(--space-2) * -1);
+  color: var(--color-graphite-soft);
+}
+
+.auth__submit {
+  padding-block: var(--space-3);
+  font-size: var(--font-size-md);
+}
+
+.auth__switch {
+  font-size: var(--font-size-sm);
+  color: var(--color-graphite-soft);
+}
+
+.role-picker {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.role-picker legend {
+  margin-bottom: var(--space-2);
+}
+
+.role-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-concrete);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.role-option:has(input:checked) {
+  border-color: var(--color-prussian);
+  background: var(--color-prussian-tint);
+}
+
+.role-option input {
+  margin-top: 0.25rem;
+  accent-color: var(--color-prussian);
+}
+
+.role-option span {
+  display: grid;
+}
+
+.role-option small {
+  color: var(--color-graphite-soft);
+}
+
+.auth__demo {
+  width: 100%;
+  max-width: 24rem;
+  padding-top: var(--space-4);
+  border-top: 1px dashed var(--color-concrete);
+}
+
+.auth__demo p {
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-graphite-soft);
+}
+
+.auth__demo-list {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.demo-account {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-concrete);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: var(--font-size-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.demo-account span {
+  color: var(--color-graphite-soft);
+}
+
+.demo-account:hover {
+  border-color: var(--color-prussian);
+  background: var(--color-prussian-tint);
+}
+
+@media (max-width: 860px) {
+  .auth {
+    grid-template-columns: 1fr;
+  }
+
+  .auth__blueprint {
+    gap: var(--space-4);
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .auth__drawing .plan {
+    max-width: 18rem;
+  }
+
+  .auth__tagline {
+    font-size: var(--font-size-lg);
+  }
+
+  .auth__panel {
+    padding: var(--space-8) var(--space-4);
+  }
+}
