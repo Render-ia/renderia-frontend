@@ -86,12 +86,83 @@
   font-weight: 650;
 }
 
+.shell__footer {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: auto;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-top: var(--border-hairline);
+}
+
+.user-card:empty {
+  display: none;
+}
+
+.user-card__avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  background: var(--color-prussian);
+  color: #fff;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.user-card__info {
+  display: grid;
+  min-width: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.25;
+}
+
+.user-card__info strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-card__info small {
+  color: var(--color-graphite-soft);
+}
+
+.user-card__logout {
+  display: grid;
+  place-items: center;
+  margin-left: auto;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-graphite-soft);
+  cursor: pointer;
+}
+
+.user-card__logout svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.user-card__logout:hover {
+  background: var(--color-concrete-soft);
+  color: var(--color-danger);
+}
+
 .backend-status {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-top: auto;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-1) var(--space-3);
   font-size: var(--font-size-xs);
   color: var(--color-graphite-soft);
 }
@@ -109,6 +180,39 @@
 
 .backend-status[data-state='offline'] .backend-status__dot {
   background: var(--color-danger);
+}
+
+/* ---------- Bare mode (login, register) ---------- */
+
+.shell--bare {
+  grid-template-columns: 1fr;
+}
+
+.shell--bare .shell__sidebar,
+.shell--bare .shell__topbar {
+  display: none;
+}
+
+.shell--bare .shell__main {
+  padding: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-4);
+  top: -3rem;
+  z-index: 50;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-prussian);
+  color: #fff;
+}
+
+.skip-link:focus {
+  top: var(--space-2);
+}
+
+.shell__main:focus {
+  outline: none;
 }
 
 /* ---------- Body ---------- */
@@ -176,14 +280,14 @@
     box-shadow: 0 0 0 100vmax rgba(20, 27, 31, 0.35);
   }
 
-  .shell__topbar {
+  .shell:not(.shell--bare) .shell__topbar {
     display: flex;
     position: sticky;
     top: 0;
     z-index: 10;
   }
 
-  .shell__main {
+  .shell:not(.shell--bare) .shell__main {
     padding: var(--space-6) var(--space-4);
   }
 }
