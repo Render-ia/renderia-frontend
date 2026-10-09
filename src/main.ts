@@ -8,6 +8,7 @@ import './styles/dialog.css';
 import './styles/toast.css';
 import './styles/home.css';
 import './styles/auth.css';
+import './styles/projects.css';
 
 import { AuthService } from './auth/AuthService.ts';
 import { Session } from './auth/Session.ts';
@@ -21,6 +22,9 @@ import { RegisterView } from './views/auth/RegisterView.ts';
 import { HomeView } from './views/HomeView.ts';
 import { NotFoundView } from './views/NotFoundView.ts';
 import { PlaceholderView } from './views/PlaceholderView.ts';
+import { FloorPlansView } from './views/projects/FloorPlansView.ts';
+import { ProjectDetailView } from './views/projects/ProjectDetailView.ts';
+import { ProjectsView } from './views/projects/ProjectsView.ts';
 
 async function bootstrap(host: HTMLElement): Promise<void> {
   const session = Session.getInstance();
@@ -38,8 +42,9 @@ async function bootstrap(host: HTMLElement): Promise<void> {
     .register('/login', () => new LoginView(goHome), { isPublic: true })
     .register('/register', () => new RegisterView(goHome), { isPublic: true })
     .register('/', () => new HomeView())
-    .register('/projects', () => new PlaceholderView('Proyectos'))
-    .register('/floor-plans', () => new PlaceholderView('Planos'))
+    .register('/projects', () => new ProjectsView())
+    .register('/projects/:id', ({ id }) => new ProjectDetailView(Number(id)))
+    .register('/floor-plans', () => new FloorPlansView())
     .register('/analyses', () => new PlaceholderView('Análisis IA'))
     .register('/viewer', () => new PlaceholderView('Visor 3D'))
     .register('/admin', () => new PlaceholderView('Administración'), { permission: 'admin:access' })
