@@ -1,8 +1,10 @@
+import { Session } from '../auth/Session.ts';
 import { appEvents } from '../core/events/AppEvents.ts';
 import { ApiError } from '../core/http/ApiError.ts';
 import { HelloService, type HelloResponse } from '../services/HelloService.ts';
 import { planDrawing } from '../ui/planDrawing.ts';
 import { escapeHtml } from '../utils/html.ts';
+import { DashboardSummary } from './home/DashboardSummary.ts';
 import { View } from './View.ts';
 
 /**
@@ -18,6 +20,7 @@ export class HomeView extends View {
     return `
       <section class="home">
         <header class="page-header">
+          <p class="home__greeting">${this.greeting()}</p>
           <h1>De plano 2D a estructura 3D</h1>
           <p class="page-header__lead">
             Sube el plano de una edificación, deja que la IA detecte muros, columnas y vigas,
@@ -25,6 +28,9 @@ export class HomeView extends View {
           </p>
         </header>
 
+        <div class="dashboard" data-dashboard></div>
+
+        <h2 class="home__sheet-title">Conexión con el servidor</h2>
         <figure class="sheet">
           <div class="sheet__drawing">${planDrawing()}</div>
           <figcaption class="title-block" aria-live="polite">
@@ -37,6 +43,14 @@ export class HomeView extends View {
   protected afterRender(container: HTMLElement): void {
     const block = container.querySelector<HTMLElement>('.title-block')!;
     this.loadHello(block);
+    new DashboardSummary().mount(container.querySelector<HTMLElement>('[data-dashboard]')!);
+  }
+
+  private greeting(): string {
+    const hour = new Date().getHours();
+    const salute = hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches';
+    const name = Session.getInstance().user?.fullName.split(' ')[0] ?? '';
+    return `${salute}, ${escapeHtml(name)}`;
   }
 
   private async loadHello(block: HTMLElement): Promise<void> {
