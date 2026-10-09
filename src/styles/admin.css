@@ -54,7 +54,7 @@
 
 .segmented__item[aria-selected='true'] {
   background: var(--color-prussian);
-  color: #fff;
+  color: var(--color-on-accent);
 }
 
 .switch {

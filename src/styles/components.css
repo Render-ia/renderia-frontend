@@ -9,7 +9,7 @@
   border: 1.5px solid var(--color-prussian);
   border-radius: var(--radius-sm);
   background: var(--color-prussian);
-  color: #fff;
+  color: var(--color-on-accent);
   font-size: var(--font-size-sm);
   font-weight: 600;
   text-decoration: none;

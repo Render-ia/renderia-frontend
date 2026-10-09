@@ -248,7 +248,7 @@
 .steps__item--done .steps__number {
   border-color: var(--color-success);
   background: var(--color-success);
-  color: #fff;
+  color: var(--color-on-accent);
 }
 
 .steps__item--next {
