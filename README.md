@@ -18,7 +18,7 @@ Proyecto final de **Patrones de Software**.
 
 ```bash
 npm install
-cp .env.example .env   # y ajustar VITE_API_URL
+cp .env.example .env   # opcional: solo para apuntar a otro backend
 npm run dev
 ```
 

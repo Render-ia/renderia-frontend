@@ -12,7 +12,7 @@ export class AppConfig {
 
   private constructor() {
     const fromEnv = import.meta.env.VITE_API_URL;
-    this.apiUrl = (fromEnv ?? 'http://localhost:8080/api/v1').replace(/\/+$/, '');
+    this.apiUrl = (fromEnv || '/api/v1').replace(/\/+$/, '');
   }
 
   static getInstance(): AppConfig {
