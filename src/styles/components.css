@@ -1,0 +1,68 @@
+/* ---------- Buttons ---------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1.5px solid var(--color-prussian);
+  border-radius: var(--radius-sm);
+  background: var(--color-prussian);
+  color: #fff;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--color-prussian-strong);
+  border-color: var(--color-prussian-strong);
+}
+
+.button--ghost {
+  background: transparent;
+  color: var(--color-prussian);
+}
+
+.button--ghost:hover {
+  background: var(--color-prussian-tint);
+  color: var(--color-prussian);
+}
+
+/* ---------- Page header ---------- */
+
+.page-header {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+.page-header__lead {
+  color: var(--color-graphite-soft);
+  font-size: var(--font-size-lg);
+  line-height: 1.45;
+}
+
+/* ---------- Empty state ---------- */
+
+.empty-state {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+  max-width: 34rem;
+  padding-top: var(--space-12);
+}
+
+.empty-state p {
+  color: var(--color-graphite-soft);
+}
+
+.empty-state__code {
+  font-size: 5rem;
+  font-weight: 800;
+  font-stretch: 125%;
+  line-height: 1;
+  color: var(--color-concrete);
+}
