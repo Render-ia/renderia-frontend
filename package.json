@@ -1,0 +1,16 @@
+{
+  "name": "renderia-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Render.IA - Frontend for the AI platform that turns 2D floor plans into 3D structural models",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  }
+}
