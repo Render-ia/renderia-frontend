@@ -29,3 +29,27 @@ npm run dev
 | `npm run dev` | Inicia el servidor de desarrollo |
 | `npm run build` | Revisa los tipos y genera la versión de producción en `dist/` |
 | `npm run preview` | Sirve localmente la versión de producción |
+
+## Estructura
+
+```
+src/
+├── core/
+│   ├── config/AppConfig.ts   Configuración de la app (Singleton)
+│   ├── events/               EventBus tipado (Observer) y eventos globales
+│   ├── http/                 ApiClient (Singleton) y ApiError
+│   └── router/Router.ts      Enrutador por hash (#/ruta)
+├── services/                 Comunicación con el backend por recurso
+├── views/                    Pantallas; todas heredan de View (Template Method)
+├── ui/                       Marco de la app, navegación y logo
+├── utils/                    Funciones de apoyo
+└── styles/                   Tokens de diseño y estilos por sección
+```
+
+## Patrones de software en el frontend
+
+| Patrón | Dónde | Para qué |
+|---|---|---|
+| Singleton | `AppConfig`, `ApiClient` | Una sola configuración y un solo cliente HTTP para toda la app |
+| Observer | `EventBus`, `appEvents` | Avisar cambios de ruta y estado del servidor sin acoplar componentes |
+| Template Method | `View` | Todas las pantallas siguen los mismos pasos: `render` y luego `afterRender` |
