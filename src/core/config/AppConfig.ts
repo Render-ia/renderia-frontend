@@ -14,7 +14,9 @@ export class AppConfig {
 
   private constructor() {
     const fromEnv = import.meta.env.VITE_API_URL;
-    this.apiUrl = (fromEnv || '/api/v1').replace(/\/+$/, '');
+    const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+    const fallback = isLocal ? '/api/v1' : 'https://renderia-backend.onrender.com/api/v1';
+    this.apiUrl = (fromEnv || fallback).replace(/\/+$/, '');
     this.dataSource = import.meta.env.VITE_DATA_SOURCE === 'api' ? 'api' : 'mock';
   }
 
