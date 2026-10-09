@@ -19,6 +19,8 @@
   --color-danger: #b23a26;
   --color-success: #2f6b45;
   --color-grid: rgba(29, 78, 110, 0.08);
+  /* Text on prussian or success fills */
+  --color-on-accent: #ffffff;
 
   /* Type */
   --font-family: 'Archivo', system-ui, sans-serif;
@@ -66,5 +68,6 @@
     --color-success: #6fbf8b;
     --color-danger: #e57a65;
     --color-grid: rgba(127, 179, 211, 0.07);
+    --color-on-accent: #10181d;
   }
 }
