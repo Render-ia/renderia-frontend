@@ -15,7 +15,7 @@ const host = document.querySelector<HTMLDivElement>('#app');
 if (host) {
   const shell = new AppShell(host);
 
-  new Router(shell.outlet, () => new NotFoundView())
+  new Router(() => shell.outlet, () => new NotFoundView())
     .register('/', () => new HomeView())
     .register('/projects', () => new PlaceholderView('Proyectos'))
     .register('/floor-plans', () => new PlaceholderView('Planos'))
