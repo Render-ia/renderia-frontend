@@ -1,0 +1,68 @@
+/*
+ * Design tokens for Render.IA.
+ * Palette taken from construction drawings: drafting paper, graphite ink,
+ * prussian blue (cyanotype), concrete grey and survey-marker yellow.
+ */
+:root {
+  /* Color */
+  --color-paper: #f3f5f2;
+  --color-paper-raised: #fbfcfa;
+  --color-graphite: #22292e;
+  --color-graphite-soft: #52606a;
+  --color-prussian: #1d4e6e;
+  --color-prussian-strong: #143a53;
+  --color-prussian-tint: #dbe6ec;
+  --color-concrete: #b9bfbd;
+  --color-concrete-soft: #dde1df;
+  --color-survey: #e8c547;
+  --color-survey-ink: #5c4a07;
+  --color-danger: #b23a26;
+  --color-success: #2f6b45;
+  --color-grid: rgba(29, 78, 110, 0.08);
+
+  /* Type */
+  --font-family: 'Archivo', system-ui, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.75rem;
+  --font-size-xxl: 2.5rem;
+  --line-height-body: 1.55;
+  --line-height-tight: 1.15;
+
+  /* Space (4px grid) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+
+  /* Shape */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --border-hairline: 1px solid var(--color-concrete);
+  --border-ink: 1.5px solid var(--color-graphite);
+
+  /* Layout */
+  --sidebar-width: 15rem;
+  --topbar-height: 3.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-paper: #151b1f;
+    --color-paper-raised: #1c242a;
+    --color-graphite: #e4e9e7;
+    --color-graphite-soft: #9aa7ae;
+    --color-prussian: #7fb3d3;
+    --color-prussian-strong: #a9cde3;
+    --color-prussian-tint: #20323e;
+    --color-concrete: #3b464d;
+    --color-concrete-soft: #2a3339;
+    --color-survey-ink: #f1db86;
+    --color-grid: rgba(127, 179, 211, 0.07);
+  }
+}
