@@ -1,0 +1,146 @@
+.viewer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 14rem;
+  align-items: start;
+  gap: var(--space-6);
+}
+
+.viewer__stage {
+  position: relative;
+  height: min(72vh, 46rem);
+  min-height: 22rem;
+  border: var(--border-ink);
+  background: #eef2f1;
+  overflow: hidden;
+}
+
+.viewer__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+.viewer__canvas:active {
+  cursor: grabbing;
+}
+
+.viewer__toolbar {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--color-concrete);
+  border-radius: var(--radius-sm);
+  background: rgba(251, 252, 250, 0.92);
+}
+
+.viewer__tool {
+  padding: var(--space-1) var(--space-3);
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: #22292e;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.viewer__tool:hover {
+  background: #dde1df;
+}
+
+.viewer__tool--on {
+  background: #1d4e6e;
+  color: #fff;
+}
+
+.viewer__tool--on:hover {
+  background: #143a53;
+}
+
+.viewer__divider {
+  width: 1px;
+  height: 1.2rem;
+  margin: 0 var(--space-1);
+  background: #b9bfbd;
+}
+
+.viewer__info {
+  position: absolute;
+  right: var(--space-3);
+  top: var(--space-3);
+  z-index: 2;
+  width: 14rem;
+  padding: var(--space-3);
+  border: 1.5px solid #22292e;
+  background: rgba(251, 252, 250, 0.96);
+  color: #22292e;
+  font-size: var(--font-size-sm);
+}
+
+.viewer__info h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-md);
+}
+
+.viewer__info dl {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+}
+
+.viewer__info dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.viewer__info dt {
+  color: #52606a;
+}
+
+.viewer__info dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.viewer__help {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-2);
+  z-index: 2;
+  max-width: calc(100% - 1.5rem);
+  font-size: var(--font-size-xs);
+  color: #52606a;
+  pointer-events: none;
+}
+
+.plan-card--link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.plan-card--link:hover {
+  border-color: var(--color-prussian);
+}
+
+@media (max-width: 960px) {
+  .viewer {
+    grid-template-columns: 1fr;
+  }
+
+  .viewer__info {
+    top: auto;
+    bottom: var(--space-6);
+  }
+}
