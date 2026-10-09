@@ -1,0 +1,147 @@
+/*
+ * Drawing sheet: a drafting grid with a plan and, in the corner, the title
+ * block ("rótulo") that every construction drawing carries.
+ */
+.sheet {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr minmax(16rem, 22rem);
+  margin: 0;
+  border: var(--border-ink);
+  background-color: var(--color-paper-raised);
+  background-image:
+    linear-gradient(var(--color-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.sheet::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid var(--color-concrete);
+  pointer-events: none;
+}
+
+.sheet__drawing {
+  display: grid;
+  place-items: center;
+  padding: var(--space-8);
+}
+
+.plan {
+  width: 100%;
+  max-width: 34rem;
+  height: auto;
+}
+
+.plan__walls path {
+  fill: none;
+  stroke: var(--color-graphite);
+  stroke-width: 6;
+  stroke-linecap: square;
+}
+
+.plan__openings path {
+  fill: none;
+  stroke: var(--color-graphite-soft);
+  stroke-width: 1.2;
+  stroke-dasharray: 4 3;
+}
+
+.plan__columns rect {
+  fill: var(--color-survey);
+  stroke: var(--color-graphite);
+  stroke-width: 1.5;
+}
+
+.plan__dimension path {
+  stroke: var(--color-prussian);
+  stroke-width: 1;
+}
+
+.plan__dimension text {
+  fill: var(--color-prussian);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ---------- Title block ---------- */
+
+.title-block {
+  align-self: end;
+  margin: 6px;
+  border-top: var(--border-ink);
+  border-left: var(--border-ink);
+  background: var(--color-paper-raised);
+  min-height: 12rem;
+}
+
+.title-block__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+}
+
+.title-block__cell {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-concrete);
+}
+
+.title-block__cell:nth-child(3) {
+  border-right: 1px solid var(--color-concrete);
+}
+
+.title-block__cell--wide {
+  grid-column: 1 / -1;
+}
+
+.title-block__cell:last-child {
+  border-bottom: 0;
+}
+
+.title-block dt {
+  font-size: var(--font-size-xs);
+  color: var(--color-graphite-soft);
+}
+
+.title-block dd {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.title-block__project {
+  font-size: var(--font-size-xl) !important;
+  font-weight: 800 !important;
+  font-stretch: 122%;
+  line-height: 1.1;
+  color: var(--color-prussian);
+}
+
+.title-block__cell--ok dd {
+  color: var(--color-success);
+}
+
+.title-block__message {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  padding: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-graphite-soft);
+}
+
+.title-block__message--error strong {
+  color: var(--color-danger);
+}
+
+@media (max-width: 1100px) {
+  .sheet {
+    grid-template-columns: 1fr;
+  }
+
+  .title-block {
+    border-right: 0;
+  }
+}
