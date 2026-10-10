@@ -74,8 +74,11 @@ Abre `http://localhost:5173` y entra con una de las cuentas de prueba:
 
 | `VITE_DATA_SOURCE` | Qué hace |
 |---|---|
-| `mock` (por defecto) | Todo se guarda en el navegador. Funciona sin backend y sirve para la demostración. |
-| `api` | Usa el backend en `VITE_API_URL`. Los endpoints esperados están en [`docs/API.md`](docs/API.md). |
+| `mock` (por defecto en `localhost`) | Todo se guarda en el navegador. Funciona sin backend. |
+| `hybrid` (por defecto en producción) | Inicio de sesión, registro y catálogos van al backend real; proyectos, planos y análisis siguen en el navegador mientras se publican sus endpoints. |
+| `api` | Todo va al backend en `VITE_API_URL`. Los endpoints esperados están en [`docs/API.md`](docs/API.md). |
+
+Si `VITE_API_URL` está vacía, en producción se usa `https://renderia-backend.onrender.com/api/v1`.
 
 En desarrollo, Vite redirige `/api` a `http://localhost:8080`, así que no hace falta configurar CORS para probar con el backend local.
 
