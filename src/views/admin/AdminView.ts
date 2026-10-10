@@ -21,7 +21,7 @@ export class AdminView extends View {
   }
 
   protected render(): string {
-    const isMock = AppConfig.getInstance().dataSource === 'mock';
+    const isMock = AppConfig.getInstance().dataSource !== 'api';
     return `
       <header class="page-header page-header--row">
         <div>
