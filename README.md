@@ -75,7 +75,7 @@ Abre `http://localhost:5173` y entra con una de las cuentas de prueba:
 | `VITE_DATA_SOURCE` | Qué hace |
 |---|---|
 | `mock` (por defecto en `localhost`) | Todo se guarda en el navegador. Funciona sin backend. |
-| `hybrid` (por defecto en producción) | Inicio de sesión, registro, catálogos y proyectos van al backend real; planos y análisis siguen en el navegador mientras se publican sus endpoints. |
+| `hybrid` (por defecto en producción) | Inicio de sesión, registro, catálogos, proyectos y planos van al backend real; los análisis siguen en el navegador mientras se publican sus endpoints. |
 | `api` | Todo va al backend en `VITE_API_URL`. Los endpoints esperados están en [`docs/API.md`](docs/API.md). |
 
 Si `VITE_API_URL` está vacía, en producción se usa `https://renderia-backend.onrender.com/api/v1`.
