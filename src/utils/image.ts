@@ -16,6 +16,9 @@ export interface PreparedPlan extends PreparedImage {
 export function loadImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image();
+    // Plans served by the backend live on another domain: ask for CORS so the
+    // analyzer can read their pixels from a canvas.
+    if (!url.startsWith('data:') && !url.startsWith('blob:')) image.crossOrigin = 'anonymous';
     image.onload = () => resolve(image);
     image.onerror = () => reject(new Error('No se pudo leer la imagen del plano.'));
     image.src = url;
