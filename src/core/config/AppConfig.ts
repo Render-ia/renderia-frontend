@@ -28,7 +28,7 @@ export class AppConfig {
     if (source === 'mock' || source === 'hybrid' || source === 'api') {
       this.dataSource = source;
     } else {
-      this.dataSource = isLocal ? 'mock' : 'hybrid';
+      this.dataSource = isLocal ? 'mock' : 'api';
     }
   }
 

@@ -75,8 +75,8 @@ Abre `http://localhost:5173` y entra con una de las cuentas de prueba:
 | `VITE_DATA_SOURCE` | Qué hace |
 |---|---|
 | `mock` (por defecto en `localhost`) | Todo se guarda en el navegador. Funciona sin backend. |
-| `hybrid` (por defecto en producción) | Inicio de sesión, registro, catálogos, proyectos y planos van al backend real; los análisis siguen en el navegador mientras se publican sus endpoints. |
-| `api` | Todo va al backend en `VITE_API_URL`. Los endpoints esperados están en [`docs/API.md`](docs/API.md). |
+| `hybrid` | Inicio de sesión, catálogos, proyectos y planos van al backend; el resto, al navegador. Sirvió durante la migración. |
+| `api` (por defecto en producción) | Todo va al backend en `VITE_API_URL`, y los análisis se hacen en el servicio de IA ([renderia-ai](https://github.com/Render-ia/renderia-ai)). Los endpoints están en [`docs/API.md`](docs/API.md). |
 
 Si `VITE_API_URL` está vacía, en producción se usa `https://renderia-backend.onrender.com/api/v1`.
 
