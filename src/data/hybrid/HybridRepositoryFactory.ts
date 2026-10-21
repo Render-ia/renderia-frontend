@@ -5,7 +5,7 @@ import { HybridCatalogRepository } from './HybridCatalogRepository.ts';
 
 /**
  * Concrete factory for the migration to the real backend: the parts the
- * backend already serves (login, registration and catalogs) go to the API,
+ * backend already serves (login, registration, catalogs and projects) go to the API,
  * the rest keeps using the in-browser data until its endpoints exist.
  *
  * Pattern: Abstract Factory — the views still ask for repositories the same way.
@@ -24,7 +24,7 @@ export class HybridRepositoryFactory implements RepositoryFactory {
     return new HybridCatalogRepository(this.api.catalogs(), this.mock.catalogs());
   }
   projects() {
-    return this.mock.projects();
+    return this.api.projects();
   }
   floorPlans() {
     return this.mock.floorPlans();
