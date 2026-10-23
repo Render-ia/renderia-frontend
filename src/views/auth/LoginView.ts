@@ -1,7 +1,7 @@
 import { AuthService } from '../../auth/AuthService.ts';
 import { AppConfig } from '../../core/config/AppConfig.ts';
 import { View } from '../View.ts';
-import { authLayout, showAuthError } from './AuthLayout.ts';
+import { authLayout, passwordField, showAuthError, slowServerNote, submitWhileWaiting, wirePasswordToggles } from './AuthLayout.ts';
 
 const DEMO_ACCOUNTS = [
   { role: 'Administrador', email: 'admin@renderia.co', password: 'Admin123*' },
@@ -26,13 +26,11 @@ export class LoginView extends View {
           <span class="field__label">Correo</span>
           <input class="input" type="email" name="email" autocomplete="email" required />
         </label>
-        <label class="field">
-          <span class="field__label">Contraseña</span>
-          <input class="input" type="password" name="password" autocomplete="current-password" required />
-        </label>
+        ${passwordField('Contraseña', 'password', 'current-password')}
 
         <p class="form-error" role="alert" hidden></p>
         <button class="button auth__submit" type="submit">Iniciar sesión</button>
+        ${slowServerNote}
         <p class="auth__switch">¿No tienes cuenta? <a href="#/register">Crea una</a></p>
       </form>
       ${this.demoAccounts()}`);
@@ -40,23 +38,23 @@ export class LoginView extends View {
 
   protected afterRender(container: HTMLElement): void {
     const form = container.querySelector<HTMLFormElement>('.auth__form')!;
-    const submit = form.querySelector<HTMLButtonElement>('[type="submit"]')!;
+    wirePasswordToggles(form);
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       if (!form.reportValidity()) return;
       const data = new FormData(form);
 
-      submit.disabled = true;
-      submit.textContent = 'Entrando…';
-      try {
-        await new AuthService().login(String(data.get('email')), String(data.get('password')));
-        this.onSuccess();
-      } catch (error) {
-        showAuthError(form, error instanceof Error ? error.message : 'No se pudo iniciar sesión.');
-        submit.disabled = false;
-        submit.textContent = 'Iniciar sesión';
-      }
+      let ok = false;
+      await submitWhileWaiting(form, 'Entrando…', async () => {
+        try {
+          await new AuthService().login(String(data.get('email')), String(data.get('password')));
+          ok = true;
+        } catch (error) {
+          showAuthError(form, error instanceof Error ? error.message : 'No se pudo iniciar sesión.');
+        }
+      });
+      if (ok) this.onSuccess();
     });
 
     container.querySelectorAll<HTMLButtonElement>('[data-demo]').forEach((button) => {
