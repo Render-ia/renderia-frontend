@@ -22,7 +22,7 @@
 }
 
 .tabs__tab[aria-selected='true'] {
-  border-bottom-color: var(--color-prussian);
+  border-bottom-color: var(--color-survey);
   color: var(--color-prussian);
 }
 
@@ -38,14 +38,14 @@
   justify-self: start;
   padding: 3px;
   border: var(--border-hairline);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--color-paper-raised);
 }
 
 .segmented__item {
   padding: var(--space-1) var(--space-3);
   border: 0;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   background: transparent;
   font-size: var(--font-size-sm);
   font-weight: 600;
@@ -111,10 +111,10 @@
 .model-card {
   display: grid;
   gap: var(--space-2);
-  padding: var(--space-4);
-  border: var(--border-hairline);
-  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
   background: var(--color-paper-raised);
+  box-shadow: var(--shadow-card);
 }
 
 .model-card--off {
