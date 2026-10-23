@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import { styleFor } from '../analysis/elementStyle.ts';
+import { MODEL_COLORS, styleFor } from '../analysis/elementStyle.ts';
 import type { CatalogItem } from '../models/Catalog.ts';
 import type { StructuralElement } from '../models/StructuralElement.ts';
 import { nameOf } from '../services/CatalogService.ts';
 import { ElementMeshFactory } from './meshes/ElementMeshFactory.ts';
 
-export type ColorMode = 'type' | 'material';
+export type ColorMode = 'type' | 'material' | 'model';
 
 /** Colors used when the model is colored by construction material. */
 export const MATERIAL_COLORS: Record<string, string> = {
@@ -16,6 +16,14 @@ export const MATERIAL_COLORS: Record<string, string> = {
   Drywall: '#e6e3dc',
 };
 const NO_MATERIAL = '#8fc6dd';
+
+/** Dark studio where the model is shown, like a model on a dark table. */
+const STUDIO = {
+  background: '#1b2430',
+  ground: '#202b38',
+  gridMajor: '#3a4b61',
+  gridMinor: '#2a3747',
+};
 
 export interface StructuralScene {
   scene: THREE.Scene;
@@ -44,8 +52,9 @@ export class StructuralSceneBuilder {
     this.scene.add(this.model);
   }
 
-  withBackground(color: string): this {
+  withBackground(color: string = STUDIO.background): this {
     this.scene.background = new THREE.Color(color);
+    this.scene.fog = new THREE.Fog(color, 30, 90);
     return this;
   }
 
@@ -59,7 +68,9 @@ export class StructuralSceneBuilder {
       const color =
         colorMode === 'type'
           ? styleFor(typeName).color
-          : ((materialName && MATERIAL_COLORS[materialName]) ?? NO_MATERIAL);
+          : colorMode === 'model'
+            ? (MODEL_COLORS[typeName] ?? MODEL_COLORS.Muro)
+            : ((materialName && MATERIAL_COLORS[materialName]) ?? NO_MATERIAL);
 
       const object = this.factory.creatorFor(typeName).create({ element, typeName, materialName, color, toScene });
       this.groupFor(typeName).add(object);
@@ -71,7 +82,7 @@ export class StructuralSceneBuilder {
     const extent = Math.max(this.size.x, this.size.z) * 2.5 + 10;
     const ground = new THREE.Mesh(
       new THREE.PlaneGeometry(extent, extent),
-      new THREE.MeshStandardMaterial({ color: '#dfe3e0', roughness: 1 }),
+      new THREE.MeshStandardMaterial({ color: STUDIO.ground, roughness: 1 }),
     );
     ground.rotation.x = -Math.PI / 2;
     ground.position.y = -0.13;
@@ -79,7 +90,7 @@ export class StructuralSceneBuilder {
     ground.name = 'ground';
     this.scene.add(ground);
 
-    const grid = new THREE.GridHelper(extent, Math.round(extent), '#9fb4c1', '#c9d3d8');
+    const grid = new THREE.GridHelper(extent, Math.round(extent), STUDIO.gridMajor, STUDIO.gridMinor);
     grid.position.y = -0.12;
     grid.name = 'grid';
     this.scene.add(grid);
@@ -87,8 +98,8 @@ export class StructuralSceneBuilder {
   }
 
   withLights(): this {
-    this.scene.add(new THREE.HemisphereLight('#ffffff', '#b7bfbc', 1.1));
-    const sun = new THREE.DirectionalLight('#ffffff', 2.2);
+    this.scene.add(new THREE.HemisphereLight('#dfe8f5', STUDIO.background, 1.2));
+    const sun = new THREE.DirectionalLight('#fff4e0', 2.6);
     const reach = Math.max(this.size.x, this.size.z);
     sun.position.set(reach * 0.6, reach * 1.2, reach * 0.8);
     sun.castShadow = true;
@@ -100,6 +111,11 @@ export class StructuralSceneBuilder {
     camera.bottom = -reach;
     camera.far = reach * 4;
     this.scene.add(sun);
+
+    // A cool light from behind outlines the edges against the dark background.
+    const rim = new THREE.DirectionalLight('#8da2ff', 0.7);
+    rim.position.set(-reach, reach * 0.6, -reach);
+    this.scene.add(rim);
     return this;
   }
 

@@ -1,4 +1,4 @@
-import { styleFor, TYPE_ORDER } from '../../analysis/elementStyle.ts';
+import { MODEL_COLORS, styleFor, TYPE_ORDER } from '../../analysis/elementStyle.ts';
 import { Session } from '../../auth/Session.ts';
 import type { CatalogItem } from '../../models/Catalog.ts';
 import { logActivity } from '../../services/ActivityLogger.ts';
@@ -20,7 +20,7 @@ export class ViewerView extends View {
   private detail: AnalysisDetail | null = null;
   private types: CatalogItem[] = [];
   private materials: CatalogItem[] = [];
-  private colorMode: ColorMode = 'type';
+  private colorMode: ColorMode = 'model';
   private hidden = new Set<string>();
 
   constructor(private readonly analysisId: number) {
@@ -72,7 +72,7 @@ export class ViewerView extends View {
       <p class="breadcrumb"><a href="#/viewer">Visor 3D</a> / <a href="#/analyses/${analysis.id}">Análisis #${analysis.id}</a></p>
       <header class="page-header page-header--row">
         <div>
-          <h1>${escapeHtml(project.name)} · Piso ${plan.floorLevel}</h1>
+          <h1>${escapeHtml(project.name)}, piso ${plan.floorLevel}</h1>
           <p class="page-header__lead">Modelo estructural con ${elements.length} elementos detectados.</p>
         </div>
         <div class="page-header__actions">
@@ -91,16 +91,19 @@ export class ViewerView extends View {
             <button class="viewer__tool" type="button" data-view="3d">Vista 3D</button>
             <button class="viewer__tool" type="button" data-view="top">Vista superior</button>
             <span class="viewer__divider"></span>
-            <button class="viewer__tool viewer__tool--on" type="button" data-color="type" aria-pressed="true">Color por tipo</button>
-            <button class="viewer__tool" type="button" data-color="material" aria-pressed="false">Color por material</button>
+            ${this.colorButton('model', 'Maqueta')}
+            ${this.colorButton('type', 'Color por tipo')}
+            ${this.colorButton('material', 'Color por material')}
           </div>
-          <div class="viewer__info" data-info hidden></div>
-          <p class="viewer__help">Arrastra para girar · Rueda para acercar · Clic derecho para mover · Clic en un elemento para ver sus datos</p>
+          <div class="viewer__panel">
+            <section class="viewer__card" aria-labelledby="layers-title">
+              <h2 id="layers-title">Capas</h2>
+              <ul class="legend__list" data-legend></ul>
+            </section>
+            <div class="viewer__card viewer__info" data-info hidden></div>
+          </div>
+          <p class="viewer__help">Arrastra para girar. Rueda para acercar. Clic derecho para mover. Clic en un elemento para ver sus datos.</p>
         </div>
-        <aside class="legend" aria-label="Capas del modelo">
-          <h2>Capas</h2>
-          <ul class="legend__list" data-legend></ul>
-        </aside>
       </div>`;
 
     page.querySelector('[data-view="3d"]')!.addEventListener('click', () => this.viewer?.resetCamera());
@@ -122,6 +125,11 @@ export class ViewerView extends View {
     this.renderLegend(page);
   }
 
+  private colorButton(mode: ColorMode, label: string): string {
+    const on = this.colorMode === mode;
+    return `<button class="viewer__tool ${on ? 'viewer__tool--on' : ''}" type="button" data-color="${mode}" aria-pressed="${on}">${label}</button>`;
+  }
+
   private async mountViewer(page: HTMLElement): Promise<void> {
     const stage = page.querySelector<HTMLElement>('[data-stage]')!;
     const { ModelViewer } = await import('../../viewer/ModelViewer.ts');
@@ -134,7 +142,7 @@ export class ViewerView extends View {
     if (!this.viewer) return;
     const { StructuralSceneBuilder } = await import('../../viewer/StructuralSceneBuilder.ts');
     const content = new StructuralSceneBuilder()
-      .withBackground('#eef2f1')
+      .withBackground()
       .withElements(this.detail!.elements, this.types, this.materials, this.colorMode)
       .withGround()
       .withLights()
@@ -157,7 +165,7 @@ export class ViewerView extends View {
           <li>
             <label class="legend__item">
               <input type="checkbox" value="${escapeHtml(type)}" ${this.hidden.has(type) ? '' : 'checked'} />
-              ${this.colorMode === 'type' ? `<span class="legend__swatch" style="background:${styleFor(type).color}"></span>` : ''}
+              ${this.swatch(type)}
               <span class="legend__name">${escapeHtml(type)}</span>
               <span class="legend__count">${counts.get(type)}</span>
             </label>
@@ -172,6 +180,13 @@ export class ViewerView extends View {
         this.viewer?.setVisible(box.value, box.checked);
       }),
     );
+  }
+
+  /** Color sample next to a layer; colors by material vary inside a layer, so they get none. */
+  private swatch(type: string): string {
+    if (this.colorMode === 'material') return '';
+    const color = this.colorMode === 'model' ? (MODEL_COLORS[type] ?? MODEL_COLORS.Muro) : styleFor(type).color;
+    return `<span class="legend__swatch" style="background:${color}"></span>`;
   }
 
   private showInfo(page: HTMLElement, picked: PickedElement | null): void {
