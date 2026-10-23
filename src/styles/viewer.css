@@ -1,17 +1,24 @@
+/*
+ * 3D viewer: a dark "model studio" in both themes, so the white model and the
+ * basswood beams stand out. Controls float over the stage.
+ */
 .viewer {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 14rem;
-  align-items: start;
-  gap: var(--space-6);
+  --studio: #1b2430;
+  --studio-panel: rgba(36, 49, 66, 0.92);
+  --studio-line: #33445a;
+  --studio-text: #eef1f4;
+  --studio-muted: #a7b4c2;
 }
 
 .viewer__stage {
   position: relative;
-  height: min(72vh, 46rem);
-  min-height: 22rem;
-  border: var(--border-ink);
-  background: #eef2f1;
+  height: min(76vh, 50rem);
+  min-height: 26rem;
+  border-radius: var(--radius-lg);
+  background: var(--studio);
+  color: var(--studio-text);
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
 .viewer__canvas {
@@ -26,63 +33,88 @@
   cursor: grabbing;
 }
 
+.viewer__stage :focus-visible {
+  outline-color: #c9a979;
+}
+
 .viewer__toolbar {
   position: absolute;
-  top: var(--space-3);
-  left: var(--space-3);
+  top: var(--space-4);
+  left: var(--space-4);
   z-index: 2;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--color-concrete);
-  border-radius: var(--radius-sm);
-  background: rgba(251, 252, 250, 0.92);
+  gap: var(--space-1);
+  max-width: calc(100% - 2rem);
 }
 
 .viewer__tool {
-  padding: var(--space-1) var(--space-3);
-  border: 0;
-  border-radius: 2px;
-  background: transparent;
-  color: #22292e;
-  font-size: var(--font-size-xs);
+  min-height: 2.5rem;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--studio-line);
+  border-radius: 999px;
+  background: var(--studio-panel);
+  color: var(--studio-text);
+  font-size: var(--font-size-sm);
   font-weight: 600;
   cursor: pointer;
+  transition: background-color 150ms ease-out, border-color 150ms ease-out;
 }
 
 .viewer__tool:hover {
-  background: #dde1df;
+  border-color: var(--studio-muted);
 }
 
-.viewer__tool--on {
-  background: #1d4e6e;
-  color: #fff;
-}
-
+.viewer__tool--on,
 .viewer__tool--on:hover {
-  background: #143a53;
+  border-color: var(--studio-text);
+  background: var(--studio-text);
+  color: var(--studio);
 }
 
 .viewer__divider {
   width: 1px;
-  height: 1.2rem;
+  height: 1.5rem;
   margin: 0 var(--space-1);
-  background: #b9bfbd;
+  background: var(--studio-line);
 }
 
-.viewer__info {
+.viewer__panel {
   position: absolute;
-  right: var(--space-3);
-  top: var(--space-3);
+  top: var(--space-4);
+  right: var(--space-4);
   z-index: 2;
-  width: 14rem;
-  padding: var(--space-3);
-  border: 1.5px solid #22292e;
-  background: rgba(251, 252, 250, 0.96);
-  color: #22292e;
+  display: grid;
+  gap: var(--space-3);
+  width: 15rem;
+}
+
+.viewer__card {
+  padding: var(--space-4);
+  border: 1px solid var(--studio-line);
+  border-radius: var(--radius-lg);
+  background: var(--studio-panel);
+  backdrop-filter: blur(6px);
   font-size: var(--font-size-sm);
+}
+
+.viewer__card[hidden] {
+  display: none;
+}
+
+.viewer__card h2 {
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+}
+
+.viewer__card .legend__item input {
+  accent-color: #c9a979;
+}
+
+.viewer__card .legend__swatch {
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .viewer__info h3 {
@@ -95,7 +127,7 @@
 
 .viewer__info dl {
   display: grid;
-  gap: 2px;
+  gap: var(--space-1);
   margin: 0;
 }
 
@@ -106,7 +138,7 @@
 }
 
 .viewer__info dt {
-  color: #52606a;
+  color: var(--studio-muted);
 }
 
 .viewer__info dd {
@@ -116,12 +148,12 @@
 
 .viewer__help {
   position: absolute;
-  left: var(--space-3);
-  bottom: var(--space-2);
+  left: var(--space-4);
+  bottom: var(--space-3);
   z-index: 2;
-  max-width: calc(100% - 1.5rem);
+  max-width: calc(100% - 2rem);
   font-size: var(--font-size-xs);
-  color: #52606a;
+  color: var(--studio-muted);
   pointer-events: none;
 }
 
@@ -134,13 +166,29 @@
   border-color: var(--color-prussian);
 }
 
-@media (max-width: 960px) {
-  .viewer {
-    grid-template-columns: 1fr;
+@media (max-width: 760px) {
+  /* On phones the panels go below the model instead of covering it. */
+  .viewer__stage {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
   }
 
-  .viewer__info {
-    top: auto;
-    bottom: var(--space-6);
+  .viewer__canvas {
+    order: 1;
+    height: 60vh;
+  }
+
+  .viewer__panel {
+    position: static;
+    order: 2;
+    width: auto;
+    padding: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  }
+
+  .viewer__help {
+    display: none;
   }
 }

@@ -104,7 +104,7 @@ export class NewAnalysisView extends View {
             <span class="field__label">Plano</span>
             <select class="select" name="plan">${planOptions}</select>
           </label>
-          <div class="new-analysis__preview"><img alt="Vista previa del plano" data-preview /></div>
+          <div class="new-analysis__preview cyanotype-frame"><img alt="Vista previa del plano" data-preview /></div>
         </div>
         <div class="new-analysis__side">
           <fieldset class="model-picker">

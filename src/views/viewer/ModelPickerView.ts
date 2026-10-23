@@ -44,7 +44,7 @@ export class ModelPickerView extends View {
   private card({ analysis, plan, project, model, model3d }: AnalysisRow): string {
     return `
       <a class="plan-card plan-card--link" href="#/viewer/${analysis.id}">
-        <div class="plan-card__image"><img src="${escapeHtml(plan.fileUrl)}" alt="" loading="lazy" /></div>
+        <div class="plan-card__image cyanotype-frame"><img src="${escapeHtml(plan.fileUrl)}" alt="" loading="lazy" /></div>
         <div class="plan-card__body">
           <h3>${escapeHtml(project.name)} · Piso ${plan.floorLevel}</h3>
           <p class="plan-card__meta">${plural(model3d?.elementCount ?? 0, 'elemento', 'elementos')} · ${escapeHtml(model?.name ?? '')}</p>

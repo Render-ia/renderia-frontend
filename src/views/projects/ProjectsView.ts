@@ -155,7 +155,7 @@ export class ProjectsView extends View {
       : '<span class="project-card__no-plan">Sin planos</span>';
     return `
       <a class="project-card" href="#/projects/${project.id}">
-        <div class="project-card__thumb">${thumb}</div>
+        <div class="project-card__thumb cyanotype-frame">${thumb}</div>
         <div class="project-card__body">
           <h3>${escapeHtml(project.name)}</h3>
           <p class="project-card__meta">

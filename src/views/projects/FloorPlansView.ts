@@ -79,7 +79,7 @@ export class FloorPlansView extends View {
         const latest = this.analyses.find((a) => a.floorPlanId === plan.id);
         return `
           <article class="plan-card">
-            <div class="plan-card__image"><img src="${escapeHtml(plan.fileUrl)}" alt="" loading="lazy" /></div>
+            <div class="plan-card__image cyanotype-frame"><img src="${escapeHtml(plan.fileUrl)}" alt="" loading="lazy" /></div>
             <div class="plan-card__body">
               <h3><a href="#/projects/${project.id}">${escapeHtml(project.name)}</a> · Piso ${plan.floorLevel}</h3>
               <p class="plan-card__meta">Escala ${escapeHtml(plan.scale)} · Subido el ${formatDate(plan.uploadedAt)}</p>

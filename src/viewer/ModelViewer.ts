@@ -31,6 +31,8 @@ export class ModelViewer {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.1;
     this.renderer.domElement.className = 'viewer__canvas';
     this.host.append(this.renderer.domElement);
 
@@ -61,7 +63,8 @@ export class ModelViewer {
 
   resetCamera(): void {
     if (!this.content) return;
-    const reach = Math.max(this.content.size.x, this.content.size.z);
+    // Narrow (portrait) stages need the camera further away to fit the building.
+    const reach = Math.max(this.content.size.x, this.content.size.z) * Math.max(1, 0.9 / this.camera.aspect);
     this.camera.position.set(reach * 0.85, reach * 0.9, reach * 1.05);
     this.controls.target.set(0, 1, 0);
     this.controls.update();
