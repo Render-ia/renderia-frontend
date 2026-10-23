@@ -119,7 +119,7 @@ export class ProjectDetailView extends View {
         const latest = this.analyses.find((a) => a.floorPlanId === plan.id);
         return `
           <article class="plan-card">
-            <div class="plan-card__image">
+            <div class="plan-card__image cyanotype-frame">
               <img src="${escapeHtml(plan.fileUrl)}" alt="Plano del piso ${plan.floorLevel}" loading="lazy" />
             </div>
             <div class="plan-card__body">
