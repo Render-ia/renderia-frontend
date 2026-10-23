@@ -63,7 +63,7 @@ npm install
 npm run dev
 ```
 
-Para correr las pruebas: `npm test`.
+Para correr las pruebas: `npm test`. En cada pull request, GitHub Actions revisa los tipos, corre las pruebas y hace el build (`.github/workflows/ci.yml`).
 
 Abre `http://localhost:5173` y entra con una de las cuentas de prueba:
 
