@@ -47,6 +47,7 @@ Con el plano de ejemplo (`public/samples/plano-casa.svg`) detecta los 18 tramos 
 | **State** | `AnalysisState` (`PendingState`, `ProcessingState`, `CompletedState`, `FailedState`) | Ciclo de vida de un análisis y transiciones válidas |
 | **Builder** | `StructuralSceneBuilder` | Armar la escena 3D paso a paso (fondo, elementos, terreno, luces) |
 | **Repository** | `data/repositories.ts` | Separar el acceso a datos de la lógica de las pantallas |
+| **Command** | `EditElementCommand`, `RemoveElementCommand`, `CommandHistory` (`analysis/commands`) | Cada corrección a los elementos es un objeto que sabe aplicarse y revertirse: deshacer y rehacer (Ctrl+Z / Ctrl+Shift+Z) |
 
 ## Tecnologías
 
@@ -61,6 +62,8 @@ Con el plano de ejemplo (`public/samples/plano-casa.svg`) detecta los 18 tramos 
 npm install
 npm run dev
 ```
+
+Para correr las pruebas: `npm test`.
 
 Abre `http://localhost:5173` y entra con una de las cuentas de prueba:
 

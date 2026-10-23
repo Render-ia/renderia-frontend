@@ -1,4 +1,11 @@
 import { stateOf, statusBadge } from '../../analysis/AnalysisState.ts';
+import { CommandHistory } from '../../analysis/commands/CommandHistory.ts';
+import {
+  EditElementCommand,
+  RemoveElementCommand,
+  type ElementCommand,
+  type ElementReceiver,
+} from '../../analysis/commands/ElementCommand.ts';
 import { styleFor, TYPE_ORDER } from '../../analysis/elementStyle.ts';
 import { metersPerPixel } from '../../analysis/scale.ts';
 import type { CatalogItem } from '../../models/Catalog.ts';
@@ -32,6 +39,9 @@ export class AnalysisDetailView extends View {
   private materials: CatalogItem[] = [];
   /** Element type the inspector is focused on; null shows every type. */
   private focus: string | null = null;
+  private readonly history = new CommandHistory();
+  private page: HTMLElement | null = null;
+  private readonly onKeydown = (event: KeyboardEvent) => this.shortcut(event);
 
   constructor(private readonly analysisId: number) {
     super();
@@ -125,7 +135,17 @@ export class AnalysisDetailView extends View {
         <figure class="blueprint workbench__plan" data-overlay>${loadingState('Dibujando resultados…')}</figure>
         <section class="inspector" aria-labelledby="inspector-title">
           <header class="inspector__header">
-            <h2 id="inspector-title">Elementos detectados</h2>
+            <div class="inspector__title">
+              <h2 id="inspector-title">Elementos detectados</h2>
+              ${
+                editable
+                  ? `<div class="history" role="group" aria-label="Historial de cambios">
+                      <button class="button button--ghost button--small" type="button" data-undo disabled>Deshacer</button>
+                      <button class="button button--ghost button--small" type="button" data-redo disabled>Rehacer</button>
+                    </div>`
+                  : ''
+              }
+            </div>
             <p class="field__hint">${
               editable
                 ? 'Pasa el mouse por una fila para verla en el plano. Corrige el tipo o el material si la IA se equivocó.'
@@ -150,6 +170,18 @@ export class AnalysisDetailView extends View {
     }
     this.renderTabs(page);
     this.renderTable(page);
+    if (this.service.canEdit(this.detail!.project)) {
+      this.page = page;
+      page.querySelector('[data-undo]')!.addEventListener('click', () => this.undo());
+      page.querySelector('[data-redo]')!.addEventListener('click', () => this.redo());
+      document.addEventListener('keydown', this.onKeydown);
+    }
+  }
+
+  unmount(): void {
+    document.removeEventListener('keydown', this.onKeydown);
+    this.page = null;
+    super.unmount();
   }
 
   private overlaySize: [number, number] = [0, 0];
@@ -281,32 +313,90 @@ export class AnalysisDetailView extends View {
     this.root?.querySelectorAll(`[data-id="${id}"]`).forEach((el) => el.classList.toggle('is-highlighted', on));
   }
 
-  private async saveField(page: HTMLElement, element: StructuralElement, select: HTMLSelectElement): Promise<void> {
+  private saveField(page: HTMLElement, element: StructuralElement, select: HTMLSelectElement): Promise<void> {
     const value = select.value ? Number(select.value) : null;
     const changes = select.dataset.field === 'elementTypeId' ? { elementTypeId: value! } : { materialId: value };
+    return this.perform(page, new EditElementCommand(this.receiver(), element, changes), 'Elemento corregido.');
+  }
+
+  private removeElement(page: HTMLElement, element: StructuralElement): Promise<void> {
+    return this.perform(page, new RemoveElementCommand(this.receiver(), element), 'Elemento quitado del análisis.');
+  }
+
+  /** Lets the commands read and save the elements of this analysis. */
+  private receiver(): ElementReceiver {
+    const detail = this.detail!;
+    return {
+      elements: detail.elements,
+      update: (element, changes) => this.service.updateElement(detail, element, changes),
+      remove: (element) => this.service.removeElement(detail, element),
+      restore: (input) => this.service.restoreElement(detail, input),
+    };
+  }
+
+  private async perform(page: HTMLElement, command: ElementCommand, message: string): Promise<void> {
     try {
-      const updated = await this.service.updateElement(this.detail!, element, changes);
-      Object.assign(element, updated);
-      Toast.success('Elemento corregido.');
-      this.renderOverlay(page.querySelector('[data-overlay]')!);
-      this.renderTabs(page);
-      this.renderTable(page);
+      await this.history.run(command);
+      Toast.success(message);
     } catch (error) {
       Toast.error(errorMessage(error));
+    }
+    this.refresh(page);
+  }
+
+  private async undo(): Promise<void> {
+    if (!this.page || !this.history.canUndo) return;
+    try {
+      const command = await this.history.undo();
+      if (command) Toast.success(`Deshecho: ${command.label}.`);
+    } catch (error) {
+      Toast.error(errorMessage(error));
+    }
+    this.refresh(this.page);
+  }
+
+  private async redo(): Promise<void> {
+    if (!this.page || !this.history.canRedo) return;
+    try {
+      const command = await this.history.redo();
+      if (command) Toast.success(`Rehecho: ${command.label}.`);
+    } catch (error) {
+      Toast.error(errorMessage(error));
+    }
+    this.refresh(this.page);
+  }
+
+  /** Ctrl+Z undoes; Ctrl+Shift+Z or Ctrl+Y redoes. Native undo inside text fields is left alone. */
+  private shortcut(event: KeyboardEvent): void {
+    if (!(event.ctrlKey || event.metaKey) || event.altKey) return;
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('input, textarea, [contenteditable="true"]')) return;
+    const key = event.key.toLowerCase();
+    if (key === 'z' && !event.shiftKey) {
+      event.preventDefault();
+      this.undo();
+    } else if ((key === 'z' && event.shiftKey) || key === 'y') {
+      event.preventDefault();
+      this.redo();
     }
   }
 
-  private async removeElement(page: HTMLElement, element: StructuralElement): Promise<void> {
-    try {
-      await this.service.removeElement(this.detail!, element);
-      this.detail!.elements = this.detail!.elements.filter((e) => e.id !== element.id);
-      this.renderOverlay(page.querySelector('[data-overlay]')!);
-      this.renderTabs(page);
-      this.renderTable(page);
-      Toast.success('Elemento quitado del análisis.');
-    } catch (error) {
-      Toast.error(errorMessage(error));
-    }
+  private refresh(page: HTMLElement): void {
+    if (!this.root) return;
+    this.renderOverlay(page.querySelector('[data-overlay]')!);
+    this.renderTabs(page);
+    this.renderTable(page);
+    this.renderHistory(page);
+  }
+
+  private renderHistory(page: HTMLElement): void {
+    const undo = page.querySelector<HTMLButtonElement>('[data-undo]');
+    const redo = page.querySelector<HTMLButtonElement>('[data-redo]');
+    if (!undo || !redo) return;
+    undo.disabled = !this.history.canUndo;
+    redo.disabled = !this.history.canRedo;
+    undo.title = this.history.nextUndo ? `Deshacer: ${this.history.nextUndo} (Ctrl+Z)` : 'Nada que deshacer';
+    redo.title = this.history.nextRedo ? `Rehacer: ${this.history.nextRedo} (Ctrl+Shift+Z)` : 'Nada que rehacer';
   }
 
   private async confirmDelete(): Promise<void> {

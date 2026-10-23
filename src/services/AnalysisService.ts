@@ -6,7 +6,7 @@ import type { AiModel } from '../models/Catalog.ts';
 import type { FloorPlan } from '../models/FloorPlan.ts';
 import type { Model3D } from '../models/Model3D.ts';
 import type { Project } from '../models/Project.ts';
-import type { StructuralElement } from '../models/StructuralElement.ts';
+import type { StructuralElement, StructuralElementInput } from '../models/StructuralElement.ts';
 import { logActivity } from './ActivityLogger.ts';
 import { CatalogService } from './CatalogService.ts';
 import { ProjectService } from './ProjectService.ts';
@@ -99,6 +99,14 @@ export class AnalysisService {
     this.assertCanEdit(detail.project);
     await this.repos.analyses().removeElement(element.id);
     logActivity('Elemento eliminado', `Se quitó un elemento del análisis #${detail.analysis.id}.`);
+  }
+
+  /** Saves again an element that was removed (used to undo the removal). */
+  async restoreElement(detail: AnalysisDetail, input: StructuralElementInput): Promise<StructuralElement> {
+    this.assertCanEdit(detail.project);
+    const [saved] = await this.repos.analyses().saveElements(detail.analysis.id, [input]);
+    logActivity('Elemento restaurado', `Se devolvió un elemento al análisis #${detail.analysis.id}.`);
+    return saved;
   }
 
   async remove(detail: AnalysisRow): Promise<void> {
