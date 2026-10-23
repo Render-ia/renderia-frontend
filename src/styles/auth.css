@@ -100,6 +100,43 @@
   font-size: var(--font-size-md);
 }
 
+.password {
+  position: relative;
+  display: block;
+}
+
+.password .input {
+  padding-right: 5.5rem;
+}
+
+.password__toggle {
+  position: absolute;
+  top: 50%;
+  right: var(--space-1);
+  min-height: 2.25rem;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-prussian);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.password__toggle:hover {
+  background: color-mix(in srgb, var(--color-cyanotype-line) 18%, transparent);
+}
+
+.auth__slow {
+  margin: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-survey) 22%, transparent);
+  font-size: var(--font-size-sm);
+}
+
 .auth__switch {
   font-size: var(--font-size-sm);
   color: var(--color-graphite-soft);
@@ -204,12 +241,12 @@
     padding: var(--space-6) var(--space-4);
   }
 
-  .auth__drawing .plan {
-    max-width: 18rem;
+  .auth__drawing {
+    display: none;
   }
 
   .auth__tagline {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-md);
   }
 
   .auth__panel {

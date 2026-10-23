@@ -1,6 +1,6 @@
 import { AuthService } from '../../auth/AuthService.ts';
 import { View } from '../View.ts';
-import { authLayout, showAuthError } from './AuthLayout.ts';
+import { authLayout, passwordField, showAuthError, slowServerNote, submitWhileWaiting, wirePasswordToggles } from './AuthLayout.ts';
 
 /** Role ids from the roles table. Administrators are only created by another admin. */
 const REGISTER_ROLES = [
@@ -37,15 +37,8 @@ export class RegisterView extends View {
           <span class="field__label">Correo</span>
           <input class="input" type="email" name="email" autocomplete="email" required maxlength="150" />
         </label>
-        <label class="field">
-          <span class="field__label">Contraseña</span>
-          <input class="input" type="password" name="password" autocomplete="new-password" required minlength="8" />
-          <span class="field__hint">Mínimo 8 caracteres.</span>
-        </label>
-        <label class="field">
-          <span class="field__label">Repite la contraseña</span>
-          <input class="input" type="password" name="confirm" autocomplete="new-password" required minlength="8" />
-        </label>
+        ${passwordField('Contraseña', 'password', 'new-password', 'minlength="8"', 'Mínimo 8 caracteres.')}
+        ${passwordField('Repite la contraseña', 'confirm', 'new-password', 'minlength="8"')}
 
         <fieldset class="role-picker">
           <legend class="field__label">¿Cómo usarás Render.IA?</legend>
@@ -54,13 +47,14 @@ export class RegisterView extends View {
 
         <p class="form-error" role="alert" hidden></p>
         <button class="button auth__submit" type="submit">Crear cuenta</button>
+        ${slowServerNote}
         <p class="auth__switch">¿Ya tienes cuenta? <a href="#/login">Inicia sesión</a></p>
       </form>`);
   }
 
   protected afterRender(container: HTMLElement): void {
     const form = container.querySelector<HTMLFormElement>('.auth__form')!;
-    const submit = form.querySelector<HTMLButtonElement>('[type="submit"]')!;
+    wirePasswordToggles(form);
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -72,21 +66,21 @@ export class RegisterView extends View {
         return;
       }
 
-      submit.disabled = true;
-      submit.textContent = 'Creando cuenta…';
-      try {
-        await new AuthService().register({
-          fullName: String(data.get('fullName')),
-          email: String(data.get('email')),
-          password: String(data.get('password')),
-          roleId: Number(data.get('roleId')),
-        });
-        this.onSuccess();
-      } catch (error) {
-        showAuthError(form, error instanceof Error ? error.message : 'No se pudo crear la cuenta.');
-        submit.disabled = false;
-        submit.textContent = 'Crear cuenta';
-      }
+      let ok = false;
+      await submitWhileWaiting(form, 'Creando cuenta…', async () => {
+        try {
+          await new AuthService().register({
+            fullName: String(data.get('fullName')),
+            email: String(data.get('email')),
+            password: String(data.get('password')),
+            roleId: Number(data.get('roleId')),
+          });
+          ok = true;
+        } catch (error) {
+          showAuthError(form, error instanceof Error ? error.message : 'No se pudo crear la cuenta.');
+        }
+      });
+      if (ok) this.onSuccess();
     });
   }
 }
