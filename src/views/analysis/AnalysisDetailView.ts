@@ -14,6 +14,9 @@ import { escapeHtml } from '../../utils/html.ts';
 import { loadImage } from '../../utils/image.ts';
 import { View } from '../View.ts';
 
+/** Below this confidence the inspector suggests reviewing the element. */
+const LOW_CONFIDENCE = 0.75;
+
 interface Summary {
   wallThicknessM?: number;
   buildingSizeM?: { width: number; depth: number };
@@ -27,7 +30,8 @@ export class AnalysisDetailView extends View {
   private detail: AnalysisDetail | null = null;
   private types: CatalogItem[] = [];
   private materials: CatalogItem[] = [];
-  private hidden = new Set<string>();
+  /** Element type the inspector is focused on; null shows every type. */
+  private focus: string | null = null;
 
   constructor(private readonly analysisId: number) {
     super();
@@ -69,7 +73,7 @@ export class AnalysisDetailView extends View {
       <p class="breadcrumb"><a href="#/analyses">Análisis IA</a> / Análisis #${analysis.id}</p>
       <header class="page-header page-header--row">
         <div>
-          <h1>${escapeHtml(project.name)} · Piso ${plan.floorLevel}</h1>
+          <h1>${escapeHtml(project.name)}, piso ${plan.floorLevel}</h1>
           <p class="page-header__lead">${statusBadge(analysis.status)} ${escapeHtml(state.description)}</p>
         </div>
         <div class="page-header__actions">
@@ -115,23 +119,22 @@ export class AnalysisDetailView extends View {
   }
 
   private resultsHtml(): string {
+    const editable = this.service.canEdit(this.detail!.project);
     return `
-      <section class="section">
-        <div class="analysis-layout">
-          <figure class="analysis-plan" data-overlay>${loadingState('Dibujando resultados…')}</figure>
-          <aside class="legend" aria-label="Tipos de elemento">
-            <h2>Detectado</h2>
-            <ul class="legend__list" data-legend></ul>
-            <p class="field__hint">Desmarca un tipo para ocultarlo del plano y de la tabla.</p>
-          </aside>
-        </div>
-      </section>
-      <section class="section">
-        <div class="section__header">
-          <h2>Elementos</h2>
-          <p class="field__hint">${this.service.canEdit(this.detail!.project) ? 'Corrige el tipo o el material si la IA se equivocó.' : ''}</p>
-        </div>
-        <div class="table-wrap"><table class="table" data-table></table></div>
+      <section class="section workbench">
+        <figure class="blueprint workbench__plan" data-overlay>${loadingState('Dibujando resultados…')}</figure>
+        <section class="inspector" aria-labelledby="inspector-title">
+          <header class="inspector__header">
+            <h2 id="inspector-title">Elementos detectados</h2>
+            <p class="field__hint">${
+              editable
+                ? 'Pasa el mouse por una fila para verla en el plano. Corrige el tipo o el material si la IA se equivocó.'
+                : 'Pasa el mouse por una fila para verla en el plano.'
+            }</p>
+          </header>
+          <div class="type-tabs" role="group" aria-label="Filtrar por tipo" data-tabs></div>
+          <ol class="inspector__list" data-table aria-label="Elementos"></ol>
+        </section>
       </section>`;
   }
 
@@ -145,7 +148,7 @@ export class AnalysisDetailView extends View {
     } catch (error) {
       figure.innerHTML = errorState(errorMessage(error), false);
     }
-    this.renderLegend(page);
+    this.renderTabs(page);
     this.renderTable(page);
   }
 
@@ -154,18 +157,22 @@ export class AnalysisDetailView extends View {
   private renderOverlay(figure: HTMLElement, widthM?: number, heightM?: number): void {
     if (widthM && heightM) this.overlaySize = [widthM, heightM];
     const [w, h] = this.overlaySize;
-    figure.innerHTML = planOverlay(this.detail!.plan.fileUrl, w, h, this.visibleElements(), this.types);
+    figure.innerHTML = planOverlay(this.detail!.plan.fileUrl, w, h, this.detail!.elements, this.types);
     figure.querySelectorAll<SVGElement>('.overlay__el').forEach((shape) => {
+      shape.classList.toggle('is-dimmed', this.focus !== null && shape.dataset.type !== this.focus);
       shape.addEventListener('mouseenter', () => this.highlight(shape.dataset.id!, true));
       shape.addEventListener('mouseleave', () => this.highlight(shape.dataset.id!, false));
     });
   }
 
+  /** Elements listed in the inspector: those of the focused type, or all of them. */
   private visibleElements(): StructuralElement[] {
-    return this.detail!.elements.filter((e) => !this.hidden.has(nameOf(this.types, e.elementTypeId)));
+    if (this.focus === null) return this.detail!.elements;
+    return this.detail!.elements.filter((e) => nameOf(this.types, e.elementTypeId) === this.focus);
   }
 
-  private renderLegend(page: HTMLElement): void {
+  /** One tab per detected type; picking one focuses the plan and the list on it. */
+  private renderTabs(page: HTMLElement): void {
     const counts = new Map<string, number>();
     for (const element of this.detail!.elements) {
       const type = nameOf(this.types, element.elementTypeId);
@@ -173,26 +180,29 @@ export class AnalysisDetailView extends View {
     }
     const known = TYPE_ORDER.filter((t) => counts.has(t));
     const others = [...counts.keys()].filter((t) => !TYPE_ORDER.includes(t as never));
+    if (this.focus !== null && !counts.has(this.focus)) this.focus = null;
 
-    const legend = page.querySelector<HTMLElement>('[data-legend]')!;
-    legend.innerHTML = [...known, ...others]
-      .map(
-        (type) => `
-          <li>
-            <label class="legend__item">
-              <input type="checkbox" value="${escapeHtml(type)}" ${this.hidden.has(type) ? '' : 'checked'} />
-              <span class="legend__swatch" style="background:${styleFor(type).color}"></span>
-              <span class="legend__name">${escapeHtml(styleFor(type).label === 'Otros' ? type : styleFor(type).label)}</span>
-              <span class="legend__count">${counts.get(type)}</span>
-            </label>
-          </li>`,
-      )
-      .join('');
+    const tab = (value: string, label: string, count: number, swatch = '') => `
+      <button class="type-tab" type="button" data-type="${escapeHtml(value)}"
+        aria-pressed="${(this.focus ?? '') === value}">
+        ${swatch}<span>${escapeHtml(label)}</span><span class="type-tab__count">${count}</span>
+      </button>`;
 
-    legend.querySelectorAll<HTMLInputElement>('input').forEach((box) => {
-      box.addEventListener('change', () => {
-        if (box.checked) this.hidden.delete(box.value);
-        else this.hidden.add(box.value);
+    const tabs = page.querySelector<HTMLElement>('[data-tabs]')!;
+    tabs.innerHTML =
+      tab('', 'Todos', this.detail!.elements.length) +
+      [...known, ...others]
+        .map((type) => {
+          const style = styleFor(type);
+          const label = style.label === 'Otros' ? type : style.label;
+          return tab(type, label, counts.get(type)!, `<span class="legend__swatch" style="background:${style.color}"></span>`);
+        })
+        .join('');
+
+    tabs.querySelectorAll<HTMLButtonElement>('.type-tab').forEach((button) => {
+      button.addEventListener('click', () => {
+        this.focus = button.dataset.type || null;
+        this.renderTabs(page);
         this.renderOverlay(page.querySelector('[data-overlay]')!);
         this.renderTable(page);
       });
@@ -200,44 +210,44 @@ export class AnalysisDetailView extends View {
   }
 
   private renderTable(page: HTMLElement): void {
-    const table = page.querySelector<HTMLTableElement>('[data-table]')!;
+    const list = page.querySelector<HTMLElement>('[data-table]')!;
     const editable = this.service.canEdit(this.detail!.project);
-    const rows = this.visibleElements()
+    list.innerHTML = this.visibleElements()
       .map((element, index) => {
         const type = nameOf(this.types, element.elementTypeId);
-        const typeCell = editable
-          ? `<select class="select select--compact" data-field="elementTypeId" aria-label="Tipo">${this.options(this.types, element.elementTypeId)}</select>`
-          : escapeHtml(type);
-        const materialCell = editable
-          ? `<select class="select select--compact" data-field="materialId" aria-label="Material"><option value="">Sin material</option>${this.options(this.materials, element.materialId)}</select>`
-          : escapeHtml(nameOf(this.materials, element.materialId, 'Sin material'));
+        const typeField = editable
+          ? `<select class="select select--compact" data-field="elementTypeId" aria-label="Tipo del elemento ${index + 1}">${this.options(this.types, element.elementTypeId)}</select>`
+          : `<span>${escapeHtml(type)}</span>`;
+        const materialField = editable
+          ? `<select class="select select--compact" data-field="materialId" aria-label="Material del elemento ${index + 1}"><option value="">Sin material</option>${this.options(this.materials, element.materialId)}</select>`
+          : `<span>${escapeHtml(nameOf(this.materials, element.materialId, 'Sin material'))}</span>`;
+        const doubtful = element.confidence < LOW_CONFIDENCE;
         return `
-          <tr data-id="${element.id}">
-            <td class="num">${index + 1}</td>
-            <td><span class="legend__swatch" style="background:${styleFor(type).color}"></span> ${typeCell}</td>
-            <td>${materialCell}</td>
-            <td>${this.position(element)}</td>
-            <td>${this.size(element, type)}</td>
-            <td>
+          <li class="element-row ${doubtful ? 'is-doubtful' : ''}" data-id="${element.id}">
+            <span class="element-row__index">${index + 1}</span>
+            <div class="element-row__main">
+              <div class="element-row__fields">
+                <span class="legend__swatch" style="background:${styleFor(type).color}"></span>${typeField}${materialField}
+              </div>
+              <p class="element-row__meta">${this.size(element, type)} <span>${this.position(element)}</span></p>
+            </div>
+            <div class="element-row__confidence">
               <span class="confidence" style="--value:${element.confidence}">
                 <span class="confidence__bar"></span>${formatPercent(element.confidence)}
               </span>
-            </td>
-            <td>${editable ? `<button class="button button--ghost button--small button--danger-text" type="button" data-remove>Quitar</button>` : ''}</td>
-          </tr>`;
+              ${doubtful ? '<span class="badge badge--warning">Revisar</span>' : ''}
+            </div>
+            ${editable ? `<button class="button button--ghost button--small button--danger-text" type="button" data-remove aria-label="Quitar el elemento ${index + 1}">Quitar</button>` : ''}
+          </li>`;
       })
       .join('');
 
-    table.innerHTML = `
-      <thead>
-        <tr><th class="num">#</th><th>Tipo</th><th>Material</th><th>Posición</th><th>Medidas</th><th>Confianza</th><th><span class="sr-only">Acciones</span></th></tr>
-      </thead>
-      <tbody>${rows}</tbody>`;
-
-    table.querySelectorAll<HTMLTableRowElement>('tbody tr').forEach((row) => {
+    list.querySelectorAll<HTMLElement>('.element-row').forEach((row) => {
       const element = this.detail!.elements.find((e) => e.id === Number(row.dataset.id))!;
       row.addEventListener('mouseenter', () => this.highlight(row.dataset.id!, true));
       row.addEventListener('mouseleave', () => this.highlight(row.dataset.id!, false));
+      row.addEventListener('focusin', () => this.highlight(row.dataset.id!, true));
+      row.addEventListener('focusout', () => this.highlight(row.dataset.id!, false));
       row.querySelectorAll<HTMLSelectElement>('select').forEach((select) =>
         select.addEventListener('change', () => this.saveField(page, element, select)),
       );
@@ -279,7 +289,7 @@ export class AnalysisDetailView extends View {
       Object.assign(element, updated);
       Toast.success('Elemento corregido.');
       this.renderOverlay(page.querySelector('[data-overlay]')!);
-      this.renderLegend(page);
+      this.renderTabs(page);
       this.renderTable(page);
     } catch (error) {
       Toast.error(errorMessage(error));
@@ -291,7 +301,7 @@ export class AnalysisDetailView extends View {
       await this.service.removeElement(this.detail!, element);
       this.detail!.elements = this.detail!.elements.filter((e) => e.id !== element.id);
       this.renderOverlay(page.querySelector('[data-overlay]')!);
-      this.renderLegend(page);
+      this.renderTabs(page);
       this.renderTable(page);
       Toast.success('Elemento quitado del análisis.');
     } catch (error) {
