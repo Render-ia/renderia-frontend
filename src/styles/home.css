@@ -172,7 +172,7 @@
 }
 
 /* The plan image is drawn black on white: invert it so the lines turn into cyanotype white. */
-.blueprint__figure .overlay__image {
+.blueprint .overlay__image {
   filter: invert(1);
   mix-blend-mode: screen;
   opacity: 0.7;
