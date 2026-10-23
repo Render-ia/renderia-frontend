@@ -1,34 +1,4 @@
-/*
- * Drawing sheet: a drafting grid with a plan and, in the corner, the title
- * block ("rótulo") that every construction drawing carries.
- */
-.sheet {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr minmax(16rem, 22rem);
-  margin: 0;
-  border: var(--border-ink);
-  background-color: var(--color-paper-raised);
-  background-image:
-    linear-gradient(var(--color-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-.sheet::before {
-  content: '';
-  position: absolute;
-  inset: 6px;
-  border: 1px solid var(--color-concrete);
-  pointer-events: none;
-}
-
-.sheet__drawing {
-  display: grid;
-  place-items: center;
-  padding: var(--space-8);
-}
-
+/* Base plan drawing (home empty state and login) */
 .plan {
   width: 100%;
   max-width: 34rem;
@@ -66,123 +36,248 @@
   font-weight: 600;
 }
 
-/* ---------- Title block ---------- */
+/* ---------- Header ---------- */
 
-.title-block {
-  align-self: end;
-  margin: 6px;
-  border-top: var(--border-ink);
-  border-left: var(--border-ink);
-  background: var(--color-paper-raised);
-  min-height: 12rem;
+.home__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
 }
 
-.title-block__grid {
+.home__heading {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin: 0;
+  gap: var(--space-1);
 }
 
-.title-block__cell {
-  padding: var(--space-2) var(--space-3);
-  border-bottom: 1px solid var(--color-concrete);
+.home__heading h1 {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 800;
+  font-stretch: 118%;
+  letter-spacing: -0.01em;
 }
 
-.title-block__cell:nth-child(3) {
-  border-right: 1px solid var(--color-concrete);
-}
-
-.title-block__cell--wide {
-  grid-column: 1 / -1;
-}
-
-.title-block__cell:last-child {
-  border-bottom: 0;
-}
-
-.title-block dt {
-  font-size: var(--font-size-xs);
+.home__greeting {
   color: var(--color-graphite-soft);
 }
 
-.title-block dd {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-}
-
-.title-block__project {
-  font-size: var(--font-size-xl) !important;
-  font-weight: 800 !important;
-  font-stretch: 122%;
-  line-height: 1.1;
-  color: var(--color-prussian);
-}
-
-.title-block__cell--ok dd {
-  color: var(--color-success);
-}
-
-.title-block__message {
-  display: grid;
-  gap: var(--space-2);
-  justify-items: start;
-  padding: var(--space-4);
+.home__about {
+  margin-top: var(--space-8);
   font-size: var(--font-size-sm);
   color: var(--color-graphite-soft);
 }
 
-.title-block__message--error strong {
-  color: var(--color-danger);
-}
-
-@media (max-width: 1100px) {
-  .sheet {
-    grid-template-columns: 1fr;
-  }
-
-  .title-block {
-    border-right: 0;
-  }
+.home__about:empty {
+  display: none;
 }
 
 /* ---------- Dashboard ---------- */
-
-.home__greeting {
-  font-size: var(--font-size-lg);
-  color: var(--color-prussian);
-  font-weight: 600;
-}
-
-.home__sheet-title {
-  margin: var(--space-8) 0 var(--space-3);
-  font-size: var(--font-size-lg);
-}
 
 .dashboard {
   display: grid;
   gap: var(--space-6);
 }
 
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.dashboard__side {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.dashboard__card {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--color-paper-raised);
+  box-shadow: var(--shadow-card);
+}
+
+.dashboard__card h2 {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+/* ---------- Blueprint: the latest analysis on cyanotype paper ---------- */
+
+.blueprint {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  color: var(--color-cyanotype-text);
+  background-color: var(--color-cyanotype);
+  background-image:
+    linear-gradient(var(--color-cyanotype-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-cyanotype-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.blueprint .state {
+  color: var(--color-cyanotype-text);
+  border-color: rgba(143, 193, 227, 0.4);
+}
+
+.blueprint__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-4);
+}
+
+.blueprint__header h2 {
+  color: #ffffff;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+
+.blueprint__header p {
+  font-size: var(--font-size-sm);
+  color: var(--color-cyanotype-muted);
+}
+
+.blueprint__figure {
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: var(--space-4) 0;
+}
+
+.blueprint__figure .overlay {
+  max-height: 28rem;
+}
+
+/* Walls in cyanotype white, as on a printed blueprint; the other types keep their colors. */
+.blueprint .overlay__el[data-type='Muro'] {
+  stroke: #ffffff;
+  stroke-opacity: 0.95;
+}
+
+.blueprint .overlay__el[data-type='Viga'] {
+  stroke-width: 0.05;
+}
+
+.blueprint__legend li[data-type='Muro'] .blueprint__swatch {
+  background: #ffffff !important;
+}
+
+/* The plan image is drawn black on white: invert it so the lines turn into cyanotype white. */
+.blueprint__figure .overlay__image {
+  filter: invert(1);
+  mix-blend-mode: screen;
+  opacity: 0.7;
+}
+
+.blueprint .plan__walls path {
+  stroke: #ffffff;
+}
+
+.blueprint .plan__openings path,
+.blueprint .plan__dimension path {
+  stroke: var(--color-cyanotype-line);
+}
+
+.blueprint .plan__columns rect {
+  stroke: var(--color-cyanotype-deep);
+}
+
+.blueprint .plan__dimension text {
+  fill: #ffffff;
+}
+
+.blueprint__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-sm);
+}
+
+.blueprint__legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.blueprint__legend strong {
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+.blueprint__swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.blueprint__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.button--on-blueprint {
+  min-height: 2.75rem;
+  border-color: var(--color-survey);
+  background: var(--color-survey);
+  color: var(--color-cyanotype-deep);
+}
+
+.button--on-blueprint:hover {
+  border-color: #ffd65c;
+  background: #ffd65c;
+  color: var(--color-cyanotype-deep);
+}
+
+.button--ghost-blueprint {
+  min-height: 2.75rem;
+  border-color: rgba(220, 233, 242, 0.6);
+  background: transparent;
+  color: #ffffff;
+}
+
+.button--ghost-blueprint:hover {
+  border-color: #ffffff;
+  background: rgba(143, 193, 227, 0.12);
+}
+
+.blueprint :focus-visible {
+  outline-color: var(--color-survey);
+}
+
+/* ---------- Numbers ---------- */
+
 .stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  margin: 0;
-  border: var(--border-ink);
-  background: var(--color-paper-raised);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-concrete-soft);
+  box-shadow: var(--shadow-card);
 }
 
 .stats__cell {
   display: grid;
   gap: var(--space-1);
-  padding: var(--space-3) var(--space-4);
-  border-right: 1px solid var(--color-concrete);
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-paper-raised);
   color: inherit;
   text-decoration: none;
-}
-
-.stats__cell:last-child {
-  border-right: 0;
+  transition: background-color 150ms ease-out;
 }
 
 .stats__cell:hover {
@@ -190,18 +285,20 @@
 }
 
 .stats__label {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   color: var(--color-graphite-soft);
 }
 
 .stats__value {
-  font-size: var(--font-size-xxl);
-  font-weight: 750;
-  font-stretch: 118%;
+  font-size: 2.25rem;
+  font-weight: 800;
+  font-stretch: 120%;
   line-height: 1;
   color: var(--color-prussian);
   font-variant-numeric: tabular-nums;
 }
+
+/* ---------- First steps ---------- */
 
 .steps {
   display: grid;
@@ -210,16 +307,15 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  counter-reset: none;
 }
 
 .steps__item {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-3);
   border: 1px dashed var(--color-concrete);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
 }
 
@@ -262,24 +358,7 @@
   color: var(--color-prussian);
 }
 
-.dashboard__columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-6);
-}
-
-.dashboard__card {
-  display: grid;
-  align-content: start;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border: var(--border-hairline);
-  background: var(--color-paper-raised);
-}
-
-.dashboard__card h2 {
-  font-size: var(--font-size-lg);
-}
+/* ---------- Feeds ---------- */
 
 .feed {
   display: grid;
@@ -302,27 +381,32 @@
   border-bottom: 0;
 }
 
+.feed a {
+  font-weight: 600;
+}
+
 .feed small {
   margin-left: auto;
   color: var(--color-graphite-soft);
   white-space: nowrap;
 }
 
-@media (max-width: 960px) {
-  .stats,
+@media (max-width: 1100px) {
+  .dashboard__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
   .steps {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .stats__cell:nth-child(2) {
-    border-right: 0;
+  .blueprint {
+    padding: var(--space-4);
   }
 
-  .stats__cell:nth-child(-n + 2) {
-    border-bottom: 1px solid var(--color-concrete);
-  }
-
-  .dashboard__columns {
-    grid-template-columns: 1fr;
+  .blueprint__header h2 {
+    font-size: var(--font-size-lg);
   }
 }

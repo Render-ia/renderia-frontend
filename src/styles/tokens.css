@@ -9,18 +9,30 @@
   --color-paper-raised: #fbfcfa;
   --color-graphite: #22292e;
   --color-graphite-soft: #52606a;
-  --color-prussian: #1d4e6e;
-  --color-prussian-strong: #143a53;
-  --color-prussian-tint: #dbe6ec;
+  --color-prussian: #0f3b5f;
+  --color-prussian-strong: #0a2840;
+  --color-prussian-tint: #dde8f0;
   --color-concrete: #b9bfbd;
   --color-concrete-soft: #dde1df;
-  --color-survey: #e8c547;
+  --color-survey: #f2c230;
   --color-survey-ink: #5c4a07;
   --color-danger: #b23a26;
   --color-success: #2f6b45;
   --color-grid: rgba(29, 78, 110, 0.08);
   /* Text on prussian or success fills */
   --color-on-accent: #ffffff;
+
+  /* Cyanotype surfaces: the sidebar and the blueprint panels stay blue in both themes */
+  --color-cyanotype: #0f3b5f;
+  --color-cyanotype-deep: #0a2840;
+  --color-cyanotype-raised: #164a73;
+  --color-cyanotype-line: #8fc1e3;
+  --color-cyanotype-text: #dce9f2;
+  --color-cyanotype-muted: #a9c4d8;
+  --color-cyanotype-grid: rgba(143, 193, 227, 0.14);
+
+  /* Elevation */
+  --shadow-card: 0 1px 0 rgba(15, 59, 95, 0.1), 0 8px 24px rgba(15, 59, 95, 0.07);
 
   /* Type */
   --font-family: 'Archivo', system-ui, sans-serif;
@@ -43,8 +55,9 @@
   --space-12: 3rem;
 
   /* Shape */
-  --radius-sm: 3px;
+  --radius-sm: 4px;
   --radius-md: 6px;
+  --radius-lg: 10px;
   --border-hairline: 1px solid var(--color-concrete);
   --border-ink: 1.5px solid var(--color-graphite);
 
@@ -69,5 +82,6 @@
     --color-danger: #e57a65;
     --color-grid: rgba(127, 179, 211, 0.07);
     --color-on-accent: #10181d;
+    --shadow-card: 0 1px 0 rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
   }
 }

@@ -7,18 +7,25 @@
   gap: var(--space-2);
   padding: var(--space-2) var(--space-4);
   border: 1.5px solid var(--color-prussian);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--color-prussian);
   color: var(--color-on-accent);
   font-size: var(--font-size-sm);
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
+  transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
 }
 
 .button:hover {
   background: var(--color-prussian-strong);
   border-color: var(--color-prussian-strong);
+}
+
+.button--lg {
+  min-height: 3rem;
+  padding: 0 var(--space-6);
+  font-size: var(--font-size-md);
 }
 
 .button--ghost {

@@ -23,8 +23,8 @@
   gap: var(--space-6);
   height: 100vh;
   padding: var(--space-6) var(--space-4);
-  background: var(--color-paper-raised);
-  border-right: var(--border-hairline);
+  background: var(--color-cyanotype-deep);
+  color: var(--color-cyanotype-text);
 }
 
 .brand {
@@ -32,14 +32,14 @@
   align-items: center;
   gap: var(--space-2);
   padding: 0 var(--space-2);
-  color: var(--color-graphite);
+  color: #ffffff;
   text-decoration: none;
 }
 
 .logo-mark {
   width: 2rem;
   height: 2rem;
-  color: var(--color-prussian);
+  color: var(--color-survey);
 }
 
 .brand__name {
@@ -59,13 +59,14 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  border-left: 3px solid transparent;
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  color: var(--color-graphite-soft);
-  font-size: var(--font-size-sm);
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--color-cyanotype-muted);
+  font-size: var(--font-size-md);
   font-weight: 500;
   text-decoration: none;
+  transition: background-color 150ms ease-out, color 150ms ease-out;
 }
 
 .nav__link svg {
@@ -75,15 +76,22 @@
 }
 
 .nav__link:hover {
-  color: var(--color-graphite);
-  background: var(--color-concrete-soft);
+  color: #ffffff;
+  background: rgba(143, 193, 227, 0.1);
 }
 
 .nav__link--active {
-  border-left-color: var(--color-prussian);
-  color: var(--color-prussian);
-  background: var(--color-prussian-tint);
+  color: #ffffff;
+  background: var(--color-cyanotype-raised);
   font-weight: 650;
+}
+
+.nav__link--active svg {
+  color: var(--color-survey);
+}
+
+.shell__sidebar :focus-visible {
+  outline-color: var(--color-survey);
 }
 
 .shell__footer {
@@ -96,8 +104,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2);
-  border-top: var(--border-hairline);
+  padding: var(--space-3) var(--space-2) var(--space-2);
+  border-top: 1px solid rgba(143, 193, 227, 0.2);
 }
 
 .user-card:empty {
@@ -111,8 +119,8 @@
   width: 2.1rem;
   height: 2.1rem;
   border-radius: 50%;
-  background: var(--color-prussian);
-  color: var(--color-on-accent);
+  background: var(--color-survey);
+  color: var(--color-cyanotype-deep);
   font-size: var(--font-size-xs);
   font-weight: 700;
 }
@@ -130,8 +138,12 @@
   white-space: nowrap;
 }
 
+.user-card__info strong {
+  color: #ffffff;
+}
+
 .user-card__info small {
-  color: var(--color-graphite-soft);
+  color: var(--color-cyanotype-muted);
 }
 
 .user-card__logout {
@@ -144,7 +156,7 @@
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--color-graphite-soft);
+  color: var(--color-cyanotype-muted);
   cursor: pointer;
 }
 
@@ -154,8 +166,8 @@
 }
 
 .user-card__logout:hover {
-  background: var(--color-concrete-soft);
-  color: var(--color-danger);
+  background: rgba(143, 193, 227, 0.12);
+  color: #ffffff;
 }
 
 .backend-status {
@@ -164,22 +176,22 @@
   gap: var(--space-2);
   padding: var(--space-1) var(--space-3);
   font-size: var(--font-size-xs);
-  color: var(--color-graphite-soft);
+  color: var(--color-cyanotype-muted);
 }
 
 .backend-status__dot {
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 50%;
-  background: var(--color-concrete);
+  background: var(--color-cyanotype-muted);
 }
 
 .backend-status[data-state='online'] .backend-status__dot {
-  background: var(--color-success);
+  background: #6fd39a;
 }
 
 .backend-status[data-state='offline'] .backend-status__dot {
-  background: var(--color-danger);
+  background: #ff8a73;
 }
 
 /* ---------- Bare mode (login, register) ---------- */
@@ -194,6 +206,7 @@
 }
 
 .shell--bare .shell__main {
+  max-width: none;
   padding: 0;
 }
 
@@ -240,8 +253,8 @@
 .menu-toggle {
   display: grid;
   place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
   padding: 0;
   border: var(--border-hairline);
   border-radius: var(--radius-sm);
@@ -256,7 +269,9 @@
 
 .shell__main {
   flex: 1;
-  padding: var(--space-8);
+  width: 100%;
+  max-width: 90rem;
+  padding: var(--space-8) var(--space-12);
 }
 
 /* ---------- Mobile ---------- */
