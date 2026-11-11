@@ -104,8 +104,8 @@ export function createSeed(): Tables {
       {
         id: 1,
         projectId: 1,
-        fileName: 'plano-casa.svg',
-        fileUrl: '/samples/plano-casa.svg',
+        fileName: 'house-floor-plan.svg',
+        fileUrl: '/samples/house-floor-plan.svg',
         floorLevel: 1,
         scale: '1:100',
         uploadedAt: createdAt,

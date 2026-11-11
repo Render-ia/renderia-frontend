@@ -31,7 +31,7 @@ Proyecto final de **Patrones de Software**.
 6. Deduce **puertas y ventanas** de los huecos entre tramos de un mismo muro, **vigas** entre columnas unidas por un muro, y la **losa** con el contorno del edificio.
 7. Pasa de píxeles a metros con la escala del dibujo (escaneo a 150 ppp).
 
-Con el plano de ejemplo (`public/samples/plano-casa.svg`) detecta los 18 tramos de muro, 11 columnas, 6 puertas, 5 ventanas y 15 vigas en menos de medio segundo.
+Con el plano de ejemplo (`public/samples/house-floor-plan.svg`) detecta los 18 tramos de muro, 11 columnas, 6 puertas, 5 ventanas y 15 vigas en menos de medio segundo.
 
 ## Patrones de software
 

@@ -52,9 +52,9 @@ export class FloorPlanService {
 
   /** Loads the bundled sample plan as if the user had uploaded it. */
   async uploadSample(project: Project, floorLevel: number): Promise<UploadResult> {
-    const response = await fetch('/samples/plano-casa.svg');
+    const response = await fetch('/samples/house-floor-plan.svg');
     const blob = await response.blob();
-    const file = new File([blob], 'plano-casa.svg', { type: 'image/svg+xml' });
+    const file = new File([blob], 'house-floor-plan.svg', { type: 'image/svg+xml' });
     return this.upload({ project, file, floorLevel, scale: '1:100' });
   }
 

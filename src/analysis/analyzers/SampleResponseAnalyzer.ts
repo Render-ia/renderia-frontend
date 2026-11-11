@@ -3,7 +3,7 @@ import type { AnalysisInput, AnalysisOutput, DetectedElement, PlanAnalyzer } fro
 
 type Row = [ElementTypeName, number, number, number | null, number | null, number | null, number | null, number | null];
 
-/** Elements of the sample house (public/samples/plano-casa.svg), in meters. */
+/** Elements of the sample house (public/samples/house-floor-plan.svg), in meters. */
 const SAMPLE: Row[] = [
   ['Muro', 0.64, 0.8, 2.3, 0.8, null, 2.5, 0.15],
   ['Muro', 3.79, 0.8, 8.3, 0.8, null, 2.5, 0.15],
