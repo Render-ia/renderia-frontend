@@ -1,6 +1,6 @@
 /*
- * Login and registration. The left panel is a cyanotype: white lines on
- * prussian blue, the way construction blueprints were printed.
+ * Login and registration. The left panel is the night "aurora" surface with
+ * the sample plan drawn in light, as if lit from inside.
  */
 .auth {
   display: grid;
@@ -15,11 +15,9 @@
   justify-content: space-between;
   gap: var(--space-8);
   padding: var(--space-8);
-  background-color: var(--color-cyanotype);
-  background-image:
-    linear-gradient(var(--color-cyanotype-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-cyanotype-grid) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-color: var(--color-cyanotype-deep);
+  background-image: var(--aurora), var(--aurora-grid);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px, 28px 28px;
   color: var(--color-cyanotype-text);
 }
 
@@ -27,9 +25,10 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-lg);
-  font-weight: 750;
-  font-stretch: 118%;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 .auth__brand .logo-mark {
@@ -43,6 +42,7 @@
 
 .auth__drawing .plan {
   max-width: 34rem;
+  filter: drop-shadow(0 0 18px rgba(169, 159, 255, 0.55));
 }
 
 .auth__blueprint .plan__walls path {
@@ -67,11 +67,13 @@
 }
 
 .auth__tagline {
-  max-width: 30ch;
-  font-size: var(--font-size-xl);
-  font-weight: 650;
-  font-stretch: 112%;
-  line-height: 1.2;
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: #ffffff;
 }
 
 .auth__panel {
@@ -81,6 +83,7 @@
   gap: var(--space-8);
   padding: var(--space-8) clamp(var(--space-4), 6vw, var(--space-12));
   background: var(--color-paper-raised);
+  box-shadow: -24px 0 60px -30px rgba(18, 14, 46, 0.5);
 }
 
 .auth__form {
@@ -171,7 +174,7 @@
 
 .role-option:has(input:checked) {
   border-color: var(--color-prussian);
-  box-shadow: inset 4px 0 0 var(--color-survey);
+  background: var(--color-prussian-tint);
 }
 
 .role-option input {
@@ -191,7 +194,7 @@
   width: 100%;
   max-width: 24rem;
   padding-top: var(--space-4);
-  border-top: 1px dashed var(--color-concrete);
+  border-top: 1px solid var(--color-concrete-soft);
 }
 
 .auth__demo p {
@@ -227,8 +230,8 @@
 }
 
 .demo-account:hover {
-  border-color: var(--color-cyanotype-line);
-  background: color-mix(in srgb, var(--color-cyanotype-line) 12%, transparent);
+  border-color: var(--color-prussian);
+  background: var(--color-prussian-tint);
 }
 
 @media (max-width: 860px) {
