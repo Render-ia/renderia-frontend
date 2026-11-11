@@ -73,6 +73,8 @@ Abre `http://localhost:5173` y entra con una de las cuentas de prueba:
 | Ingeniero | ingeniero@renderia.co | Ingeniero123* |
 | Estudiante | estudiante@renderia.co | Estudiante123* |
 
+En producción (con el backend real) existen las cuentas de **Ingeniero** y **Estudiante** con esas mismas contraseñas. La cuenta de administrador no es pública: sus datos se entregan aparte.
+
 ### Fuente de datos
 
 | `VITE_DATA_SOURCE` | Qué hace |

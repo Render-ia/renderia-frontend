@@ -3,10 +3,15 @@ import { AppConfig } from '../../core/config/AppConfig.ts';
 import { View } from '../View.ts';
 import { authLayout, passwordField, showAuthError, slowServerNote, submitWhileWaiting, wirePasswordToggles } from './AuthLayout.ts';
 
+/**
+ * Public demo accounts for the class presentation. With the real backend only
+ * Ingeniero and Estudiante exist (created from DEMO_ENGINEER_PASSWORD and
+ * DEMO_STUDENT_PASSWORD); the administrator is never a public demo account.
+ */
 const DEMO_ACCOUNTS = [
-  { role: 'Administrador', email: 'admin@renderia.co', password: 'Admin123*' },
-  { role: 'Ingeniero', email: 'ingeniero@renderia.co', password: 'Ingeniero123*' },
-  { role: 'Estudiante', email: 'estudiante@renderia.co', password: 'Estudiante123*' },
+  { role: 'Administrador', email: 'admin@renderia.co', password: 'Admin123*', withBackend: false },
+  { role: 'Ingeniero', email: 'ingeniero@renderia.co', password: 'Ingeniero123*', withBackend: true },
+  { role: 'Estudiante', email: 'estudiante@renderia.co', password: 'Estudiante123*', withBackend: true },
 ];
 
 export class LoginView extends View {
@@ -67,15 +72,18 @@ export class LoginView extends View {
     });
   }
 
-  /** Quick access to the demo accounts, only when running without backend. */
+  /** Quick access to the demo accounts that exist in the current data source. */
   private demoAccounts(): string {
-    if (AppConfig.getInstance().dataSource !== 'mock') return '';
-    const buttons = DEMO_ACCOUNTS.map(
-      (account, index) => `
+    const withBackend = AppConfig.getInstance().dataSource !== 'mock';
+    const buttons = DEMO_ACCOUNTS.map((account, index) => ({ account, index }))
+      .filter(({ account }) => !withBackend || account.withBackend)
+      .map(
+        ({ account, index }) => `
         <button class="demo-account" type="button" data-demo="${index}">
           <strong>${account.role}</strong><span>${account.email}</span>
         </button>`,
-    ).join('');
+      )
+      .join('');
     return `
       <div class="auth__demo">
         <p>Cuentas de prueba</p>
