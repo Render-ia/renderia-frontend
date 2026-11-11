@@ -53,10 +53,9 @@
 }
 
 .home__heading h1 {
-  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 800;
-  font-stretch: 118%;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.035em;
 }
 
 .home__greeting {
@@ -112,14 +111,13 @@
 .blueprint {
   display: grid;
   gap: var(--space-4);
-  padding: var(--space-6);
-  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  border-radius: calc(var(--radius-lg) + 4px);
+  box-shadow: var(--shadow-lift);
   color: var(--color-cyanotype-text);
-  background-color: var(--color-cyanotype);
-  background-image:
-    linear-gradient(var(--color-cyanotype-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-cyanotype-grid) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-color: var(--color-cyanotype-deep);
+  background-image: var(--aurora), var(--aurora-grid);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px, 28px 28px;
 }
 
 .blueprint .state {
@@ -237,8 +235,8 @@
 }
 
 .button--on-blueprint:hover {
-  border-color: #ffd65c;
-  background: #ffd65c;
+  border-color: #ffd47a;
+  background: #ffd47a;
   color: var(--color-cyanotype-deep);
 }
 
@@ -251,7 +249,7 @@
 
 .button--ghost-blueprint:hover {
   border-color: #ffffff;
-  background: rgba(143, 193, 227, 0.12);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .blueprint :focus-visible {
@@ -280,22 +278,52 @@
   transition: background-color 150ms ease-out;
 }
 
-.stats__cell:hover {
-  background: var(--color-prussian-tint);
-}
-
 .stats__label {
   font-size: var(--font-size-sm);
   color: var(--color-graphite-soft);
 }
 
 .stats__value {
-  font-size: 2.25rem;
+  font-family: var(--font-display);
+  font-size: 2.5rem;
   font-weight: 800;
-  font-stretch: 120%;
+  letter-spacing: -0.04em;
   line-height: 1;
-  color: var(--color-prussian);
+  color: var(--stat-color, var(--color-prussian));
   font-variant-numeric: tabular-nums;
+}
+
+/* Each figure gets its own hue: projects, plans, analyses, detected elements. */
+.stats__cell {
+  position: relative;
+}
+
+.stats__cell::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--stat-color, var(--color-prussian));
+}
+
+.stats__cell:nth-child(1) {
+  --stat-color: var(--color-prussian);
+}
+
+.stats__cell:nth-child(2) {
+  --stat-color: var(--color-success);
+}
+
+.stats__cell:nth-child(3) {
+  --stat-color: var(--color-rose);
+}
+
+.stats__cell:nth-child(4) {
+  --stat-color: #e29a00;
+}
+
+.stats__cell:hover {
+  background: color-mix(in srgb, var(--stat-color, var(--color-prussian)) 9%, var(--color-paper-raised));
 }
 
 /* ---------- First steps ---------- */
