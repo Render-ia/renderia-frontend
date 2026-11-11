@@ -23,7 +23,9 @@
   gap: var(--space-6);
   height: 100vh;
   padding: var(--space-6) var(--space-4);
-  background: var(--color-cyanotype-deep);
+  background-color: var(--color-cyanotype-deep);
+  background-image: var(--aurora), var(--aurora-grid);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px, 28px 28px;
   color: var(--color-cyanotype-text);
 }
 
@@ -43,10 +45,10 @@
 }
 
 .brand__name {
-  font-size: var(--font-size-lg);
-  font-weight: 750;
-  font-stretch: 118%;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 .nav {
@@ -61,7 +63,7 @@
   gap: var(--space-3);
   min-height: 2.75rem;
   padding: 0 var(--space-3);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   color: var(--color-cyanotype-muted);
   font-size: var(--font-size-md);
   font-weight: 500;
@@ -77,12 +79,13 @@
 
 .nav__link:hover {
   color: #ffffff;
-  background: rgba(143, 193, 227, 0.1);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .nav__link--active {
   color: #ffffff;
   background: var(--color-cyanotype-raised);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 8px 24px -10px rgba(108, 92, 255, 0.9);
   font-weight: 650;
 }
 
@@ -104,8 +107,10 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-2) var(--space-2);
-  border-top: 1px solid rgba(143, 193, 227, 0.2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .user-card:empty {
@@ -119,8 +124,8 @@
   width: 2.1rem;
   height: 2.1rem;
   border-radius: 50%;
-  background: var(--color-survey);
-  color: var(--color-cyanotype-deep);
+  background: linear-gradient(135deg, var(--color-rose), var(--color-prussian));
+  color: #ffffff;
   font-size: var(--font-size-xs);
   font-weight: 700;
 }
@@ -166,7 +171,7 @@
 }
 
 .user-card__logout:hover {
-  background: rgba(143, 193, 227, 0.12);
+  background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
 
@@ -187,11 +192,13 @@
 }
 
 .backend-status[data-state='online'] .backend-status__dot {
-  background: #6fd39a;
+  background: var(--color-lagoon);
+  box-shadow: 0 0 0 3px rgba(25, 195, 180, 0.25);
 }
 
 .backend-status[data-state='offline'] .backend-status__dot {
-  background: #ff8a73;
+  background: var(--color-rose);
+  box-shadow: 0 0 0 3px rgba(255, 107, 154, 0.25);
 }
 
 /* ---------- Bare mode (login, register) ---------- */
@@ -292,7 +299,7 @@
 
   .shell--menu-open .shell__sidebar {
     transform: none;
-    box-shadow: 0 0 0 100vmax rgba(20, 27, 31, 0.35);
+    box-shadow: 0 0 0 100vmax rgba(18, 14, 46, 0.45);
   }
 
   .shell:not(.shell--bare) .shell__topbar {

@@ -20,7 +20,13 @@ body {
   font-size: var(--font-size-md);
   line-height: var(--line-height-body);
   color: var(--color-graphite);
-  background: var(--color-paper);
+  /* Drafting paper: a faint dot grid on lavender, lit from the top right */
+  background-color: var(--color-paper);
+  background-image:
+    radial-gradient(50% 40% at 100% 0%, color-mix(in srgb, var(--color-prussian) 10%, transparent), transparent 70%),
+    radial-gradient(circle at 1px 1px, var(--color-grid) 1px, transparent 0);
+  background-size: 100% 100%, 22px 22px;
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -28,8 +34,9 @@ h1,
 h2,
 h3 {
   margin: 0;
+  font-family: var(--font-display);
   line-height: var(--line-height-tight);
-  font-stretch: 112%;
+  letter-spacing: -0.02em;
 }
 
 h1 {
@@ -39,7 +46,7 @@ h1 {
 
 h2 {
   font-size: var(--font-size-xl);
-  font-weight: 650;
+  font-weight: 700;
 }
 
 h3 {
@@ -66,7 +73,7 @@ textarea {
 
 :focus-visible {
   outline: 2px solid var(--color-prussian);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {
