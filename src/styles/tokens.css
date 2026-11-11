@@ -1,49 +1,65 @@
 /*
- * Design tokens for Render.IA.
- * Palette taken from construction drawings: drafting paper, graphite ink,
- * prussian blue (cyanotype), concrete grey and survey-marker yellow.
+ * Design tokens for Render.IA — "Aurora estructural".
+ * Light passing through a building model: deep night surfaces lit by iris,
+ * lagoon and rose glows, and calm lavender work areas with a faint dot grid
+ * that recalls drafting paper. Amber stays the color of columns.
  */
 :root {
-  /* Color */
-  --color-paper: #f3f5f2;
-  --color-paper-raised: #fbfcfa;
-  --color-graphite: #22292e;
-  --color-graphite-soft: #52606a;
-  --color-prussian: #0f3b5f;
-  --color-prussian-strong: #0a2840;
-  --color-prussian-tint: #dde8f0;
-  --color-concrete: #b9bfbd;
-  --color-concrete-soft: #dde1df;
-  --color-survey: #f2c230;
-  --color-survey-ink: #5c4a07;
-  --color-danger: #b23a26;
-  --color-success: #2f6b45;
-  --color-grid: rgba(29, 78, 110, 0.08);
-  /* Text on prussian or success fills */
+  /* Color: work areas */
+  --color-paper: #f5f4fb;
+  --color-paper-raised: #ffffff;
+  --color-graphite: #1d1938;
+  --color-graphite-soft: #625e80;
+  --color-concrete: #d9d5ea;
+  --color-concrete-soft: #ecebf5;
+
+  /* Color: accents */
+  --color-prussian: #6c5cff;
+  --color-prussian-strong: #5141e6;
+  --color-prussian-tint: #ece9ff;
+  --color-lagoon: #19c3b4;
+  --color-rose: #ff6b9a;
+  --color-survey: #ffc24b;
+  --color-survey-ink: #6b4a00;
+  --color-danger: #d93a5b;
+  --color-success: #0f9184;
+  --color-grid: rgba(108, 92, 255, 0.13);
+  /* Text on iris or success fills */
   --color-on-accent: #ffffff;
 
-  /* Cyanotype surfaces: the sidebar and the blueprint panels stay blue in both themes */
-  --color-cyanotype: #0f3b5f;
-  --color-cyanotype-deep: #0a2840;
-  --color-cyanotype-raised: #164a73;
-  --color-cyanotype-line: #8fc1e3;
-  --color-cyanotype-text: #dce9f2;
-  --color-cyanotype-muted: #a9c4d8;
-  --color-cyanotype-grid: rgba(143, 193, 227, 0.14);
+  /* Night surfaces: the sidebar and the hero panels stay dark in both themes */
+  --color-cyanotype: #1a1440;
+  --color-cyanotype-deep: #120e2e;
+  --color-cyanotype-raised: rgba(255, 255, 255, 0.09);
+  --color-cyanotype-line: #a99fff;
+  --color-cyanotype-text: #ecebfb;
+  --color-cyanotype-muted: #aaa5d1;
+  --color-cyanotype-grid: rgba(196, 189, 255, 0.07);
 
-  /* Elevation */
-  --shadow-card: 0 1px 0 rgba(15, 59, 95, 0.1), 0 8px 24px rgba(15, 59, 95, 0.07);
+  /* Aurora: glows layered over the night surfaces */
+  --aurora:
+    radial-gradient(60% 50% at 12% 8%, rgba(108, 92, 255, 0.55), transparent 70%),
+    radial-gradient(50% 45% at 92% 88%, rgba(25, 195, 180, 0.38), transparent 70%),
+    radial-gradient(45% 40% at 70% 25%, rgba(255, 107, 154, 0.3), transparent 70%);
+  --aurora-grid:
+    linear-gradient(var(--color-cyanotype-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-cyanotype-grid) 1px, transparent 1px);
+
+  /* Elevation: tinted with iris instead of plain grey */
+  --shadow-card: 0 1px 2px rgba(29, 25, 56, 0.05), 0 14px 32px -14px rgba(76, 61, 220, 0.22);
+  --shadow-lift: 0 2px 4px rgba(29, 25, 56, 0.06), 0 22px 44px -18px rgba(76, 61, 220, 0.35);
 
   /* Type */
-  --font-family: 'Archivo', system-ui, sans-serif;
+  --font-family: 'Figtree', system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Figtree', system-ui, sans-serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
   --font-size-lg: 1.25rem;
-  --font-size-xl: 1.75rem;
-  --font-size-xxl: 2.5rem;
+  --font-size-xl: 1.625rem;
+  --font-size-xxl: 2.25rem;
   --line-height-body: 1.55;
-  --line-height-tight: 1.15;
+  --line-height-tight: 1.12;
 
   /* Space (4px grid) */
   --space-1: 0.25rem;
@@ -54,34 +70,36 @@
   --space-8: 2rem;
   --space-12: 3rem;
 
-  /* Shape */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
+  /* Shape: rounder as the element gets bigger */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
   --border-hairline: 1px solid var(--color-concrete);
   --border-ink: 1.5px solid var(--color-graphite);
 
   /* Layout */
-  --sidebar-width: 15rem;
+  --sidebar-width: 16rem;
   --topbar-height: 3.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --color-paper: #151b1f;
-    --color-paper-raised: #1c242a;
-    --color-graphite: #e4e9e7;
-    --color-graphite-soft: #9aa7ae;
-    --color-prussian: #7fb3d3;
-    --color-prussian-strong: #a9cde3;
-    --color-prussian-tint: #20323e;
-    --color-concrete: #3b464d;
-    --color-concrete-soft: #2a3339;
-    --color-survey-ink: #f1db86;
-    --color-success: #6fbf8b;
-    --color-danger: #e57a65;
-    --color-grid: rgba(127, 179, 211, 0.07);
-    --color-on-accent: #10181d;
-    --shadow-card: 0 1px 0 rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
+    --color-paper: #0f0c24;
+    --color-paper-raised: #1a1638;
+    --color-graphite: #ecebfb;
+    --color-graphite-soft: #a8a4cc;
+    --color-prussian: #9d91ff;
+    --color-prussian-strong: #b8afff;
+    --color-prussian-tint: #2a2357;
+    --color-concrete: #37315f;
+    --color-concrete-soft: #241f48;
+    --color-survey-ink: #ffd98a;
+    --color-success: #4fd8c9;
+    --color-danger: #ff7d97;
+    --color-grid: rgba(157, 145, 255, 0.1);
+    --color-on-accent: #120e2e;
+    --shadow-card: 0 1px 0 rgba(0, 0, 0, 0.4), 0 14px 32px -14px rgba(0, 0, 0, 0.6);
+    --shadow-lift: 0 1px 0 rgba(0, 0, 0, 0.4), 0 22px 44px -18px rgba(0, 0, 0, 0.7);
   }
 }
