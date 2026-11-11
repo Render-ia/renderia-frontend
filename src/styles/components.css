@@ -6,20 +6,23 @@
   justify-content: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-4);
+  min-height: 2.5rem;
   border: 1.5px solid var(--color-prussian);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   background: var(--color-prussian);
   color: var(--color-on-accent);
   font-size: var(--font-size-sm);
-  font-weight: 600;
+  font-weight: 650;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
+  box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--color-prussian) 80%, transparent);
+  transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out, box-shadow 150ms ease-out;
 }
 
 .button:hover {
   background: var(--color-prussian-strong);
   border-color: var(--color-prussian-strong);
+  box-shadow: 0 10px 22px -10px color-mix(in srgb, var(--color-prussian) 90%, transparent);
 }
 
 .button--lg {
@@ -31,6 +34,7 @@
 .button--ghost {
   background: transparent;
   color: var(--color-prussian);
+  box-shadow: none;
 }
 
 .button--ghost:hover {
@@ -48,8 +52,8 @@
 
 .page-header__lead {
   color: var(--color-graphite-soft);
-  font-size: var(--font-size-lg);
-  line-height: 1.45;
+  font-size: 1.0625rem;
+  line-height: 1.5;
 }
 
 /* ---------- Empty state ---------- */
@@ -67,9 +71,9 @@
 }
 
 .empty-state__code {
+  font-family: var(--font-display);
   font-size: 5rem;
   font-weight: 800;
-  font-stretch: 125%;
   line-height: 1;
   color: var(--color-concrete);
 }
@@ -82,7 +86,7 @@
   gap: var(--space-2);
   padding: var(--space-6);
   border: 1px dashed var(--color-concrete);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--color-graphite-soft);
 }
 

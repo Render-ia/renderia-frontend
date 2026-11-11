@@ -22,7 +22,7 @@
 }
 
 .tabs__tab[aria-selected='true'] {
-  border-bottom-color: var(--color-survey);
+  border-bottom-color: var(--color-prussian);
   color: var(--color-prussian);
 }
 
