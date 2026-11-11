@@ -7,7 +7,7 @@ on:
 
 jobs:
   check:
-    name: Tipos, pruebas y build
+    name: Types, tests and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,9 +16,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Revisar tipos
+      - name: Type check
         run: npx tsc --noEmit
-      - name: Pruebas
+      - name: Tests
         run: npm test
       - name: Build
         run: npm run build

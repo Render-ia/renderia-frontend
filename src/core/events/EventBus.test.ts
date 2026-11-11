@@ -3,7 +3,7 @@ import { EventBus } from './EventBus.ts';
 
 type Events = { saved: { id: number }; closed: undefined };
 
-describe('EventBus (patrón Observer)', () => {
+describe('EventBus (Observer pattern)', () => {
   it('notifies every subscriber of an event with its payload', () => {
     const bus = new EventBus<Events>();
     const first = vi.fn();

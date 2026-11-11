@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { AdminPolicy, EngineerPolicy, StudentPolicy, policyFor } from './policies.ts';
 
-describe('RolePolicy (patrón Strategy)', () => {
+describe('RolePolicy (Strategy pattern)', () => {
   it('picks the strategy for each role', () => {
     expect(policyFor('Administrador')).toBeInstanceOf(AdminPolicy);
     expect(policyFor('Ingeniero')).toBeInstanceOf(EngineerPolicy);

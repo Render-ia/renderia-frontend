@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { CompletedState, FailedState, PendingState, ProcessingState, stateOf, statusBadge } from './AnalysisState.ts';
 
-describe('AnalysisState (patrón State)', () => {
+describe('AnalysisState (State pattern)', () => {
   it('follows the normal life cycle: pending → processing → completed', () => {
     const done = new PendingState().start().complete();
     expect(done).toBeInstanceOf(CompletedState);
