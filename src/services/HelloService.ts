@@ -2,10 +2,10 @@ import { ApiClient } from '../core/http/ApiClient.ts';
 
 /** Shape returned by GET /api/v1/hello in renderia-backend. */
 export interface HelloResponse {
-  proyecto: string;
-  descripcion: string;
-  integrantes: string[];
-  mensaje: string;
+  project: string;
+  description: string;
+  members: string[];
+  message: string;
 }
 
 /** Checks the connection with the backend through its hello endpoint. */

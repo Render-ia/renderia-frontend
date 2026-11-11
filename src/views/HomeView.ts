@@ -57,6 +57,6 @@ export class HomeView extends View {
   }
 
   private credits(data: HelloResponse): string {
-    return `${escapeHtml(data.proyecto)}, hecho por ${data.integrantes.map(escapeHtml).join(' y ')}.`;
+    return `${escapeHtml(data.project)}, hecho por ${data.members.map(escapeHtml).join(' y ')}.`;
   }
 }
