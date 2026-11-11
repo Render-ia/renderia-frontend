@@ -24,7 +24,7 @@ export class LoginView extends View {
 
         <label class="field">
           <span class="field__label">Correo</span>
-          <input class="input" type="email" name="email" autocomplete="email" required />
+          <input class="input" type="email" name="email" autocomplete="email" required maxlength="150" />
         </label>
         ${passwordField('Contraseña', 'password', 'current-password')}
 

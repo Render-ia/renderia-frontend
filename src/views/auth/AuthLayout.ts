@@ -35,7 +35,7 @@ export function passwordField(label: string, name: string, autocomplete: string,
     <label class="field">
       <span class="field__label">${label}</span>
       <span class="password">
-        <input class="input" type="password" name="${name}" autocomplete="${autocomplete}" required ${extra} />
+        <input class="input" type="password" name="${name}" autocomplete="${autocomplete}" required maxlength="72" ${extra} />
         <button class="password__toggle" type="button" aria-pressed="false" aria-label="Mostrar la contraseña">Ver</button>
       </span>
       ${hint ? `<span class="field__hint">${hint}</span>` : ''}
