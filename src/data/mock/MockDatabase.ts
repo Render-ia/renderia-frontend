@@ -48,8 +48,8 @@ export interface Tables {
 
 type TableName = keyof Tables;
 
-// v4: sample buildings with several floors.
-const STORAGE_KEY = 'renderia.db.v4';
+// v5: sample buildings with several floors and a modern luxury house.
+const STORAGE_KEY = 'renderia.db.v5';
 
 /**
  * In-browser copy of the PostgreSQL database, saved in localStorage. Lets the

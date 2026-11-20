@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1157" height="838" viewBox="-80 -80 1960 1420">
+<rect x="-80" y="-80" width="1960" height="1420" fill="#ffffff"/>
+<g fill="#1f2328">
+<rect x="0" y="-7.5" width="150" height="15"/>
+<rect x="390" y="-7.5" width="210" height="15"/>
+<rect x="840" y="-7.5" width="210" height="15"/>
+<rect x="1290" y="-7.5" width="210" height="15"/>
+<rect x="0" y="1192.5" width="150" height="15"/>
+<rect x="390" y="1192.5" width="960" height="15"/>
+<rect x="1590" y="1192.5" width="210" height="15"/>
+<rect x="-7.5" y="0" width="15" height="180"/>
+<rect x="-7.5" y="420" width="15" height="360"/>
+<rect x="-7.5" y="1020" width="15" height="180"/>
+<rect x="1792.5" y="600" width="15" height="200"/>
+<rect x="1792.5" y="1040" width="15" height="160"/>
+<rect x="894.0" y="0" width="12" height="400"/>
+<rect x="894.0" y="490" width="12" height="110"/>
+<rect x="1494.0" y="0" width="12" height="180"/>
+<rect x="1494.0" y="420" width="12" height="180"/>
+<rect x="0" y="594.0" width="400" height="12"/>
+<rect x="490" y="594.0" width="510" height="12"/>
+<rect x="1090" y="594.0" width="510" height="12"/>
+<rect x="1720" y="594.0" width="80" height="12"/>
+<rect x="594.0" y="600" width="12" height="600"/>
+<rect x="1194.0" y="600" width="12" height="600"/>
+<rect x="-15.0" y="-15.0" width="30" height="30"/>
+<rect x="-15.0" y="585.0" width="30" height="30"/>
+<rect x="-15.0" y="1185.0" width="30" height="30"/>
+<rect x="585.0" y="-15.0" width="30" height="30"/>
+<rect x="585.0" y="585.0" width="30" height="30"/>
+<rect x="585.0" y="1185.0" width="30" height="30"/>
+<rect x="1185.0" y="-15.0" width="30" height="30"/>
+<rect x="1185.0" y="585.0" width="30" height="30"/>
+<rect x="1185.0" y="1185.0" width="30" height="30"/>
+<rect x="1785.0" y="-15.0" width="30" height="30"/>
+<rect x="1785.0" y="585.0" width="30" height="30"/>
+<rect x="1785.0" y="1185.0" width="30" height="30"/>
+</g>
+<g stroke="#1f2328" stroke-width="1.5" fill="none">
+<path d="M150 -3H390M150 3H390"/>
+<path d="M600 -3H840M600 3H840"/>
+<path d="M1050 -3H1290M1050 3H1290"/>
+<path d="M150 1197H390M150 1203H390"/>
+<path d="M1350 1197H1590M1350 1203H1590"/>
+<path d="M-3 180V420M3 180V420"/>
+<path d="M-3 780V1020M3 780V1020"/>
+<path d="M1797 800V1040M1803 800V1040"/>
+<path d="M900 400H990A90 90 0 0 1 900 490"/>
+<path d="M1500 180H1740A240 240 0 0 1 1500 420"/>
+<path d="M400 600V510A90 90 0 0 1 490 600"/>
+<path d="M1000 600V510A90 90 0 0 1 1090 600"/>
+<path d="M1600 600V480A120 120 0 0 1 1720 600"/>
+</g>
+<g stroke="#5a6570" stroke-width="1.2" fill="none"><path d="M0 1260H1800M0 1250V1270M1800 1250V1270"/></g>
+<g font-family="Arial, sans-serif" font-size="26" fill="#5a6570" text-anchor="middle">
+<text x="900.0" y="1250">18,00 m</text>
+<text x="450" y="300">Suite principal</text>
+<text x="1200" y="300">Alcoba 2</text>
+<text x="1650" y="300">Terraza</text>
+<text x="300" y="900">Alcoba 3</text>
+<text x="900" y="900">Vestier y baño</text>
+<text x="1500" y="900">Sala familiar</text>
+</g></svg>

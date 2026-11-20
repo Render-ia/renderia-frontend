@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1157" height="838" viewBox="-80 -80 1960 1420">
+<rect x="-80" y="-80" width="1960" height="1420" fill="#ffffff"/>
+<g fill="#1f2328">
+<rect x="600" y="-7.5" width="100" height="15"/>
+<rect x="940" y="-7.5" width="60" height="15"/>
+<rect x="1240" y="-7.5" width="210" height="15"/>
+<rect x="1690" y="-7.5" width="110" height="15"/>
+<rect x="0" y="1192.5" width="150" height="15"/>
+<rect x="390" y="1192.5" width="960" height="15"/>
+<rect x="1590" y="1192.5" width="210" height="15"/>
+<rect x="-7.5" y="600" width="15" height="180"/>
+<rect x="-7.5" y="1020" width="15" height="180"/>
+<rect x="1792.5" y="0" width="15" height="150"/>
+<rect x="1792.5" y="390" width="15" height="410"/>
+<rect x="1792.5" y="1040" width="15" height="160"/>
+<rect x="594.0" y="0" width="12" height="250"/>
+<rect x="594.0" y="350" width="12" height="500"/>
+<rect x="594.0" y="940" width="12" height="260"/>
+<rect x="600" y="694.0" width="350" height="12"/>
+<rect x="1040" y="694.0" width="310" height="12"/>
+<rect x="1470" y="694.0" width="330" height="12"/>
+<rect x="894.0" y="700" width="12" height="500"/>
+<rect x="1194.0" y="700" width="12" height="500"/>
+<rect x="-15.0" y="-15.0" width="30" height="30"/>
+<rect x="-15.0" y="585.0" width="30" height="30"/>
+<rect x="-15.0" y="1185.0" width="30" height="30"/>
+<rect x="585.0" y="-15.0" width="30" height="30"/>
+<rect x="585.0" y="585.0" width="30" height="30"/>
+<rect x="585.0" y="1185.0" width="30" height="30"/>
+<rect x="1185.0" y="-15.0" width="30" height="30"/>
+<rect x="1185.0" y="585.0" width="30" height="30"/>
+<rect x="1185.0" y="1185.0" width="30" height="30"/>
+<rect x="1785.0" y="-15.0" width="30" height="30"/>
+<rect x="1785.0" y="585.0" width="30" height="30"/>
+<rect x="1785.0" y="1185.0" width="30" height="30"/>
+</g>
+<g stroke="#1f2328" stroke-width="1.5" fill="none">
+<path d="M700 -3H940M700 3H940"/>
+<path d="M1000 -3H1240M1000 3H1240"/>
+<path d="M1450 -3H1690M1450 3H1690"/>
+<path d="M150 1197H390M150 1203H390"/>
+<path d="M1350 1197H1590M1350 1203H1590"/>
+<path d="M-3 780V1020M3 780V1020"/>
+<path d="M1797 150V390M1803 150V390"/>
+<path d="M1797 800V1040M1803 800V1040"/>
+<path d="M600 250H700A100 100 0 0 1 600 350"/>
+<path d="M600 850H690A90 90 0 0 1 600 940"/>
+<path d="M950 700V790A90 90 0 0 0 1040 700"/>
+<path d="M1350 700V820A120 120 0 0 0 1470 700"/>
+</g>
+<g stroke="#5a6570" stroke-width="1.2" fill="none"><path d="M0 1260H1800M0 1250V1270M1800 1250V1270"/></g>
+<g font-family="Arial, sans-serif" font-size="26" fill="#5a6570" text-anchor="middle">
+<text x="900.0" y="1250">18,00 m</text>
+<text x="300" y="300">Parqueadero</text>
+<text x="1200" y="350">Sala comedor</text>
+<text x="300" y="900">Estudio</text>
+<text x="750" y="950">Baño</text>
+<text x="1050" y="950">Escalera</text>
+<text x="1500" y="950">Cocina</text>
+</g></svg>
