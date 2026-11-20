@@ -1,3 +1,5 @@
+import type { AnalysisSummary } from '../analysis/AnalysisSummary.ts';
+import type { ElementChanges } from '../analysis/commands/ElementCommand.ts';
 import { Session } from '../auth/Session.ts';
 import { ApiError } from '../core/http/ApiError.ts';
 import { repositories } from '../data/dataSource.ts';
@@ -89,7 +91,7 @@ export class AnalysisService {
   async updateElement(
     detail: AnalysisDetail,
     element: StructuralElement,
-    changes: { elementTypeId?: number; materialId?: number | null },
+    changes: ElementChanges,
   ): Promise<StructuralElement> {
     this.assertCanEdit(detail.project);
     return this.repos.analyses().updateElement(element.id, changes);
@@ -107,6 +109,18 @@ export class AnalysisService {
     const [saved] = await this.repos.analyses().saveElements(detail.analysis.id, [input]);
     logActivity('Elemento restaurado', `Se devolvió un elemento al análisis #${detail.analysis.id}.`);
     return saved;
+  }
+
+  /** Saves the summary (assumptions, review state) in ai_analyses.raw_response. */
+  async saveSummary(detail: AnalysisDetail, summary: AnalysisSummary): Promise<void> {
+    this.assertCanEdit(detail.project);
+    const saved = await this.repos.analyses().update(detail.analysis.id, { rawResponse: JSON.stringify(summary) });
+    detail.analysis.rawResponse = saved.rawResponse ?? JSON.stringify(summary);
+  }
+
+  /** Records that a person checked the proposal. */
+  async markReviewed(detail: AnalysisDetail): Promise<void> {
+    logActivity('Análisis revisado', `Se marcó como revisado el análisis #${detail.analysis.id}.`);
   }
 
   async remove(detail: AnalysisRow): Promise<void> {

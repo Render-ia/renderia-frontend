@@ -1,3 +1,4 @@
+import type { ElementChanges } from '../../analysis/commands/ElementCommand.ts';
 import { ApiError } from '../../core/http/ApiError.ts';
 import type { AiAnalysis } from '../../models/AiAnalysis.ts';
 import type { StructuralElement, StructuralElementInput } from '../../models/StructuralElement.ts';
@@ -64,7 +65,7 @@ export class MockAnalysisRepository implements AnalysisRepository {
 
   async updateElement(
     id: number,
-    changes: { elementTypeId?: number; materialId?: number | null },
+    changes: ElementChanges,
   ): Promise<StructuralElement> {
     await latency(60);
     const element = this.db.table('elements').find((e) => e.id === id);
