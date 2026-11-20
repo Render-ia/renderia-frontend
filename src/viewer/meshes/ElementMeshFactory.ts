@@ -3,6 +3,7 @@ import {
   BeamMeshCreator,
   ColumnMeshCreator,
   DoorMeshCreator,
+  ElevatorMeshCreator,
   MarkerMeshCreator,
   SlabMeshCreator,
   StairMeshCreator,
@@ -20,6 +21,7 @@ export class ElementMeshFactory {
     ['Puerta', new DoorMeshCreator()],
     ['Ventana', new WindowMeshCreator()],
     ['Escalera', new StairMeshCreator()],
+    ['Ascensor', new ElevatorMeshCreator()],
   ]);
   private readonly fallback = new MarkerMeshCreator();
 

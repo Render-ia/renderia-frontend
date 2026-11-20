@@ -115,22 +115,78 @@ export class WindowMeshCreator extends ElementMeshCreator {
   }
 }
 
-/** Stairs as a block of steps going up along x. */
+/**
+ * Stairs: the end point gives the direction the steps go up. A wide stair
+ * (two flights side by side, as in a building core) goes up one side, turns
+ * on a landing and comes back on the other side.
+ */
 export class StairMeshCreator extends ElementMeshCreator {
   protected build(context: MeshContext): THREE.Object3D {
     const { element, toScene } = context;
     const width = element.width ?? 1;
     const length = element.thickness ?? 2.5;
-    const steps = 12;
-    const group = new THREE.Group();
+    const height = element.height ?? LEVEL.column;
     const center = toScene(element.startX, element.startY);
-    const material = this.material(context.color);
-    for (let i = 0; i < steps; i++) {
-      const rise = ((i + 1) * LEVEL.column) / steps;
-      const step = new THREE.Mesh(new THREE.BoxGeometry(length / steps, rise, width), material);
-      step.position.set(center.x - length / 2 + (i + 0.5) * (length / steps), rise / 2, center.y);
-      group.add(step);
+    const direction =
+      element.endX != null && element.endY != null
+        ? toScene(element.endX, element.endY).sub(center)
+        : new THREE.Vector2(1, 0);
+    const material = this.surface(context, 'concrete', context.color, length, width, { roughness: 0.75 });
+    const group = new THREE.Group();
+    const steps = 9;
+    const twoFlights = width >= 1.6;
+    const landing = twoFlights ? Math.min(1.1, length * 0.3) : 0;
+    const run = length - landing;
+    const flightWidth = twoFlights ? width / 2 - 0.04 : width;
+    const flights = twoFlights ? 2 : 1;
+    const flightRise = height / flights;
+    for (let f = 0; f < flights; f++) {
+      const side = twoFlights ? (f === 0 ? -1 : 1) * (width / 4) : 0;
+      for (let i = 0; i < steps; i++) {
+        const top = f * flightRise + ((i + 1) * flightRise) / steps;
+        const block = new THREE.Mesh(new THREE.BoxGeometry(run / steps, top, flightWidth), material);
+        // First flight goes up along +x, the second comes back along -x.
+        const along = -length / 2 + (i + 0.5) * (run / steps);
+        block.position.set(f === 0 ? along : -along - landing, top / 2, side);
+        group.add(block);
+      }
     }
+    if (twoFlights) {
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(landing, flightRise, width), material);
+      slab.position.set(length / 2 - landing / 2, flightRise / 2, 0);
+      group.add(slab);
+    }
+    group.rotation.y = -Math.atan2(direction.y, direction.x);
+    group.position.set(center.x, 0, center.y);
+    return group;
+  }
+}
+
+/** Elevator: the shaft walls up to the next floor, open at the front, with the steel cabin inside. */
+export class ElevatorMeshCreator extends ElementMeshCreator {
+  protected build(context: MeshContext): THREE.Object3D {
+    const { element, toScene } = context;
+    const width = element.width ?? 1.5;
+    const depth = element.thickness ?? 1.5;
+    const height = element.height ?? LEVEL.column;
+    const center = toScene(element.startX, element.startY);
+    const group = new THREE.Group();
+    const steel = this.material('#9aa3ab', { roughness: 0.28, metalness: 0.85 });
+    const cabin = new THREE.Mesh(new THREE.BoxGeometry(width * 0.82, height * 0.8, depth * 0.82), steel);
+    cabin.position.y = height * 0.4 + 0.02;
+    group.add(cabin);
+    const door = this.material('#5d666e', { roughness: 0.3, metalness: 0.9 });
+    // Doors face +y in the plan (the hall side of the Torre Galeras core).
+    const leaf = new THREE.Mesh(new THREE.BoxGeometry(width * 0.5, height * 0.72, 0.03), door);
+    leaf.position.set(0, height * 0.36 + 0.02, depth * 0.41 + 0.016);
+    group.add(leaf);
+    const rail = this.material('#2f3439', { roughness: 0.5, metalness: 0.6 });
+    for (const x of [-1, 1]) {
+      const guide = new THREE.Mesh(new THREE.BoxGeometry(0.06, height, 0.06), rail);
+      guide.position.set((x * width) / 2 - x * 0.06, height / 2, 0);
+      group.add(guide);
+    }
+    group.position.set(center.x, 0, center.y);
     return group;
   }
 }

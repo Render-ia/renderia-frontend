@@ -80,6 +80,7 @@ export function createSeed(): Tables {
       { id: 5, name: 'Puerta', description: 'Abertura de paso en un muro' },
       { id: 6, name: 'Ventana', description: 'Abertura de luz y ventilación en un muro' },
       { id: 7, name: 'Escalera', description: 'Conexión vertical entre pisos' },
+      { id: 8, name: 'Ascensor', description: 'Cabina y foso del ascensor en el núcleo del edificio' },
     ],
     materials: [
       { id: 1, name: 'Concreto reforzado', description: 'Concreto con acero de refuerzo' },

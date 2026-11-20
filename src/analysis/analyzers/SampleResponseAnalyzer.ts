@@ -71,6 +71,7 @@ const MATERIALS: Record<ElementTypeName, string | null> = {
   Puerta: 'Madera',
   Ventana: null,
   Escalera: 'Concreto reforzado',
+  Ascensor: null,
 };
 
 /**

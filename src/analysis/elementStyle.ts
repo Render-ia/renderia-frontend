@@ -15,6 +15,7 @@ export const ELEMENT_STYLES: Record<ElementTypeName, ElementStyle> = {
   Puerta: { color: '#2f8a57', label: 'Puertas' },
   Ventana: { color: '#58b4d8', label: 'Ventanas' },
   Escalera: { color: '#7a5aa6', label: 'Escaleras' },
+  Ascensor: { color: '#5b7f95', label: 'Ascensores' },
 };
 
 const FALLBACK: ElementStyle = { color: '#7d8a91', label: 'Otros' };
@@ -24,7 +25,7 @@ export function styleFor(typeName: string): ElementStyle {
 }
 
 /** Order in which types are listed in legends. */
-export const TYPE_ORDER: ElementTypeName[] = ['Muro', 'Columna', 'Viga', 'Losa', 'Puerta', 'Ventana', 'Escalera'];
+export const TYPE_ORDER: ElementTypeName[] = ['Muro', 'Columna', 'Viga', 'Losa', 'Puerta', 'Ventana', 'Escalera', 'Ascensor'];
 
 /** Architectural model look used by the 3D viewer: white walls and columns, basswood beams. */
 export const MODEL_COLORS: Record<string, string> = {
@@ -35,4 +36,5 @@ export const MODEL_COLORS: Record<string, string> = {
   Puerta: '#b98b5e',
   Ventana: '#9fd2ec',
   Escalera: '#c9a979',
+  Ascensor: '#9aa3ab',
 };

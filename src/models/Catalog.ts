@@ -21,7 +21,8 @@ export type ElementTypeName =
   | 'Losa'
   | 'Puerta'
   | 'Ventana'
-  | 'Escalera';
+  | 'Escalera'
+  | 'Ascensor';
 
 /** Row of the `ai_models` table. */
 export interface AiModel {

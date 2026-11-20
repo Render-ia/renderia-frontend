@@ -24,7 +24,8 @@ describe('3D studio presets', () => {
   it('groups types in disciplines', () => {
     expect(disciplineOf('Muro')).toBe('architecture');
     expect(disciplineOf('Viga')).toBe('structure');
-    expect(disciplineOf('Ascensor')).toBe('other');
+    expect(disciplineOf('Ascensor')).toBe('structure');
+    expect(disciplineOf('Rampa')).toBe('other');
   });
 
   it('colors by finish without depending on geometry', () => {

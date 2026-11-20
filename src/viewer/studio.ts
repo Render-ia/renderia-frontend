@@ -53,7 +53,7 @@ export type Discipline = 'architecture' | 'structure' | 'other';
 
 export const DISCIPLINES: { id: Discipline; label: string; types: string[] }[] = [
   { id: 'architecture', label: 'Arquitectura', types: ['Muro', 'Puerta', 'Ventana'] },
-  { id: 'structure', label: 'Estructura', types: ['Columna', 'Viga', 'Losa', 'Escalera'] },
+  { id: 'structure', label: 'Estructura', types: ['Columna', 'Viga', 'Losa', 'Escalera', 'Ascensor'] },
   { id: 'other', label: 'Otros', types: [] },
 ];
 
