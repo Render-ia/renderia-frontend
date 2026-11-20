@@ -10,7 +10,11 @@ export type Permission =
   /** Download the 3D model as a GLB file. */
   | 'models:export'
   /** Correct the type or material of detected elements. */
-  | 'elements:edit';
+  | 'elements:edit'
+  /** Sign off any analysis as reviewed, even in someone else's project. */
+  | 'analyses:review-any'
+  /** Share own projects with other users. */
+  | 'projects:share';
 
 /**
  * Pattern: Strategy — each role is a strategy that answers what its users can

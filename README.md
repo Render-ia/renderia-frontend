@@ -65,15 +65,17 @@ npm run dev
 
 Para correr las pruebas: `npm test`. En cada pull request, GitHub Actions revisa los tipos, corre las pruebas y hace el build (`.github/workflows/ci.yml`).
 
-Abre `http://localhost:5173` y entra con una de las cuentas de prueba:
+Abre `http://localhost:5173` y, en el login, usa el panel **Cuentas de prueba**: hay una cuenta por rol (Administrador, Ingeniero, Revisor, Cliente y Estudiante) y se entra con el botón **Usar**.
 
-| Rol | Correo | Contraseña |
-|---|---|---|
-| Administrador | admin@renderia.co | Admin123* |
-| Ingeniero | ingeniero@renderia.co | Ingeniero123* |
-| Estudiante | estudiante@renderia.co | Estudiante123* |
+Las cuentas de prueba no tienen contraseña conocida: el botón le pide al backend que abra la sesión (`POST /auth/demo`), así que no hay contraseñas en el código, en la página ni en la red. En el backend reciben una contraseña aleatoria en cada arranque y solo se guarda su hash BCrypt. Las cuentas que se crean en la versión del navegador guardan la contraseña con PBKDF2 y sal aleatoria.
 
-En producción (con el backend real) existen las cuentas de **Ingeniero** y **Estudiante** con esas mismas contraseñas. La cuenta de administrador no es pública: sus datos se entregan aparte.
+| Rol | Qué puede hacer |
+|---|---|
+| Administrador | Todo. La cuenta de prueba ve el panel de administración, pero no cambia datos de otros |
+| Ingeniero | Sus proyectos sin límite; los comparte con clientes y colegas |
+| Revisor | Ve y valida los proyectos de todos, sin editar ni borrar |
+| Cliente | Solo ve lo que le comparten, en modo cliente |
+| Estudiante | Hasta 3 proyectos |
 
 ### Fuente de datos
 

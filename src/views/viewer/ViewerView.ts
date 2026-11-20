@@ -31,6 +31,7 @@ const AUDIENCE_KEY = 'renderia.viewer.audience';
 const MAX_CUT_HEIGHT = 3.2;
 
 function savedAudience(): Audience {
+  if (Session.getInstance().user?.role.name === 'Cliente') return 'client';
   try {
     return localStorage.getItem(AUDIENCE_KEY) === 'client' ? 'client' : 'engineer';
   } catch {
@@ -116,10 +117,14 @@ export class ViewerView extends View {
           }</p>
         </div>
         <div class="page-header__actions">
-          <div class="segmented" role="group" aria-label="Modo de la vista">
+          ${
+            Session.getInstance().user?.role.name === 'Cliente'
+              ? ''
+              : `<div class="segmented" role="group" aria-label="Modo de la vista">
             <button type="button" class="segmented__item" data-audience="engineer" aria-pressed="${!client}">Ingeniero</button>
             <button type="button" class="segmented__item" data-audience="client" aria-pressed="${client}">Cliente</button>
-          </div>
+          </div>`
+          }
           <button class="button button--ghost" type="button" data-shot>Imagen 4K</button>
           ${
             canExport && !client

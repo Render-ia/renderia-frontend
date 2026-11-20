@@ -1,12 +1,17 @@
+import { repositories } from '../../data/dataSource.ts';
 import { AuthService } from '../../auth/AuthService.ts';
 import { View } from '../View.ts';
 import { authLayout, passwordField, showAuthError, slowServerNote, submitWhileWaiting, wirePasswordToggles } from './AuthLayout.ts';
 import { reportFormValidity } from '../../utils/form.ts';
 
-/** Role ids from the roles table. Administrators are only created by another admin. */
+/**
+ * Roles a person can pick when signing up. Administrators and reviewers are only
+ * assigned by an administrator. Ids are looked up by name in the roles table.
+ */
 const REGISTER_ROLES = [
-  { id: 2, name: 'Ingeniero', hint: 'Proyectos sin límite y exportación del modelo 3D' },
-  { id: 3, name: 'Estudiante', hint: 'Hasta 3 proyectos, con fines académicos' },
+  { name: 'Ingeniero', hint: 'Proyectos sin límite y exportación del modelo 3D' },
+  { name: 'Estudiante', hint: 'Hasta 3 proyectos, con fines académicos' },
+  { name: 'Cliente', hint: 'Ves los proyectos que tu ingeniero te comparta' },
 ];
 
 export class RegisterView extends View {
@@ -20,7 +25,7 @@ export class RegisterView extends View {
     const roles = REGISTER_ROLES.map(
       (role, index) => `
         <label class="role-option">
-          <input type="radio" name="roleId" value="${role.id}" ${index === 0 ? 'checked' : ''} />
+          <input type="radio" name="roleName" value="${role.name}" ${index === 0 ? 'checked' : ''} />
           <span><strong>${role.name}</strong><small>${role.hint}</small></span>
         </label>`,
     ).join('');
@@ -70,11 +75,14 @@ export class RegisterView extends View {
       let ok = false;
       await submitWhileWaiting(form, 'Creando cuenta…', async () => {
         try {
+          const roles = await repositories().users().listRoles();
+          const role = roles.find((r) => r.name === data.get('roleName'));
+          if (!role) throw new Error('Ese rol todavía no está disponible.');
           await new AuthService().register({
             fullName: String(data.get('fullName')),
             email: String(data.get('email')),
             password: String(data.get('password')),
-            roleId: Number(data.get('roleId')),
+            roleId: role.id,
           });
           ok = true;
         } catch (error) {

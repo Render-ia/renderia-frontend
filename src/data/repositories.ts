@@ -5,6 +5,7 @@ import type { AiModel, CatalogItem, CatalogName } from '../models/Catalog.ts';
 import type { FloorPlan, FloorPlanInput } from '../models/FloorPlan.ts';
 import type { Model3D } from '../models/Model3D.ts';
 import type { Project, ProjectInput } from '../models/Project.ts';
+import type { ProjectMember } from '../models/ProjectMember.ts';
 import type { Role } from '../models/Role.ts';
 import type { StructuralElement, StructuralElementInput } from '../models/StructuralElement.ts';
 import type { RegisterData, UserWithRole } from '../models/User.ts';
@@ -47,6 +48,11 @@ export interface CatalogRepository {
 export interface ProjectRepository {
   /** All projects, or only the ones owned by `ownerId`. */
   findAll(ownerId?: number): Promise<Project[]>;
+  /** Projects the user owns plus the ones shared with them. */
+  findAccessible(userId: number): Promise<Project[]>;
+  members(projectId: number): Promise<ProjectMember[]>;
+  share(projectId: number, email: string): Promise<ProjectMember>;
+  unshare(projectId: number, userId: number): Promise<void>;
   findById(id: number): Promise<Project | null>;
   create(ownerId: number, input: ProjectInput): Promise<Project>;
   update(id: number, input: ProjectInput): Promise<Project>;
@@ -72,6 +78,8 @@ export interface AnalysisRepository {
   findById(id: number): Promise<AiAnalysis | null>;
   create(floorPlanId: number, aiModelId: number): Promise<AiAnalysis>;
   update(id: number, changes: Partial<Omit<AiAnalysis, 'id'>>): Promise<AiAnalysis>;
+  /** Signs the analysis off; the backend stamps who and when in raw_response. */
+  review(id: number, reviewerName: string): Promise<AiAnalysis>;
   remove(id: number): Promise<void>;
   findElements(analysisId: number): Promise<StructuralElement[]>;
   saveElements(analysisId: number, elements: StructuralElementInput[]): Promise<StructuralElement[]>;

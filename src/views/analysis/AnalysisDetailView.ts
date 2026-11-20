@@ -23,7 +23,6 @@ import { UpdateSummaryCommand, type SummaryStore } from '../../analysis/commands
 import { CONFIDENCE_LEVELS, confidenceLevel, countByLevel, levelInfo, type ConfidenceLevel } from '../../analysis/confidence.ts';
 import { styleFor, TYPE_ORDER } from '../../analysis/elementStyle.ts';
 import { metersPerPixel } from '../../analysis/scale.ts';
-import { Session } from '../../auth/Session.ts';
 import type { CatalogItem } from '../../models/Catalog.ts';
 import type { StructuralElement, StructuralElementInput } from '../../models/StructuralElement.ts';
 import { AnalysisService, type AnalysisDetail } from '../../services/AnalysisService.ts';
@@ -488,7 +487,7 @@ export class AnalysisDetailView extends View {
         </div>
         <div class="validation__status">
           ${status}
-          ${editable && !review ? '<button type="button" class="button button--small" data-review>Marcar como revisado</button>' : ''}
+          ${this.service.canReview(this.detail!.project) && !review ? '<button type="button" class="button button--small" data-review>Marcar como revisado</button>' : ''}
         </div>
       </header>
       <div class="validation__grid">
@@ -580,15 +579,14 @@ export class AnalysisDetailView extends View {
       });
       if (!confirmed) return;
     }
-    const next: AnalysisSummary = {
-      ...this.summary,
-      validation: {
-        reviewedAt: new Date().toISOString(),
-        reviewedBy: Session.getInstance().user?.fullName ?? 'Usuario',
-      },
-    };
-    const command = new UpdateSummaryCommand(this.summaryStore(), next, 'marcar como revisado');
-    if (await this.perform(page, command, 'Propuesta marcada como revisada.')) this.service.markReviewed(this.detail!);
+    try {
+      await this.service.review(this.detail!);
+      this.summary = parseSummary(this.detail!.analysis.rawResponse, this.detail!.plan.scale);
+      Toast.success('Propuesta marcada como revisada.');
+    } catch (error) {
+      Toast.error(errorMessage(error));
+    }
+    this.refresh(page);
   }
 
   // ---------- Drawing elements the AI missed ----------

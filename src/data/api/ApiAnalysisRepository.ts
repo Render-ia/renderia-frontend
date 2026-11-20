@@ -30,6 +30,12 @@ export class ApiAnalysisRepository implements AnalysisRepository {
     return this.api.put<AiAnalysis>(`/analyses/${id}`, changes);
   }
 
+  async review(id: number, _reviewerName: string): Promise<AiAnalysis> {
+    // The server takes the reviewer from the session token, then we read the stamped summary.
+    await this.api.post<unknown>(`/analyses/${id}/review`, {});
+    return this.api.get<AiAnalysis>(`/analyses/${id}`);
+  }
+
   remove(id: number): Promise<void> {
     return this.api.delete<void>(`/analyses/${id}`);
   }

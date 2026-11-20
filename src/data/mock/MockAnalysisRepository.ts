@@ -38,6 +38,23 @@ export class MockAnalysisRepository implements AnalysisRepository {
     return analysis;
   }
 
+  async review(id: number, reviewerName: string): Promise<AiAnalysis> {
+    await latency();
+    const analysis = this.db.table('analyses').find((a) => a.id === id);
+    if (!analysis) throw new ApiError('El análisis no existe.', 404);
+    let summary: Record<string, unknown> = {};
+    try {
+      const parsed: unknown = JSON.parse(analysis.rawResponse ?? '{}');
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) summary = parsed as Record<string, unknown>;
+    } catch {
+      summary = {};
+    }
+    summary.validation = { reviewedAt: now(), reviewedBy: reviewerName };
+    analysis.rawResponse = JSON.stringify(summary);
+    this.db.save();
+    return analysis;
+  }
+
   async remove(id: number): Promise<void> {
     await latency();
     const keep = <T>(rows: T[], predicate: (row: T) => boolean): void => {

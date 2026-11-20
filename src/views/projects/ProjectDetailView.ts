@@ -4,6 +4,7 @@ import type { AiAnalysis } from '../../models/AiAnalysis.ts';
 import type { CatalogItem } from '../../models/Catalog.ts';
 import { PLAN_SCALES, type FloorPlan } from '../../models/FloorPlan.ts';
 import type { Project } from '../../models/Project.ts';
+import type { ProjectMember } from '../../models/ProjectMember.ts';
 import { CatalogService, nameOf } from '../../services/CatalogService.ts';
 import { FloorPlanService, type UploadResult } from '../../services/FloorPlanService.ts';
 import { ProjectService } from '../../services/ProjectService.ts';
@@ -28,6 +29,7 @@ export class ProjectDetailView extends View {
   private floorPlans: FloorPlan[] = [];
   private analyses: AiAnalysis[] = [];
   private buildingTypes: CatalogItem[] = [];
+  private members: ProjectMember[] = [];
 
   constructor(private readonly projectId: number) {
     super();
@@ -53,6 +55,7 @@ export class ProjectDetailView extends View {
         this.plans.listByProject(project.id),
         repositories().analyses().findAll(),
       ]);
+      this.members = this.projects.canShare(project) ? await this.projects.members(project) : [];
       if (!this.root) return;
       this.project = project;
       this.floorPlans = floorPlans;
@@ -77,6 +80,7 @@ export class ProjectDetailView extends View {
         <div>
           <h1>${escapeHtml(project.name)}</h1>
           ${project.description ? `<p class="page-header__lead">${escapeHtml(project.description)}</p>` : ''}
+          ${this.projects.isSharedWithMe(project) ? '<p><span class="badge badge--neutral">Compartido contigo</span></p>' : ''}
         </div>
         ${
           canManage
@@ -101,12 +105,76 @@ export class ProjectDetailView extends View {
           <div data-plans>${this.plansHtml()}</div>
           ${canManage ? this.uploadHtml() : ''}
         </div>
-      </section>`;
+      </section>
+      ${this.projects.canShare(project) ? `<section class="section" data-sharing>${this.sharingHtml()}</section>` : ''}`;
 
     page.querySelector('[data-edit]')?.addEventListener('click', () => this.openEdit());
     page.querySelector('[data-delete]')?.addEventListener('click', () => this.confirmDelete());
     this.bindPlanActions(page);
     if (canManage) this.bindUpload(page);
+    this.bindSharing(page);
+  }
+
+  // ---------- Sharing with clients and colleagues ----------
+
+  private sharingHtml(): string {
+    const rows = this.members
+      .map(
+        (m) => `
+          <li class="member">
+            <span><strong>${escapeHtml(m.fullName)}</strong> <small>${escapeHtml(m.email)} · ${escapeHtml(m.role)}</small></span>
+            <button type="button" class="button button--ghost button--small button--danger-text" data-unshare="${m.userId}">Quitar</button>
+          </li>`,
+      )
+      .join('');
+    return `
+      <div class="section__header"><h2>Compartir</h2></div>
+      <p class="field__hint">Las personas con quienes compartes el proyecto lo ven, pero no lo pueden cambiar. Un cliente lo ve en modo cliente.</p>
+      ${rows ? `<ul class="member-list">${rows}</ul>` : '<p class="field__hint">Todavía no lo compartes con nadie.</p>'}
+      <form class="share-form" data-share novalidate>
+        <label class="field">
+          <span class="field__label">Correo de la persona</span>
+          <input class="input" type="email" name="email" required maxlength="150" placeholder="cliente@renderia.co" />
+        </label>
+        <button class="button" type="submit">Compartir</button>
+      </form>`;
+  }
+
+  private bindSharing(page: HTMLElement): void {
+    const section = page.querySelector<HTMLElement>('[data-sharing]');
+    if (!section) return;
+    const rerender = () => {
+      section.innerHTML = this.sharingHtml();
+      this.bindSharing(page);
+    };
+    section.querySelector<HTMLFormElement>('[data-share]')?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget as HTMLFormElement;
+      if (!reportFormValidity(form)) return;
+      const email = String(new FormData(form).get('email'));
+      try {
+        const member = await this.projects.share(this.project!, email);
+        this.members = [...this.members, member];
+        Toast.success(`Ahora ${member.fullName} puede ver el proyecto.`);
+        rerender();
+      } catch (error) {
+        Toast.error(errorMessage(error));
+      }
+    });
+    section.querySelectorAll<HTMLButtonElement>('[data-unshare]').forEach((button) =>
+      button.addEventListener('click', async () => {
+        const member = this.members.find((m) => m.userId === Number(button.dataset.unshare));
+        if (!member) return;
+        try {
+          await this.projects.unshare(this.project!, member);
+          this.members = this.members.filter((m) => m.userId !== member.userId);
+          Toast.success(`${member.fullName} ya no ve el proyecto.`);
+          rerender();
+        } catch (error) {
+          Toast.error(errorMessage(error));
+        }
+      }),
+    );
   }
 
   private plansHtml(): string {
@@ -132,7 +200,7 @@ export class ProjectDetailView extends View {
                 ${latest ? `${statusBadge(latest.status)} <a href="#/analyses/${latest.id}">Ver análisis</a>` : '<span class="badge badge--neutral">Sin analizar</span>'}
               </p>
               <div class="plan-card__actions">
-                <a class="button button--small" href="#/analyses/new/${plan.id}">Analizar con IA</a>
+                ${canManage ? `<a class="button button--small" href="#/analyses/new/${plan.id}">Analizar con IA</a>` : ''}
                 ${latest?.status === 'COMPLETED' ? `<a class="button button--ghost button--small" href="#/viewer/${latest.id}">Ver en 3D</a>` : ''}
                 ${canManage ? `<button class="button button--ghost button--small button--danger-text" type="button" data-remove-plan="${plan.id}">Eliminar</button>` : ''}
               </div>
