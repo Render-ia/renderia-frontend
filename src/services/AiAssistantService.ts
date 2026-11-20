@@ -46,7 +46,22 @@ export class AiAssistantService {
     });
   }
 
-  render(analysisId: number, image: string, style: RenderStyle, scene: 'exterior' | 'interior', notes: string): Promise<RenderResult> {
-    return this.api.post<RenderResult>(`/analyses/${analysisId}/render`, { image, style, scene, notes });
+  async render(analysisId: number, image: string, style: RenderStyle, scene: 'exterior' | 'interior', notes: string): Promise<RenderResult> {
+    const result = await this.api.post<RenderResult>(`/analyses/${analysisId}/render`, { image, style, scene, notes });
+    return checkedRender(result);
   }
+}
+
+const RENDER_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+const BASE64 = /^[A-Za-z0-9+/]+={0,2}$/;
+
+/**
+ * The render goes into a data: URL inside the page, so only a real image type
+ * and plain base64 are accepted: anything else could break out of the attribute.
+ */
+export function checkedRender(result: RenderResult): RenderResult {
+  if (!result || !RENDER_TYPES.includes(result.mimeType) || typeof result.data !== 'string' || !BASE64.test(result.data)) {
+    throw new Error('El servicio de IA devolvió una imagen no válida.');
+  }
+  return { ...result, disclaimer: typeof result.disclaimer === 'string' ? result.disclaimer : '' };
 }
