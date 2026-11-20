@@ -19,6 +19,6 @@ Cada cambio es un objeto comando (patrón Command) con `execute` y `undo`: `Edit
 - Confirmar un supuesto actualiza todos los elementos relacionados de una vez.
 - Cada comando tiene su prueba.
 
-## Cómo defenderla
+## Preguntas frecuentes
 - **¿Dónde está el patrón Command?** En `src/analysis/commands`. La vista no cambia datos directamente: crea un comando y se lo pasa al historial.
 - **¿Qué es el comando compuesto?** Un comando que agrupa otros, como una macro, y los aplica o revierte juntos.

@@ -20,6 +20,6 @@ El detector geométrico (umbral de Otsu, morfología, búsqueda de bandas) mide 
 - Cada elemento tiene un nivel de confianza, y el usuario ve cuáles revisar primero.
 - Hay que mantener dos lecturas y compararlas.
 
-## Cómo defenderla
+## Preguntas frecuentes
 - **¿Para qué Gemini si el detector ya mide?** Para entender lo que el detector no ve, como cotas escritas, habitaciones y calidad del plano, y para avisar cuando algo no cuadra. La medida final la pone la geometría o la persona.
 - **Dónde se ve:** `GeminiAnalyzer` y `GeminiPlanReader.toOutput` en renderia-ai, y el panel de validación en `AnalysisDetailView`.

@@ -1,6 +1,6 @@
 # Decisiones de diseño
 
-Cada archivo explica una decisión: qué problema había, qué se eligió, qué se descartó y cómo defenderla en la sustentación. Una decisión no se edita para cambiarla; se escribe una nueva que la reemplaza.
+Cada archivo explica una decisión: qué problema había, qué se eligió, qué se descartó y dónde se ve en el código. Una decisión no se edita para cambiarla; se escribe una nueva que la reemplaza.
 
 | N.º | Decisión | Estado |
 |---|---|---|

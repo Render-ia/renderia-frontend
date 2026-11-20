@@ -18,6 +18,6 @@ La sesión es un JWT firmado con HS256, y la clave sale de `JWT_SECRET`. Si esa 
 - Si el administrador desactiva una cuenta, sus sesiones dejan de servir de inmediato.
 - Los límites diarios viven en memoria y se reinician con el servidor. Para dos personas y un curso eso es suficiente.
 
-## Cómo defenderla
+## Preguntas frecuentes
 - **¿Qué pasa si roban un token?** Vence en 12 horas, y basta con desactivar la cuenta para que deje de servir.
 - **Dónde se ve:** `SecurityConfig`, `JwtKeyConfig`, `AuthRateLimiter` y `DailyQuota` en el backend.

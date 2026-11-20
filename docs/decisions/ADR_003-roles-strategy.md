@@ -19,6 +19,6 @@ Cinco roles fijos: Administrador, Ingeniero, Revisor, Cliente y Estudiante. Cada
 - Las reglas tienen pruebas unitarias por rol.
 - Un proyecto se comparte por correo (tabla `project_members`) y el invitado solo lo puede ver.
 
-## Cómo defenderla
+## Preguntas frecuentes
 - **¿Dónde está el patrón Strategy?** En `RolePolicy`: cada rol es una estrategia y los servicios preguntan `policy().canManageAnyProject()` en vez de comparar nombres.
 - **¿Qué pasa si alguien manipula el frontend?** Nada. El backend vuelve a revisar cada permiso con el rol del token y con la base de datos.

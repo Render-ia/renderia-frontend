@@ -20,6 +20,6 @@ Separar el sistema en cuatro repositorios: frontend (TypeScript + Three.js en Ve
 - Hay que mantener el contrato entre piezas: está en `docs/API.md`.
 - Hay más de un lugar donde configurar variables de entorno.
 
-## Cómo defenderla
+## Preguntas frecuentes
 - **¿Por qué no un monolito?** Porque la IA es la parte que más cambia. Al aislarla, cambiar de modelo es agregar una clase y una fila en la tabla, sin tocar nada más.
 - **Dónde se ve:** `AnalyzerFactory` en renderia-ai y `AiServiceClient` en renderia-backend.

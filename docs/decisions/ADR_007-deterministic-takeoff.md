@@ -17,6 +17,6 @@ Las cantidades se calculan con fórmulas en `src/engineering/quantities.ts`: lon
 - El mismo modelo da siempre el mismo presupuesto, y cada valor se puede revisar a mano.
 - Los precios son de referencia. El usuario debe ajustarlos a su ciudad y su fecha.
 
-## Cómo defenderla
+## Preguntas frecuentes
 - **¿Por qué no usar IA aquí también?** Porque un presupuesto tiene que poder auditarse línea por línea. La IA ayuda a leer el plano, pero no calcula cantidades.
 - **Dónde se ve:** `computeTakeoff` y `computeBudget`, con sus pruebas unitarias.
