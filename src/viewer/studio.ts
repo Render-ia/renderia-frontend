@@ -32,7 +32,7 @@ export function cameraPose(view: ViewName, width: number, depth: number, aspect 
     case 'top':
       return { position: [0, reach * 1.6, 0.01], target: [0, 0, 0] };
     case 'front':
-      return { position: [0, eye, depth / 2 + reach * 1.4], target: [0, eye, 0] };
+      return { position: [0, eye, depth / 2 + reach * 2], target: [0, eye, 0] };
     case 'back':
       return { position: [0, eye, -(depth / 2 + reach * 2)], target: [0, eye, 0] };
     case 'left':
