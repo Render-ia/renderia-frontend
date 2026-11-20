@@ -3,7 +3,7 @@ import type { CatalogItem } from '../models/Catalog.ts';
 import type { StructuralElement } from '../models/StructuralElement.ts';
 import { nameOf } from '../services/CatalogService.ts';
 import { ElementMeshFactory } from './meshes/ElementMeshFactory.ts';
-import { colorFor, type ColorMode } from './studio.ts';
+import { colorFor, MAX_STORIES, type ColorMode } from './studio.ts';
 
 export type { ColorMode } from './studio.ts';
 
@@ -21,8 +21,11 @@ export interface StructuralScene {
   model: THREE.Group;
   /** One group per element type, to show or hide them. */
   groups: Map<string, THREE.Group>;
-  /** Size of the building footprint in meters. */
+  /** Size of the building in meters (x and z: footprint, y: total height). */
   size: THREE.Vector3;
+  /** Height of one floor in meters and how many floors are stacked. */
+  storyHeight: number;
+  stories: number;
 }
 
 /**
@@ -36,6 +39,8 @@ export class StructuralSceneBuilder {
   private readonly factory = new ElementMeshFactory();
   private center = new THREE.Vector2();
   private size = new THREE.Vector3(10, 3, 10);
+  private storyHeight = 3;
+  private stories = 1;
 
   constructor() {
     this.model.name = 'Render.IA';
@@ -63,6 +68,35 @@ export class StructuralSceneBuilder {
     return this;
   }
 
+  /**
+   * Repeats the analyzed floor plan `count` times, one on top of the other,
+   * to show the whole building from its typical floor. Each copy keeps the
+   * element data, so layers, picking and section cuts work on every floor.
+   */
+  withStories(count: number): this {
+    const box = new THREE.Box3().setFromObject(this.model);
+    if (!box.isEmpty()) this.storyHeight = Math.max(2.4, box.max.y - Math.min(0, box.min.y));
+    this.stories = Math.max(1, Math.min(MAX_STORIES, Math.round(count)));
+    for (const group of this.groups.values()) {
+      const floor = [...group.children];
+      floor.forEach((object) => (object.userData.story = 1));
+      for (let story = 2; story <= this.stories; story++) {
+        for (const object of floor) {
+          const copy = object.clone();
+          copy.position.y += (story - 1) * this.storyHeight;
+          copy.userData.story = story;
+          group.add(copy);
+        }
+      }
+    }
+    this.size.y = this.storyHeight * this.stories;
+    if (this.scene.fog instanceof THREE.Fog) {
+      this.scene.fog.near += this.size.y;
+      this.scene.fog.far += this.size.y * 2;
+    }
+    return this;
+  }
+
   withGround(): this {
     const extent = Math.max(this.size.x, this.size.z) * 2.5 + 10;
     const ground = new THREE.Mesh(
@@ -85,7 +119,7 @@ export class StructuralSceneBuilder {
   withLights(): this {
     this.scene.add(new THREE.HemisphereLight('#dfe8f5', STUDIO.background, 1.2));
     const sun = new THREE.DirectionalLight('#fff4e0', 2.6);
-    const reach = Math.max(this.size.x, this.size.z);
+    const reach = Math.max(this.size.x, this.size.z, this.size.y);
     sun.position.set(reach * 0.6, reach * 1.2, reach * 0.8);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
@@ -107,7 +141,14 @@ export class StructuralSceneBuilder {
   }
 
   build(): StructuralScene {
-    return { scene: this.scene, model: this.model, groups: this.groups, size: this.size.clone() };
+    return {
+      scene: this.scene,
+      model: this.model,
+      groups: this.groups,
+      size: this.size.clone(),
+      storyHeight: this.storyHeight,
+      stories: this.stories,
+    };
   }
 
   private groupFor(typeName: string): THREE.Group {

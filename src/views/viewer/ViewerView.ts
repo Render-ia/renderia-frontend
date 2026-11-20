@@ -15,6 +15,7 @@ import {
   disciplineOf,
   FINISHES,
   isFinish,
+  MAX_STORIES,
   TECHNICAL_MODES,
   VIEWS,
   colorFor,
@@ -77,6 +78,9 @@ export class ViewerView extends View {
   private cutHeight = MAX_CUT_HEIGHT;
   /** Vertical cut position from 0 (front) to 1 (back); 1 is off. */
   private cutDepth = 1;
+  /** How many times the analyzed floor is stacked, and the floor shown on top (null = all). */
+  private stories = 1;
+  private shownStory: number | null = null;
 
   constructor(private readonly analysisId: number) {
     super();
@@ -171,6 +175,18 @@ export class ViewerView extends View {
               </div>
               ${isFinish(this.colorMode) ? '<p class="viewer__note">Solo cambian los colores; las medidas no se tocan.</p>' : ''}
             </section>
+            <section class="viewer__card" aria-labelledby="building-title">
+              <h2 id="building-title">Edificio</h2>
+              <label class="viewer__range">
+                <span>Pisos <output data-stories-value>${this.stories}</output></span>
+                <input type="range" min="1" max="${MAX_STORIES}" step="1" value="${this.stories}" data-stories />
+              </label>
+              <label class="viewer__range" ${this.stories === 1 ? 'hidden' : ''}>
+                <span>Ver hasta el piso <output data-story-value>${this.shownStory ?? 'todos'}</output></span>
+                <input type="range" min="1" max="${this.stories}" step="1" value="${this.shownStory ?? this.stories}" data-story />
+              </label>
+              <p class="viewer__note">Repite esta planta como planta tipo para ver el edificio completo.</p>
+            </section>
             <section class="viewer__card" aria-labelledby="layers-title">
               <h2 id="layers-title">Capas</h2>
               <div data-legend></div>
@@ -237,6 +253,22 @@ export class ViewerView extends View {
     page.querySelectorAll<HTMLButtonElement>('[data-audience]').forEach((button) =>
       button.addEventListener('click', () => this.setAudience(page, button.dataset.audience as Audience)),
     );
+    const storiesInput = page.querySelector<HTMLInputElement>('[data-stories]')!;
+    storiesInput.addEventListener('input', () => {
+      page.querySelector('[data-stories-value]')!.textContent = storiesInput.value;
+    });
+    storiesInput.addEventListener('change', () => {
+      this.stories = Number(storiesInput.value);
+      if (this.shownStory !== null && this.shownStory > this.stories) this.shownStory = null;
+      this.renderPageKeepingViewer(page);
+      void this.rebuild();
+    });
+    page.querySelector<HTMLInputElement>('[data-story]')!.addEventListener('input', (event) => {
+      const value = Number((event.target as HTMLInputElement).value);
+      this.shownStory = value >= this.stories ? null : value;
+      page.querySelector('[data-story-value]')!.textContent = this.shownStory === null ? 'todos' : String(value);
+      this.viewer?.showUpToStory(this.shownStory);
+    });
     page.querySelector<HTMLInputElement>('[data-cut-height]')!.addEventListener('input', (event) => {
       this.cutHeight = Number((event.target as HTMLInputElement).value);
       this.applySection(page);
@@ -355,11 +387,13 @@ export class ViewerView extends View {
     const content = new StructuralSceneBuilder()
       .withBackground()
       .withElements(this.detail!.elements, this.types, this.materials, this.colorMode)
+      .withStories(this.stories)
       .withGround()
       .withLights()
       .build();
     this.viewer.show(content, resetCamera);
     this.hidden.forEach((type) => this.viewer!.setVisible(type, false));
+    this.viewer.showUpToStory(this.shownStory);
     if (this.page()) this.applySection(this.page()!);
     if (resetCamera && this.view !== 'iso') this.viewer.setView(this.view, false);
   }

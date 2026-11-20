@@ -25,9 +25,13 @@ export interface CameraPose {
  * Camera pose for each view of a building of the given footprint (meters).
  * `aspect` pushes the camera back on narrow screens so the model still fits.
  */
-export function cameraPose(view: ViewName, width: number, depth: number, aspect = 1.6): CameraPose {
-  const reach = Math.max(width, depth) * Math.max(1, 0.9 / aspect);
-  const eye = 1.4;
+/** Tallest building the viewer stacks from one typical floor. */
+export const MAX_STORIES = 30;
+
+export function cameraPose(view: ViewName, width: number, depth: number, aspect = 1.6, height = 3): CameraPose {
+  // Tall buildings need the camera further back and aimed at their middle.
+  const reach = Math.max(width, depth, height * 1.3) * Math.max(1, 0.9 / aspect);
+  const eye = Math.max(1.4, height / 2);
   switch (view) {
     case 'top':
       return { position: [0, reach * 1.6, 0.01], target: [0, 0, 0] };
@@ -40,7 +44,7 @@ export function cameraPose(view: ViewName, width: number, depth: number, aspect 
     case 'right':
       return { position: [width / 2 + reach * 2, eye, 0], target: [0, eye, 0] };
     default:
-      return { position: [reach * 0.85, reach * 0.9, reach * 1.05], target: [0, 1, 0] };
+      return { position: [reach * 0.85, reach * 0.9, reach * 1.05], target: [0, Math.max(1, height * 0.4), 0] };
   }
 }
 

@@ -89,13 +89,13 @@ export class ModelViewer {
   /** Footprint of the building in meters. */
   get size(): { width: number; depth: number; height: number } {
     const size = this.content?.size;
-    return { width: size?.x ?? 10, depth: size?.z ?? 10, height: 3 };
+    return { width: size?.x ?? 10, depth: size?.z ?? 10, height: size?.y ?? 3 };
   }
 
   /** Flies the camera to one of the standard views. */
   setView(view: ViewName, animate = true): void {
     if (!this.content) return;
-    const pose = cameraPose(view, this.content.size.x, this.content.size.z, this.camera.aspect);
+    const pose = cameraPose(view, this.content.size.x, this.content.size.z, this.camera.aspect, this.content.size.y);
     const to = { position: new THREE.Vector3(...pose.position), target: new THREE.Vector3(...pose.target) };
     if (!animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       this.camera.position.copy(to.position);
@@ -151,6 +151,17 @@ export class ModelViewer {
       this.renderer.setPixelRatio(ratio);
       this.resize();
     }
+  }
+
+  /**
+   * Shows the building up to floor `story` (null = every floor), so the
+   * chosen floor is on top and can be seen from above.
+   */
+  showUpToStory(story: number | null): void {
+    this.content?.model.traverse((object) => {
+      const level = object.userData.story;
+      if (typeof level === 'number') object.visible = story === null || level <= story;
+    });
   }
 
   setVisible(typeName: string, visible: boolean): void {
@@ -262,7 +273,7 @@ export class ModelViewer {
     this.raycaster.setFromCamera(pointer, this.camera);
     const hit = this.raycaster
       .intersectObject(this.content.model, true)
-      .find((intersection) => intersection.object.visible && intersection.object.parent?.visible !== false);
+      .find((intersection) => isShown(intersection.object));
 
     this.clearHighlight();
     if (!hit) {
@@ -292,6 +303,14 @@ export class ModelViewer {
     }
     this.highlighted = [];
   }
+}
+
+/** True when the object and every parent are visible (hidden floors and layers can't be picked). */
+function isShown(object: THREE.Object3D | null): boolean {
+  for (let node = object; node; node = node.parent) {
+    if (!node.visible) return false;
+  }
+  return true;
 }
 
 interface CameraPoseVectors {
