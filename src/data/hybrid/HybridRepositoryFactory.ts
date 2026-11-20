@@ -38,4 +38,7 @@ export class HybridRepositoryFactory implements RepositoryFactory {
   activity() {
     return this.mock.activity();
   }
+  budgets() {
+    return this.mock.budgets();
+  }
 }

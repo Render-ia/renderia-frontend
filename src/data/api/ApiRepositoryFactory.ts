@@ -2,6 +2,7 @@ import type { RepositoryFactory } from '../RepositoryFactory.ts';
 import { ApiActivityRepository } from './ApiActivityRepository.ts';
 import { ApiAnalysisRepository } from './ApiAnalysisRepository.ts';
 import { ApiAuthRepository } from './ApiAuthRepository.ts';
+import { ApiBudgetRepository } from './ApiBudgetRepository.ts';
 import { ApiCatalogRepository } from './ApiCatalogRepository.ts';
 import { ApiFloorPlanRepository } from './ApiFloorPlanRepository.ts';
 import { ApiModel3DRepository } from './ApiModel3DRepository.ts';
@@ -33,5 +34,8 @@ export class ApiRepositoryFactory implements RepositoryFactory {
   }
   activity() {
     return new ApiActivityRepository();
+  }
+  budgets() {
+    return new ApiBudgetRepository();
   }
 }

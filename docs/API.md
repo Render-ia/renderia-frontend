@@ -132,6 +132,15 @@ IA de visión), el frontend pide el análisis al backend:
   "endX": null, "endY": null, "width": 0.3, "height": 2.8, "thickness": 0.3, "confidence": 0.95 }
 ```
 
+## Copiloto y presupuesto
+
+| Método | Ruta | Cuerpo | Respuesta |
+|---|---|---|---|
+| POST | `/analyses/{id}/copilot` | `{ question, depth, history }` | `{ answer, proposals[] }`; la pregunta y la respuesta quedan guardadas |
+| GET | `/analyses/{id}/copilot/messages` | — | `[{ role, text, proposals[], createdAt }]` del usuario, de la más vieja a la más nueva |
+| GET | `/analyses/{id}/budget-inputs` | — | `{ params: {}, prices: {}, aiu: {} }` |
+| PUT | `/analyses/{id}/budget-inputs` | igual que GET; números entre 0 y 10^12 | lo guardado (solo quien puede editar el análisis) |
+
 ## Modelos 3D y actividad
 
 | Método | Ruta | Cuerpo | Respuesta |

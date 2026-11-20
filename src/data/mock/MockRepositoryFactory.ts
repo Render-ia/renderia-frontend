@@ -2,6 +2,7 @@ import type { RepositoryFactory } from '../RepositoryFactory.ts';
 import { MockActivityRepository } from './MockActivityRepository.ts';
 import { MockAnalysisRepository } from './MockAnalysisRepository.ts';
 import { MockAuthRepository } from './MockAuthRepository.ts';
+import { MockBudgetRepository } from './MockBudgetRepository.ts';
 import { MockCatalogRepository } from './MockCatalogRepository.ts';
 import { MockFloorPlanRepository } from './MockFloorPlanRepository.ts';
 import { MockModel3DRepository } from './MockModel3DRepository.ts';
@@ -33,5 +34,8 @@ export class MockRepositoryFactory implements RepositoryFactory {
   }
   activity() {
     return new MockActivityRepository();
+  }
+  budgets() {
+    return new MockBudgetRepository();
   }
 }
