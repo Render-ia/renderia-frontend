@@ -4,6 +4,7 @@ import { Session } from '../../auth/Session.ts';
 import type { CatalogItem } from '../../models/Catalog.ts';
 import { logActivity } from '../../services/ActivityLogger.ts';
 import { AnalysisService, type AnalysisDetail } from '../../services/AnalysisService.ts';
+import { BuildingService } from '../../services/BuildingService.ts';
 import { CatalogService, nameOf } from '../../services/CatalogService.ts';
 import { errorMessage, errorState, loadingState } from '../../ui/states.ts';
 import { Toast } from '../../ui/Toast.ts';
@@ -81,9 +82,26 @@ export class ViewerView extends View {
   /** How many times the analyzed floor is stacked, and the floor shown on top (null = all). */
   private stories = 1;
   private shownStory: number | null = null;
+  /** Building mode: one analyzed plan per floor, floor 1 first. */
+  private floors: AnalysisDetail[] = [];
+  /** Floor shown alone in building mode (null = the whole building). */
+  private onlyStory: number | null = null;
 
-  constructor(private readonly analysisId: number) {
+  /** Opens one analysis, or with `projectId` the whole building of a project. */
+  constructor(
+    private readonly analysisId: number | null,
+    private readonly projectId: number | null = null,
+  ) {
     super();
+  }
+
+  /** True when the project has several analyzed floors stacked as a building. */
+  private get building(): boolean {
+    return this.floors.length > 1;
+  }
+
+  private get elements(): AnalysisDetail['elements'] {
+    return this.floors.flatMap((floor) => floor.elements);
   }
 
   protected render(): string {
@@ -104,13 +122,17 @@ export class ViewerView extends View {
     const page = this.root?.querySelector<HTMLElement>('[data-page]');
     if (!page) return;
     try {
-      const [detail, catalogs] = await Promise.all([
-        new AnalysisService().get(this.analysisId),
+      const [floors, catalogs] = await Promise.all([
+        this.projectId !== null
+          ? new BuildingService().floors(this.projectId)
+          : new AnalysisService().get(this.analysisId!).then((one) => [one]),
         CatalogService.getInstance().load(),
       ]);
+      const detail = floors[0];
       if (detail.analysis.status !== 'COMPLETED') {
         throw new Error('Este análisis no terminó bien, así que no tiene modelo 3D. Vuelve a analizar el plano.');
       }
+      this.floors = floors;
       this.detail = detail;
       this.types = catalogs.elementTypes;
       this.materials = catalogs.materials;
@@ -124,19 +146,26 @@ export class ViewerView extends View {
   }
 
   private renderPage(page: HTMLElement): void {
-    const { analysis, plan, project, elements } = this.detail!;
+    const { analysis, plan, project } = this.detail!;
+    const elements = this.elements;
     const canExport = Session.getInstance().can('models:export');
     const client = this.audience === 'client';
 
     page.innerHTML = `
-      <p class="breadcrumb"><a href="#/viewer">Visor 3D</a> / <a href="#/analyses/${analysis.id}">Análisis #${analysis.id}</a></p>
+      <p class="breadcrumb"><a href="#/viewer">Visor 3D</a> / ${
+        this.projectId !== null
+          ? `<a href="#/projects/${project.id}">Proyecto</a>`
+          : `<a href="#/analyses/${analysis.id}">Análisis #${analysis.id}</a>`
+      }</p>
       <header class="page-header page-header--row">
         <div>
-          <h1>${escapeHtml(project.name)}, piso ${plan.floorLevel}</h1>
+          <h1>${this.projectId !== null ? escapeHtml(project.name) : `${escapeHtml(project.name)}, piso ${plan.floorLevel}`}</h1>
           <p class="page-header__lead">${
             client
               ? 'Presentación del proyecto. Los acabados son una propuesta visual: la geometría es la del análisis.'
-              : `Modelo estructural con ${elements.length} elementos detectados.`
+              : this.building
+                ? `Edificio de ${this.floors.length} pisos con ${elements.length} elementos detectados, un plano por piso.`
+                : `Modelo estructural con ${elements.length} elementos detectados.`
           }</p>
         </div>
         <div class="page-header__actions">
@@ -177,16 +206,9 @@ export class ViewerView extends View {
             </section>
             <section class="viewer__card" aria-labelledby="building-title">
               <h2 id="building-title">Edificio</h2>
-              <label class="viewer__range">
-                <span>Pisos <output data-stories-value>${this.stories}</output></span>
-                <input type="range" min="1" max="${MAX_STORIES}" step="1" value="${this.stories}" data-stories />
-              </label>
-              <label class="viewer__range" ${this.stories === 1 ? 'hidden' : ''}>
-                <span>Ver hasta el piso <output data-story-value>${this.shownStory ?? 'todos'}</output></span>
-                <input type="range" min="1" max="${this.stories}" step="1" value="${this.shownStory ?? this.stories}" data-story />
-              </label>
-              <p class="viewer__note">Repite esta planta como planta tipo para ver el edificio completo.</p>
+              ${this.building ? this.floorButtons() : this.typicalFloorControls()}
             </section>
+
             <section class="viewer__card" aria-labelledby="layers-title">
               <h2 id="layers-title">Capas</h2>
               <div data-legend></div>
@@ -253,17 +275,28 @@ export class ViewerView extends View {
     page.querySelectorAll<HTMLButtonElement>('[data-audience]').forEach((button) =>
       button.addEventListener('click', () => this.setAudience(page, button.dataset.audience as Audience)),
     );
-    const storiesInput = page.querySelector<HTMLInputElement>('[data-stories]')!;
-    storiesInput.addEventListener('input', () => {
+    page.querySelectorAll<HTMLButtonElement>('[data-floor]').forEach((button) =>
+      button.addEventListener('click', () => {
+        this.onlyStory = button.dataset.floor === 'all' ? null : Number(button.dataset.floor);
+        this.viewer?.showOnlyStory(this.onlyStory);
+        page.querySelectorAll<HTMLButtonElement>('[data-floor]').forEach((b) => {
+          const on = b === button;
+          b.classList.toggle('viewer__chip--on', on);
+          b.setAttribute('aria-pressed', String(on));
+        });
+      }),
+    );
+    const storiesInput = page.querySelector<HTMLInputElement>('[data-stories]');
+    storiesInput?.addEventListener('input', () => {
       page.querySelector('[data-stories-value]')!.textContent = storiesInput.value;
     });
-    storiesInput.addEventListener('change', () => {
+    storiesInput?.addEventListener('change', () => {
       this.stories = Number(storiesInput.value);
       if (this.shownStory !== null && this.shownStory > this.stories) this.shownStory = null;
       this.renderPageKeepingViewer(page);
       void this.rebuild();
     });
-    page.querySelector<HTMLInputElement>('[data-story]')!.addEventListener('input', (event) => {
+    page.querySelector<HTMLInputElement>('[data-story]')?.addEventListener('input', (event) => {
       const value = Number((event.target as HTMLInputElement).value);
       this.shownStory = value >= this.stories ? null : value;
       page.querySelector('[data-story-value]')!.textContent = this.shownStory === null ? 'todos' : String(value);
@@ -367,6 +400,32 @@ export class ViewerView extends View {
     });
   }
 
+  /** Building mode: the whole building or one floor at a time. */
+  private floorButtons(): string {
+    const button = (value: string, label: string, on: boolean) =>
+      `<button class="viewer__chip ${on ? 'viewer__chip--on' : ''}" type="button" data-floor="${value}" aria-pressed="${on}">${label}</button>`;
+    return `
+      <div class="viewer__chips" role="group" aria-label="Piso que se ve">
+        ${button('all', 'Completo', this.onlyStory === null)}
+        ${this.floors.map((floor, index) => button(String(index + 1), `Piso ${floor.plan.floorLevel}`, this.onlyStory === index + 1)).join('')}
+      </div>
+      <p class="viewer__note">Cada piso tiene su propio plano analizado. Elige uno para verlo solo.</p>`;
+  }
+
+  /** Single analysis: repeat it as a typical floor to see a tall building. */
+  private typicalFloorControls(): string {
+    return `
+      <label class="viewer__range">
+        <span>Pisos <output data-stories-value>${this.stories}</output></span>
+        <input type="range" min="1" max="${MAX_STORIES}" step="1" value="${this.stories}" data-stories />
+      </label>
+      <label class="viewer__range" ${this.stories === 1 ? 'hidden' : ''}>
+        <span>Ver hasta el piso <output data-story-value>${this.shownStory ?? 'todos'}</output></span>
+        <input type="range" min="1" max="${this.stories}" step="1" value="${this.shownStory ?? this.stories}" data-story />
+      </label>
+      <p class="viewer__note">Repite esta planta como planta tipo para ver el edificio completo.</p>`;
+  }
+
   private colorButton(mode: ColorMode, label: string): string {
     const on = this.colorMode === mode;
     return `<button class="viewer__chip ${on ? 'viewer__chip--on' : ''}" type="button" data-color="${mode}" aria-pressed="${on}">
@@ -384,16 +443,22 @@ export class ViewerView extends View {
   private async rebuild(resetCamera = true): Promise<void> {
     if (!this.viewer) return;
     const { StructuralSceneBuilder } = await import('../../viewer/StructuralSceneBuilder.ts');
-    const content = new StructuralSceneBuilder()
-      .withBackground()
-      .withElements(this.detail!.elements, this.types, this.materials, this.colorMode)
-      .withStories(this.stories)
-      .withGround()
-      .withLights()
-      .build();
+    const builder = new StructuralSceneBuilder().withBackground();
+    if (this.building) {
+      builder.withFloors(
+        this.floors.map((floor) => floor.elements),
+        this.types,
+        this.materials,
+        this.colorMode,
+      );
+    } else {
+      builder.withElements(this.detail!.elements, this.types, this.materials, this.colorMode).withStories(this.stories);
+    }
+    const content = builder.withGround().withLights().build();
     this.viewer.show(content, resetCamera);
     this.hidden.forEach((type) => this.viewer!.setVisible(type, false));
-    this.viewer.showUpToStory(this.shownStory);
+    if (this.building) this.viewer.showOnlyStory(this.onlyStory);
+    else this.viewer.showUpToStory(this.shownStory);
     if (this.page()) this.applySection(this.page()!);
     if (resetCamera && this.view !== 'iso') this.viewer.setView(this.view, false);
   }
@@ -404,7 +469,7 @@ export class ViewerView extends View {
 
   private renderLegend(page: HTMLElement): void {
     const counts = new Map<string, number>();
-    for (const element of this.detail!.elements) {
+    for (const element of this.elements) {
       const type = nameOf(this.types, element.elementTypeId, 'Otro');
       counts.set(type, (counts.get(type) ?? 0) + 1);
     }
@@ -474,7 +539,7 @@ export class ViewerView extends View {
 
   private showInfo(page: HTMLElement, picked: PickedElement | null): void {
     const info = page.querySelector<HTMLElement>('[data-info]')!;
-    const element = picked && this.detail!.elements.find((e) => e.id === picked.elementId);
+    const element = picked && this.elements.find((e) => e.id === picked.elementId);
     if (!picked || !element) {
       info.hidden = true;
       return;
@@ -503,6 +568,7 @@ export class ViewerView extends View {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
+    if (this.building) return `${slug || 'renderia'}-${this.onlyStory === null ? 'edificio' : `piso-${this.floors[this.onlyStory - 1].plan.floorLevel}`}`;
     return `${slug || 'renderia'}-piso-${plan.floorLevel}`;
   }
 

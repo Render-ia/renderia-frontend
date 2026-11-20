@@ -62,6 +62,7 @@ async function bootstrap(host: HTMLElement): Promise<void> {
     .register('/analyses/:id', ({ id }) => new AnalysisDetailView(Number(id)))
     .register('/analyses/:id/budget', ({ id }) => new QuantitiesView(Number(id)))
     .register('/viewer', () => new ModelPickerView())
+    .register('/viewer/project/:id', ({ id }) => new ViewerView(null, Number(id)))
     .register('/viewer/:id', ({ id }) => new ViewerView(Number(id)))
     .register('/admin', () => new AdminView(), { permission: 'admin:access' })
     // Not logged in: only public screens. Logged in: public screens send you home.
