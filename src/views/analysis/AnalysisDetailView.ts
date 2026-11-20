@@ -35,6 +35,7 @@ import { formatDateTime, formatDuration, formatMeters, formatPercent } from '../
 import { escapeHtml } from '../../utils/html.ts';
 import { loadImage } from '../../utils/image.ts';
 import { View } from '../View.ts';
+import { CopilotPanel } from './CopilotPanel.ts';
 
 /** How each type is drawn by hand on the plan: clicks needed and default sizes. */
 interface DrawSpec {
@@ -148,7 +149,8 @@ export class AnalysisDetailView extends View {
       </dl>
 
       ${state.hasResults ? '<section class="section validation" aria-labelledby="validation-title" data-validation></section>' : ''}
-      ${state.hasResults ? this.resultsHtml() : ''}`;
+      ${state.hasResults ? this.resultsHtml() : ''}
+      ${state.hasResults ? '<section class="section copilot" data-copilot></section>' : ''}`;
 
     page.querySelector('[data-delete]')?.addEventListener('click', () => this.confirmDelete());
     if (state.hasResults) await this.mountResults(page);
@@ -224,6 +226,7 @@ export class AnalysisDetailView extends View {
       figure.innerHTML = errorState(errorMessage(error), false);
     }
     this.page = page;
+    this.mountCopilot(page);
     this.renderValidation(page);
     this.renderTabs(page);
     this.renderTable(page);
@@ -756,6 +759,22 @@ export class AnalysisDetailView extends View {
   }
 
   /** Lets the commands read and save the elements of this analysis. */
+  private mountCopilot(page: HTMLElement): void {
+    const root = page.querySelector<HTMLElement>('[data-copilot]');
+    if (!root) return;
+    const detail = this.detail!;
+    void new CopilotPanel(root, {
+      analysisId: detail.analysis.id,
+      receiver: () => this.receiver(),
+      describe: (id) => {
+        const element = detail.elements.find((e) => e.id === id);
+        return element ? `${nameOf(this.types, element.elementTypeId)} #${id}` : `Elemento #${id}`;
+      },
+      canApply: this.service.canEdit(detail.project),
+      apply: (command, message) => this.perform(page, command, message),
+    }).mount();
+  }
+
   private receiver(): ElementReceiver {
     const detail = this.detail!;
     return {
