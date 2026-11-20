@@ -4,7 +4,7 @@ import './styles/shell.css';
 import './styles/components.css';
 import './styles/forms.css';
 import './styles/tables.css';
-import './styles/dialog.css';
+import './styles/inpage.css';
 import './styles/toast.css';
 import './styles/home.css';
 import './styles/auth.css';

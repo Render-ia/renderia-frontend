@@ -8,7 +8,7 @@ import type { ProjectMember } from '../../models/ProjectMember.ts';
 import { CatalogService, nameOf } from '../../services/CatalogService.ts';
 import { FloorPlanService, type UploadResult } from '../../services/FloorPlanService.ts';
 import { ProjectService } from '../../services/ProjectService.ts';
-import { Dialog } from '../../ui/Dialog.ts';
+import { InPage } from '../../ui/InPage.ts';
 import { emptyState, errorMessage, errorState, loadingState } from '../../ui/states.ts';
 import { Toast } from '../../ui/Toast.ts';
 import { formatDate, plural } from '../../utils/format.ts';
@@ -243,7 +243,7 @@ export class ProjectDetailView extends View {
     page.querySelectorAll<HTMLButtonElement>('[data-remove-plan]').forEach((button) => {
       button.addEventListener('click', async () => {
         const plan = this.floorPlans.find((p) => p.id === Number(button.dataset.removePlan))!;
-        const confirmed = await Dialog.confirm({
+        const confirmed = await InPage.confirm({
           title: 'Eliminar plano',
           message: `Se eliminará el plano del piso ${plan.floorLevel} junto con sus análisis y modelos 3D.`,
           confirmLabel: 'Eliminar plano',
@@ -359,14 +359,14 @@ export class ProjectDetailView extends View {
 
   private openEdit(): void {
     const project = this.project!;
-    Dialog.form('Editar proyecto', projectFields(this.buildingTypes, project), 'Guardar cambios', async (data, form) => {
+    InPage.form('Editar proyecto', projectFields(this.buildingTypes, project), 'Guardar cambios', async (data, form) => {
       try {
         await this.projects.update(project, readProjectForm(data));
         Toast.success('Cambios guardados.');
         this.load();
         return true;
       } catch (error) {
-        Dialog.showFormError(form, errorMessage(error));
+        InPage.showFormError(form, errorMessage(error));
         return false;
       }
     });
@@ -374,7 +374,7 @@ export class ProjectDetailView extends View {
 
   private async confirmDelete(): Promise<void> {
     const project = this.project!;
-    const confirmed = await Dialog.confirm({
+    const confirmed = await InPage.confirm({
       title: 'Eliminar proyecto',
       message: `Se eliminará "${project.name}" con sus ${plural(this.floorPlans.length, 'plano', 'planos')}, análisis y modelos 3D. Esta acción no se puede deshacer.`,
       confirmLabel: 'Eliminar proyecto',

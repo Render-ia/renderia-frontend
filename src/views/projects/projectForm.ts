@@ -2,7 +2,7 @@ import type { CatalogItem } from '../../models/Catalog.ts';
 import type { Project, ProjectInput } from '../../models/Project.ts';
 import { escapeHtml } from '../../utils/html.ts';
 
-/** Fields of the create/edit project dialog. */
+/** Fields of the create/edit project form page. */
 export function projectFields(buildingTypes: CatalogItem[], project?: Project): string {
   const options = buildingTypes
     .map(

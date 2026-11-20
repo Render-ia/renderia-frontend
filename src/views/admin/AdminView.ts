@@ -1,7 +1,7 @@
 import { AppConfig } from '../../core/config/AppConfig.ts';
 import { MockDatabase } from '../../data/mock/MockDatabase.ts';
 import { CatalogService } from '../../services/CatalogService.ts';
-import { Dialog } from '../../ui/Dialog.ts';
+import { InPage } from '../../ui/InPage.ts';
 import { Toast } from '../../ui/Toast.ts';
 import { View } from '../View.ts';
 import { ActivityPanel } from './ActivityPanel.ts';
@@ -62,7 +62,7 @@ export class AdminView extends View {
 
   /** Demo mode only: wipes the browser database and loads the initial data again. */
   private async reset(): Promise<void> {
-    const confirmed = await Dialog.confirm({
+    const confirmed = await InPage.confirm({
       title: 'Restablecer datos de prueba',
       message: 'Se borrarán los proyectos, planos y análisis guardados en este navegador, y se cargarán los datos iniciales.',
       confirmLabel: 'Restablecer',
