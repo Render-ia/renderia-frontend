@@ -68,6 +68,7 @@ Como ingeniero, quiero corregir o borrar elementos detectados y deshacer o rehac
 Como ingeniero, quiero hacerle preguntas sobre el plano a un copiloto de IA y aplicar sus propuestas, para revisar más rápido.
 - Las propuestas se aplican como comandos que se pueden deshacer.
 - Cada usuario tiene un número máximo de preguntas al día.
+- La conversación queda guardada en la base de datos (`copilot_messages`) y sigue ahí en la próxima visita. Cada usuario ve solo la suya.
 
 ### HU-11 Firmar la revisión
 Como revisor, quiero aprobar un análisis o dejarle observaciones, para que quede constancia de quién lo validó.
@@ -84,7 +85,8 @@ Como ingeniero o cliente, quiero ver el análisis como un modelo 3D que pueda gi
 ### HU-13 Calcular cantidades y presupuesto
 Como ingeniero, quiero calcular las cantidades de material y el presupuesto a partir del análisis, para estimar el costo de la obra.
 - Las cantidades salen de fórmulas, no de la IA.
-- Se pueden ajustar los precios y el AIU.
+- Se pueden ajustar los precios, los parámetros y el AIU, y quedan guardados en la base de datos (`budget_settings`).
+- Quien solo puede ver el proyecto puede probar otros valores, pero no guardarlos.
 - El presupuesto se puede descargar en CSV o imprimir como PDF.
 
 ## Administración
@@ -114,10 +116,10 @@ Como administrador, quiero ver el registro de actividad (quién hizo qué y cuá
 | HU-07 | `projects/ProjectDetailView`, `projects/FloorPlansView` | `FloorPlanController` | Repository |
 | HU-08 | `analysis/NewAnalysisView` | `AnalysisController`, `AiController` | Strategy, Factory Method, Facade, State |
 | HU-09 | `analysis/AnalysisDetailView` | `AnalysisController` | Command, Composite |
-| HU-10 | `analysis/CopilotPanel` | `CopilotController` | Facade, Adapter (servicio de IA) |
+| HU-10 | `analysis/CopilotPanel` | `CopilotController` | Facade, Adapter (servicio de IA), Repository |
 | HU-11 | `analysis/AnalysisDetailView` | `ReviewController` | Strategy |
 | HU-12 | `viewer/ViewerView`, `viewer/ModelPickerView` | `Model3DController` | Builder, Factory Method |
-| HU-13 | `engineering/QuantitiesView` | (cálculo en el navegador) | Template Method |
+| HU-13 | `engineering/QuantitiesView` | `BudgetController` (el cálculo se hace en el navegador) | Abstract Factory (`BudgetRepository`), Template Method |
 | HU-14 | `admin/UsersPanel` | `UserController`, `RoleController` | Template Method (`View`) |
 | HU-15 | `admin/CatalogsPanel` | `BuildingTypeController`, `ElementTypeController`, `MaterialController` | Template Method (`CatalogService`) |
 | HU-16 | `admin/AiModelsPanel` | `AiModelController` | Strategy, Factory Method |
