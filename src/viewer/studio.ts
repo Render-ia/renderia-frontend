@@ -63,7 +63,7 @@ export function disciplineOf(type: string): Discipline {
 
 /** Technical color modes (engineer) and finish styles (client). */
 export type ColorMode = 'model' | 'type' | 'material' | FinishStyle;
-export type FinishStyle = 'modern' | 'tropical' | 'rustic' | 'minimalist';
+export type FinishStyle = 'modern' | 'contemporary' | 'concrete' | 'tropical' | 'rustic' | 'minimalist';
 
 export const TECHNICAL_MODES: { mode: ColorMode; label: string }[] = [
   { mode: 'model', label: 'Maqueta' },
@@ -76,6 +76,18 @@ export const FINISHES: { mode: FinishStyle; label: string; colors: Record<string
     mode: 'modern',
     label: 'Moderno',
     colors: { Muro: '#f2f1ee', Columna: '#d9d9d6', Viga: '#bfc3c7', Losa: '#8a6644', Puerta: '#2f3336', Ventana: '#7fb4d1' },
+  },
+  {
+    // Warm white walls, charcoal frame (columns and beams), wood soffits, black doors and tinted glass.
+    mode: 'contemporary',
+    label: 'Contemporáneo',
+    colors: { Muro: '#ece8e1', Columna: '#3a3e44', Viga: '#3a3e44', Losa: '#a0714a', Puerta: '#1d2024', Ventana: '#4f7f99' },
+  },
+  {
+    // Exposed concrete with a graphite frame, as in today's apartment and office buildings.
+    mode: 'concrete',
+    label: 'Concreto',
+    colors: { Muro: '#9a9e9f', Columna: '#4a4f55', Viga: '#4a4f55', Losa: '#7d5c40', Puerta: '#26292d', Ventana: '#5f93ae' },
   },
   {
     mode: 'tropical',
@@ -128,4 +140,19 @@ export function colorFor(mode: ColorMode, type: string, material: string | null)
 export function captureSize(width: number, height: number, longSide = 3840): { width: number; height: number; scale: number } {
   const scale = longSide / Math.max(1, width, height);
   return { width: Math.round(width * scale), height: Math.round(height * scale), scale };
+}
+
+/** Finish that suits each kind of building, for its presentation picture. */
+const COVER_FINISH: Record<string, FinishStyle> = {
+  'Vivienda unifamiliar': 'contemporary',
+  'Edificio residencial': 'concrete',
+  Oficina: 'concrete',
+  'Local comercial': 'contemporary',
+  Bodega: 'concrete',
+  'Institución educativa': 'rustic',
+  'Centro de salud': 'minimalist',
+};
+
+export function coverFinish(buildingType: string): FinishStyle {
+  return COVER_FINISH[buildingType] ?? 'modern';
 }

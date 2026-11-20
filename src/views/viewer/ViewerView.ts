@@ -21,6 +21,7 @@ import {
   VIEWS,
   colorFor,
   type ColorMode,
+  coverFinish,
   type ViewName,
 } from '../../viewer/studio.ts';
 import { View } from '../View.ts';
@@ -86,6 +87,8 @@ export class ViewerView extends View {
   private floors: AnalysisDetail[] = [];
   /** Floor shown alone in building mode (null = the whole building). */
   private onlyStory: number | null = null;
+  /** Kind of building, which picks the client's default finish. */
+  private buildingType = '';
 
   /** Opens one analysis, or with `projectId` the whole building of a project. */
   constructor(
@@ -134,6 +137,8 @@ export class ViewerView extends View {
       }
       this.floors = floors;
       this.detail = detail;
+      this.buildingType = catalogs.buildingTypes.find((t) => t.id === detail.project.buildingTypeId)?.name ?? '';
+      if (this.audience === 'client') this.colorMode = coverFinish(this.buildingType);
       this.types = catalogs.elementTypes;
       this.materials = catalogs.materials;
       if (!this.root) return;
@@ -374,7 +379,7 @@ export class ViewerView extends View {
     } catch {
       // Private mode: the choice lasts for this visit only.
     }
-    if (audience === 'client' && !isFinish(this.colorMode)) this.colorMode = 'modern';
+    if (audience === 'client' && !isFinish(this.colorMode)) this.colorMode = coverFinish(this.buildingType);
     if (audience === 'engineer' && isFinish(this.colorMode)) this.colorMode = 'model';
     this.renderPageKeepingViewer(page);
   }

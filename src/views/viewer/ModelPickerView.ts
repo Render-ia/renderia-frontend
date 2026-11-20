@@ -5,11 +5,12 @@ import { CatalogService } from '../../services/CatalogService.ts';
 import { emptyState, errorMessage, errorState, loadingState } from '../../ui/states.ts';
 import { plural } from '../../utils/format.ts';
 import { escapeHtml } from '../../utils/html.ts';
+import { coverFinish } from '../../viewer/studio.ts';
 import { View } from '../View.ts';
 
 const ALL = 'Todos';
 /** Bump when the cover look changes so old pictures are drawn again. */
-const COVER_KEY = 'renderia.cover.v3';
+const COVER_KEY = 'renderia.cover.v5';
 
 interface Card {
   building: Building;
@@ -139,6 +140,7 @@ export class ModelPickerView extends View {
             details.map((d) => d.elements),
             this.catalogs.elementTypes,
             this.catalogs.materials,
+            coverFinish(card.buildingType),
           );
           saveCover(card.coverKey, picture);
           const frame = this.root?.querySelector<HTMLElement>(`[data-cover="${CSS.escape(card.coverKey)}"]`);
