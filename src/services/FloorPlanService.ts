@@ -2,7 +2,7 @@ import { adjustScale } from '../analysis/scale.ts';
 import { repositories } from '../data/dataSource.ts';
 import type { FloorPlan } from '../models/FloorPlan.ts';
 import type { Project } from '../models/Project.ts';
-import { preparePlanImage } from '../utils/image.ts';
+import { preparePlanImage, type PreparedPlan } from '../utils/image.ts';
 import { logActivity } from './ActivityLogger.ts';
 import { ProjectService } from './ProjectService.ts';
 
@@ -11,6 +11,8 @@ export interface UploadPlanInput {
   file: File;
   floorLevel: number;
   scale: string;
+  /** Image already prepared while checking its quality, to avoid converting a PDF twice. */
+  prepared?: PreparedPlan;
 }
 
 export interface UploadResult {
@@ -39,11 +41,13 @@ export class FloorPlanService {
     if (!this.projects.canManage(input.project)) {
       throw new Error('Solo el dueño del proyecto puede subir planos.');
     }
-    const image = await preparePlanImage(input.file);
+    const image = input.prepared ?? (await preparePlanImage(input.file));
     const scale = adjustScale(input.scale, image.reduction);
+    // A PDF is stored as the PNG of its first page.
+    const fileName = input.file.type === 'application/pdf' ? input.file.name.replace(/\.pdf$/i, '') + '.png' : input.file.name;
 
     const plan = await this.repo.create(
-      { projectId: input.project.id, fileName: input.file.name, floorLevel: input.floorLevel, scale },
+      { projectId: input.project.id, fileName, floorLevel: input.floorLevel, scale },
       image,
     );
     logActivity('Plano subido', `Se subió "${plan.fileName}" (piso ${plan.floorLevel}) al proyecto "${input.project.name}".`);

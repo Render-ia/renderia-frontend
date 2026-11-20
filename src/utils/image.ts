@@ -1,6 +1,6 @@
 import type { PreparedImage } from '../data/repositories.ts';
 
-export const ACCEPTED_PLAN_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
+export const ACCEPTED_PLAN_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml', 'application/pdf'];
 export const MAX_PLAN_BYTES = 10 * 1024 * 1024;
 
 /** Longest side kept when storing raster plans in the browser. */
@@ -11,6 +11,8 @@ export interface PreparedPlan extends PreparedImage {
   height: number;
   /** Factor applied when the image had to be reduced (1 = untouched). */
   reduction: number;
+  /** Things the user should know about the conversion (PDF pages, reduced resolution...). */
+  notes: string[];
 }
 
 export function loadImage(url: string): Promise<HTMLImageElement> {
@@ -40,10 +42,20 @@ function readAsDataUrl(blob: Blob): Promise<string> {
  */
 export async function preparePlanImage(file: Blob): Promise<PreparedPlan> {
   if (!ACCEPTED_PLAN_TYPES.includes(file.type)) {
-    throw new Error('Formato no válido. Sube el plano en PNG, JPG, WEBP o SVG.');
+    throw new Error('Formato no válido. Sube el plano en PDF, PNG, JPG, WEBP o SVG.');
   }
   if (file.size > MAX_PLAN_BYTES) {
     throw new Error('El archivo pesa más de 10 MB. Reduce su tamaño e inténtalo de nuevo.');
+  }
+
+  if (file.type === 'application/pdf') {
+    const { renderPdfFirstPage, PDF_DPI } = await import('./pdf.ts');
+    const pdf = await renderPdfFirstPage(file);
+    const image = await preparePlanImage(pdf.blob);
+    const notes = [`PDF convertido a imagen a ${pdf.dpi} ppp.`];
+    if (pdf.pages > 1) notes.push(`El PDF tiene ${pdf.pages} páginas; se usó la primera. Sube cada planta como un plano aparte.`);
+    // A page drawn below 150 dpi works like a reduced image: the scale is adjusted the same way.
+    return { ...image, reduction: image.reduction * (pdf.dpi / PDF_DPI), notes: [...notes, ...image.notes] };
   }
 
   const dataUrl = await readAsDataUrl(file);
@@ -57,7 +69,7 @@ export async function preparePlanImage(file: Blob): Promise<PreparedPlan> {
 
   const longest = Math.max(width, height);
   if (file.type === 'image/svg+xml' || longest <= MAX_SIDE) {
-    return { dataUrl, blob: file, width, height, reduction: 1 };
+    return { dataUrl, blob: file, width, height, reduction: 1, notes: [] };
   }
 
   const reduction = MAX_SIDE / longest;
@@ -78,5 +90,6 @@ export async function preparePlanImage(file: Blob): Promise<PreparedPlan> {
     width: canvas.width,
     height: canvas.height,
     reduction,
+    notes: [`La imagen se redujo a ${canvas.width} × ${canvas.height} px para guardarla.`],
   };
 }

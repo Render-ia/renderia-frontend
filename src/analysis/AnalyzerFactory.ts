@@ -35,6 +35,8 @@ export class AnalyzerFactory {
         return 'Devuelve siempre el resultado del plano de ejemplo. Sirve para probar el flujo.';
       case 'local-vision':
         return 'Visión por computador: detecta muros, columnas, puertas, ventanas y vigas.';
+      case 'gemini':
+        return 'Gemini lee habitaciones, cotas y escala; la geometría la mide el detector. Avisa si las dos lecturas no coinciden.';
       default:
         return `Modelo del proveedor ${model.provider}.`;
     }

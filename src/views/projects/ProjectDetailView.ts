@@ -12,7 +12,9 @@ import { emptyState, errorMessage, errorState, loadingState } from '../../ui/sta
 import { Toast } from '../../ui/Toast.ts';
 import { formatDate, plural } from '../../utils/format.ts';
 import { escapeHtml } from '../../utils/html.ts';
-import { ACCEPTED_PLAN_TYPES } from '../../utils/image.ts';
+import { assessImage } from '../../analysis/quality/assessImage.ts';
+import type { QualityReport } from '../../analysis/quality/planQuality.ts';
+import { ACCEPTED_PLAN_TYPES, loadImage, preparePlanImage, type PreparedPlan } from '../../utils/image.ts';
 import { View } from '../View.ts';
 import { projectFields, readProjectForm } from './projectForm.ts';
 import { reportFormValidity } from '../../utils/form.ts';
@@ -149,8 +151,9 @@ export class ProjectDetailView extends View {
         <label class="dropzone" data-dropzone>
           <input type="file" name="file" accept="${ACCEPTED_PLAN_TYPES.join(',')}" class="sr-only" />
           <span class="dropzone__title" data-file-name>Arrastra el plano aquí o haz clic para elegirlo</span>
-          <span class="field__hint">PNG, JPG, WEBP o SVG. Máximo 10 MB.</span>
+          <span class="field__hint">PDF, PNG, JPG, WEBP o SVG. Máximo 10 MB.</span>
         </label>
+        <div class="quality" data-quality hidden aria-live="polite"></div>
         <div class="form-row">
           <label class="field">
             <span class="field__label">Piso</span>
@@ -161,7 +164,7 @@ export class ProjectDetailView extends View {
             <select class="select" name="scale">${scales}</select>
           </label>
         </div>
-        <p class="field__hint">La escala se usa para convertir el plano a metros (escaneo a 150 ppp).</p>
+        <p class="field__hint">La escala convierte el plano a metros (escaneo a 150 ppp; los PDF se convierten exactamente a esa resolución). Si el plano no tiene escala, elige la más cercana y luego confirma una medida de referencia en el análisis.</p>
         <p class="form-error" role="alert" hidden></p>
         <button class="button" type="submit">Subir plano</button>
         <button class="button button--ghost" type="button" data-sample>Usar plano de ejemplo</button>
@@ -196,13 +199,36 @@ export class ProjectDetailView extends View {
     const dropzone = form.querySelector<HTMLElement>('[data-dropzone]')!;
     const fileName = form.querySelector<HTMLElement>('[data-file-name]')!;
     const error = form.querySelector<HTMLElement>('.form-error')!;
+    const quality = form.querySelector<HTMLElement>('[data-quality]')!;
     let file: File | null = null;
+    let prepared: PreparedPlan | undefined;
+    let token = 0;
 
-    const pick = (picked: File | undefined) => {
+    const pick = async (picked: File | undefined) => {
       if (!picked) return;
       file = picked;
+      prepared = undefined;
       fileName.textContent = picked.name;
       dropzone.classList.add('dropzone--ready');
+      error.hidden = true;
+      const mine = ++token;
+      quality.hidden = false;
+      quality.innerHTML = `<p class="quality__checking">${picked.type === 'application/pdf' ? 'Convirtiendo el PDF y revisando' : 'Revisando'} la calidad del plano…</p>`;
+      try {
+        const result = await preparePlanImage(picked);
+        const image = await loadImage(result.dataUrl);
+        if (mine !== token) return;
+        prepared = result;
+        quality.innerHTML = qualityHtml(assessImage(image), result.notes);
+      } catch (problem) {
+        if (mine !== token) return;
+        quality.hidden = true;
+        file = null;
+        dropzone.classList.remove('dropzone--ready');
+        fileName.textContent = 'Arrastra el plano aquí o haz clic para elegirlo';
+        error.textContent = errorMessage(problem);
+        error.hidden = false;
+      }
     };
 
     input.addEventListener('change', () => pick(input.files?.[0]));
@@ -249,6 +275,7 @@ export class ProjectDetailView extends View {
         this.plans.upload({
           project: this.project!,
           file: chosen,
+          prepared,
           floorLevel: Number(data.get('floorLevel')),
           scale: String(data.get('scale')),
         }),
@@ -294,4 +321,27 @@ export class ProjectDetailView extends View {
       Toast.error(errorMessage(error));
     }
   }
+}
+
+const QUALITY_TITLES: Record<QualityReport['level'], string> = {
+  ok: 'Plano listo para analizar',
+  warning: 'Se puede analizar, pero revisa esto',
+  bad: 'Es muy probable que el análisis falle',
+};
+
+/** Result of the automatic checks shown before uploading (stage 1 of the proposal). */
+function qualityHtml(report: QualityReport, notes: string[]): string {
+  const checks = report.checks
+    .map(
+      (check) => `
+        <li class="quality__check ${check.ok ? 'is-ok' : 'is-bad'}">
+          <span class="quality__icon" aria-hidden="true">${check.ok ? '✓' : '!'}</span>
+          <span><strong>${escapeHtml(check.label)}</strong> ${escapeHtml(check.detail)}</span>
+        </li>`,
+    )
+    .join('');
+  const extra = notes.map((n) => `<li class="quality__note">${escapeHtml(n)}</li>`).join('');
+  return `
+    <p class="quality__title quality__title--${report.level}">${QUALITY_TITLES[report.level]}</p>
+    <ul class="quality__list">${checks}${extra}</ul>`;
 }

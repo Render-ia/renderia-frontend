@@ -1,7 +1,16 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { StructuralElement, StructuralElementInput } from '../../models/StructuralElement.ts';
 import { CommandHistory } from './CommandHistory.ts';
-import { EditElementCommand, RemoveElementCommand, type ElementChanges, type ElementReceiver } from './ElementCommand.ts';
+import { parseSummary, confirmAssumption, type AnalysisSummary } from '../AnalysisSummary.ts';
+import {
+  AddElementCommand,
+  CompositeCommand,
+  EditElementCommand,
+  RemoveElementCommand,
+  type ElementChanges,
+  type ElementReceiver,
+} from './ElementCommand.ts';
+import { UpdateSummaryCommand, type SummaryStore } from './SummaryCommand.ts';
 
 function element(id: number, elementTypeId = 1, materialId: number | null = 1): StructuralElement {
   return {
@@ -168,5 +177,75 @@ describe('CommandHistory', () => {
     await history.undo();
     expect(history.canUndo).toBe(false);
     expect(first.elementTypeId).toBe(2);
+  });
+});
+
+describe('AddElementCommand', () => {
+  it('adds a drawn element and undo removes it from the list and the store', async () => {
+    const receiver = new FakeReceiver();
+    const { id: _id, aiAnalysisId: _a, ...input } = element(9);
+    const command = new AddElementCommand(receiver, { ...input, confidence: 1 });
+    await command.execute();
+    expect(receiver.elements).toHaveLength(4);
+    const added = receiver.elements[3];
+    expect(receiver.saved.has(added.id)).toBe(true);
+    await command.undo();
+    expect(receiver.elements).toHaveLength(3);
+    expect(receiver.saved.has(added.id)).toBe(false);
+  });
+});
+
+describe('CompositeCommand', () => {
+  let receiver: FakeReceiver;
+  beforeEach(() => (receiver = new FakeReceiver()));
+
+  it('applies several edits as one step and undoes them together', async () => {
+    const history = new CommandHistory();
+    const all = new CompositeCommand(
+      'altura de muros',
+      receiver.elements.map((e) => new EditElementCommand(receiver, e, { height: 2.7 })),
+    );
+    await history.run(all);
+    expect(receiver.elements.every((e) => e.height === 2.7)).toBe(true);
+    expect(history.nextUndo).toBe('altura de muros');
+    await history.undo();
+    expect(receiver.elements.every((e) => e.height === 2.4)).toBe(true);
+  });
+
+  it('reverts the steps already applied when one fails', async () => {
+    const [first, second] = receiver.elements;
+    const failing = {
+      label: 'falla',
+      execute: async () => {
+        throw new Error('Servidor caído');
+      },
+      undo: async () => undefined,
+    };
+    const composite = new CompositeCommand('lote', [
+      new EditElementCommand(receiver, first, { thickness: 0.2 }),
+      new EditElementCommand(receiver, second, { thickness: 0.2 }),
+      failing,
+    ]);
+    await expect(composite.execute()).rejects.toThrow('Servidor caído');
+    expect(first.thickness).toBe(0.15);
+    expect(second.thickness).toBe(0.15);
+    expect(receiver.saved.get(first.id)!.thickness).toBe(0.15);
+  });
+});
+
+describe('UpdateSummaryCommand', () => {
+  it('saves the new summary and undo restores the previous one', async () => {
+    let current: AnalysisSummary = parseSummary(null, '1:100');
+    const store: SummaryStore = {
+      current: () => current,
+      save: async (summary) => {
+        current = summary;
+      },
+    };
+    const command = new UpdateSummaryCommand(store, confirmAssumption(current, 'wallHeight', '2.7 m'), 'confirmar');
+    await command.execute();
+    expect(current.assumptions.find((a) => a.key === 'wallHeight')).toMatchObject({ value: '2.7 m', source: 'confirmed' });
+    await command.undo();
+    expect(current.assumptions.find((a) => a.key === 'wallHeight')).toMatchObject({ value: '2.5 m', source: 'assumed' });
   });
 });

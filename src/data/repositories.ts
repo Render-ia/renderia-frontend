@@ -1,3 +1,4 @@
+import type { ElementChanges } from '../analysis/commands/ElementCommand.ts';
 import type { AiAnalysis } from '../models/AiAnalysis.ts';
 import type { ActivityLog } from '../models/ActivityLog.ts';
 import type { AiModel, CatalogItem, CatalogName } from '../models/Catalog.ts';
@@ -76,7 +77,7 @@ export interface AnalysisRepository {
   saveElements(analysisId: number, elements: StructuralElementInput[]): Promise<StructuralElement[]>;
   updateElement(
     id: number,
-    changes: { elementTypeId?: number; materialId?: number | null },
+    changes: ElementChanges,
   ): Promise<StructuralElement>;
   removeElement(id: number): Promise<void>;
 }

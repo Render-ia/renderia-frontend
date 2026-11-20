@@ -1,3 +1,4 @@
+import type { ElementChanges } from '../../analysis/commands/ElementCommand.ts';
 import { ApiClient } from '../../core/http/ApiClient.ts';
 import { ApiError } from '../../core/http/ApiError.ts';
 import type { AiAnalysis } from '../../models/AiAnalysis.ts';
@@ -43,7 +44,7 @@ export class ApiAnalysisRepository implements AnalysisRepository {
 
   updateElement(
     id: number,
-    changes: { elementTypeId?: number; materialId?: number | null },
+    changes: ElementChanges,
   ): Promise<StructuralElement> {
     return this.api.put<StructuralElement>(`/elements/${id}`, changes);
   }
