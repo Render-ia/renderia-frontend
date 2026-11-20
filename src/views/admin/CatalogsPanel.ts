@@ -2,7 +2,7 @@ import { repositories } from '../../data/dataSource.ts';
 import { CATALOG_LABELS, type CatalogItem, type CatalogName } from '../../models/Catalog.ts';
 import { logActivity } from '../../services/ActivityLogger.ts';
 import { CatalogService } from '../../services/CatalogService.ts';
-import { Dialog } from '../../ui/Dialog.ts';
+import { InPage } from '../../ui/InPage.ts';
 import { errorMessage, errorState, loadingState } from '../../ui/states.ts';
 import { Toast } from '../../ui/Toast.ts';
 import { escapeHtml } from '../../utils/html.ts';
@@ -97,7 +97,7 @@ export class CatalogsPanel implements AdminPanel {
       </label>`;
     const title = item ? 'Editar registro' : `Agregar a ${CATALOG_LABELS[this.current].toLowerCase()}`;
 
-    Dialog.form(title, fields, item ? 'Guardar cambios' : 'Agregar', async (data, form) => {
+    InPage.form(title, fields, item ? 'Guardar cambios' : 'Agregar', async (data, form) => {
       const input = { name: String(data.get('name')).trim(), description: String(data.get('description')).trim() };
       try {
         if (item) await this.repo.update(this.current, item.id, input);
@@ -108,14 +108,14 @@ export class CatalogsPanel implements AdminPanel {
         this.load(body);
         return true;
       } catch (error) {
-        Dialog.showFormError(form, errorMessage(error));
+        InPage.showFormError(form, errorMessage(error));
         return false;
       }
     });
   }
 
   private async remove(body: HTMLElement, item: CatalogItem): Promise<void> {
-    const confirmed = await Dialog.confirm({
+    const confirmed = await InPage.confirm({
       title: 'Eliminar registro',
       message: `Se eliminará "${item.name}" de ${CATALOG_LABELS[this.current].toLowerCase()}.`,
       confirmLabel: 'Eliminar',

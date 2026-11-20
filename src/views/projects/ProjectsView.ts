@@ -6,7 +6,7 @@ import type { Project } from '../../models/Project.ts';
 import type { UserWithRole } from '../../models/User.ts';
 import { CatalogService, nameOf } from '../../services/CatalogService.ts';
 import { ProjectService } from '../../services/ProjectService.ts';
-import { Dialog } from '../../ui/Dialog.ts';
+import { InPage } from '../../ui/InPage.ts';
 import { emptyState, errorMessage, errorState, loadingState } from '../../ui/states.ts';
 import { Toast } from '../../ui/Toast.ts';
 import { formatRelative, plural } from '../../utils/format.ts';
@@ -182,14 +182,14 @@ export class ProjectsView extends View {
   }
 
   private openCreate(): void {
-    Dialog.form('Nuevo proyecto', projectFields(this.buildingTypes), 'Crear proyecto', async (data, form) => {
+    InPage.form('Nuevo proyecto', projectFields(this.buildingTypes), 'Crear proyecto', async (data, form) => {
       try {
         const project = await this.service.create(readProjectForm(data));
         Toast.success(`Proyecto "${project.name}" creado.`);
         window.location.hash = `/projects/${project.id}`;
         return true;
       } catch (error) {
-        Dialog.showFormError(form, errorMessage(error));
+        InPage.showFormError(form, errorMessage(error));
         return false;
       }
     });

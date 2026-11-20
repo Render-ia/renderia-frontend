@@ -27,7 +27,7 @@ import type { CatalogItem } from '../../models/Catalog.ts';
 import type { StructuralElement, StructuralElementInput } from '../../models/StructuralElement.ts';
 import { AnalysisService, type AnalysisDetail } from '../../services/AnalysisService.ts';
 import { CatalogService, nameOf } from '../../services/CatalogService.ts';
-import { Dialog } from '../../ui/Dialog.ts';
+import { InPage } from '../../ui/InPage.ts';
 import { planOverlay, type OverlayColorMode } from '../../ui/planOverlay.ts';
 import { errorMessage, errorState, loadingState } from '../../ui/states.ts';
 import { Toast } from '../../ui/Toast.ts';
@@ -575,7 +575,7 @@ export class AnalysisDetailView extends View {
         pending ? `${pending} supuestos sin confirmar` : '',
         low ? `${low} elementos con confianza baja` : '',
       ].filter(Boolean);
-      const confirmed = await Dialog.confirm({
+      const confirmed = await InPage.confirm({
         title: 'Marcar como revisado',
         message: `Todavía hay ${parts.join(' y ')}. ¿Quieres marcar la propuesta como revisada de todas formas?`,
         confirmLabel: 'Marcar como revisado',
@@ -860,7 +860,7 @@ export class AnalysisDetailView extends View {
   }
 
   private async confirmDelete(): Promise<void> {
-    const confirmed = await Dialog.confirm({
+    const confirmed = await InPage.confirm({
       title: 'Eliminar análisis',
       message: 'Se eliminarán los elementos detectados y el modelo 3D de este análisis.',
       confirmLabel: 'Eliminar análisis',
