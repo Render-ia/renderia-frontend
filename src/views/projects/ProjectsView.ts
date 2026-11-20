@@ -43,7 +43,7 @@ export class ProjectsView extends View {
         <p class="page-header__note" data-limit hidden></p>
       </header>
       <div class="toolbar">
-        <input class="input" type="search" placeholder="Buscar por nombre o ubicación" aria-label="Buscar proyectos" data-search />
+        <input class="input" type="search" maxlength="100" placeholder="Buscar por nombre o ubicación" aria-label="Buscar proyectos" data-search />
         <select class="select" aria-label="Filtrar por tipo de edificación" data-type>
           <option value="">Todos los tipos</option>
         </select>

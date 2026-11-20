@@ -174,7 +174,7 @@ export class QuantitiesView extends View {
                 <label class="field field--inline">
                   <span class="field__label">${f.label}</span>
                   <span class="budget__input">
-                    <input class="input input--compact" type="text" inputmode="decimal" data-param="${f.key}"
+                    <input class="input input--compact" type="text" inputmode="decimal" maxlength="12" data-param="${f.key}"
                       value="${number.format(f.percent ? params[f.key] * 100 : params[f.key])}" />
                     <span>${f.unit}</span>
                   </span>
@@ -190,7 +190,7 @@ export class QuantitiesView extends View {
                 <label class="field field--inline">
                   <span class="field__label">${f.label}</span>
                   <span class="budget__input">
-                    <input class="input input--compact" type="text" inputmode="decimal" data-aiu="${f.key}" value="${number.format(aiu[f.key] * 100)}" />
+                    <input class="input input--compact" type="text" inputmode="decimal" maxlength="12" data-aiu="${f.key}" value="${number.format(aiu[f.key] * 100)}" />
                     <span>%</span>
                   </span>
                 </label>`,
@@ -247,7 +247,7 @@ export class QuantitiesView extends View {
             <td>${line.unit}</td>
             <td class="num">${number.format(line.quantity)}</td>
             <td class="num">
-              <input class="input input--compact budget__price no-print" type="text" inputmode="numeric" data-price="${line.id}"
+              <input class="input input--compact budget__price no-print" type="text" inputmode="numeric" maxlength="16" data-price="${line.id}"
                 value="${number.format(line.unitPrice)}" aria-label="Valor unitario de ${escapeHtml(line.item)}" />
               <span class="print-only">${money.format(line.unitPrice)}</span>
             </td>

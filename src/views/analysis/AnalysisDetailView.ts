@@ -385,7 +385,7 @@ export class AnalysisDetailView extends View {
         (field) => `
           <label class="measure">
             <span>${MEASURE_LABELS[field]}</span>
-            <input class="input input--compact" type="text" inputmode="decimal" data-measure="${field}"
+            <input class="input input--compact" type="text" inputmode="decimal" maxlength="10" data-measure="${field}"
               value="${element[field] ?? ''}" aria-label="${MEASURE_LABELS[field]} en metros" />
             <span aria-hidden="true">m</span>
           </label>`,
@@ -450,7 +450,7 @@ export class AnalysisDetailView extends View {
         const canConfirm = editable && a.source !== 'confirmed' && a.source !== 'detected';
         const value =
           editable && target
-            ? `<input class="input input--compact" type="text" inputmode="decimal" value="${escapeHtml(a.value)}"
+            ? `<input class="input input--compact" type="text" inputmode="decimal" maxlength="10" value="${escapeHtml(a.value)}"
                 data-assumption-value="${escapeHtml(a.key)}" aria-label="${escapeHtml(a.label)}" />`
             : `<span class="assumption__value">${escapeHtml(a.value || 'Sin dato')}</span>`;
         const action = editable && target
