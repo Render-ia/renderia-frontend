@@ -1,21 +1,11 @@
 import * as THREE from 'three';
-import { MODEL_COLORS, styleFor } from '../analysis/elementStyle.ts';
 import type { CatalogItem } from '../models/Catalog.ts';
 import type { StructuralElement } from '../models/StructuralElement.ts';
 import { nameOf } from '../services/CatalogService.ts';
 import { ElementMeshFactory } from './meshes/ElementMeshFactory.ts';
+import { colorFor, type ColorMode } from './studio.ts';
 
-export type ColorMode = 'type' | 'material' | 'model';
-
-/** Colors used when the model is colored by construction material. */
-export const MATERIAL_COLORS: Record<string, string> = {
-  'Concreto reforzado': '#a9afad',
-  Ladrillo: '#b0613e',
-  Acero: '#6d7b86',
-  Madera: '#9a6b3e',
-  Drywall: '#e6e3dc',
-};
-const NO_MATERIAL = '#8fc6dd';
+export type { ColorMode } from './studio.ts';
 
 /** Dark studio where the model is shown, like a model on a dark table. */
 const STUDIO = {
@@ -65,12 +55,7 @@ export class StructuralSceneBuilder {
     for (const element of elements) {
       const typeName = nameOf(types, element.elementTypeId, 'Otro');
       const materialName = element.materialId === null ? null : nameOf(materials, element.materialId, '');
-      const color =
-        colorMode === 'type'
-          ? styleFor(typeName).color
-          : colorMode === 'model'
-            ? (MODEL_COLORS[typeName] ?? MODEL_COLORS.Muro)
-            : ((materialName && MATERIAL_COLORS[materialName]) ?? NO_MATERIAL);
+      const color = colorFor(colorMode, typeName, materialName);
 
       const object = this.factory.creatorFor(typeName).create({ element, typeName, materialName, color, toScene });
       this.groupFor(typeName).add(object);
@@ -104,6 +89,8 @@ export class StructuralSceneBuilder {
     sun.position.set(reach * 0.6, reach * 1.2, reach * 0.8);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.bias = -0.0004;
+    sun.shadow.normalBias = 0.02;
     const camera = sun.shadow.camera;
     camera.left = -reach;
     camera.right = reach;
