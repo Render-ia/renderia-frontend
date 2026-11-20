@@ -38,7 +38,7 @@ export function cameraPose(view: ViewName, width: number, depth: number, aspect 
     case 'left':
       return { position: [-(width / 2 + reach * 2), eye, 0], target: [0, eye, 0] };
     case 'right':
-      return { position: [width / 2 + reach * 1.4, eye, 0], target: [0, eye, 0] };
+      return { position: [width / 2 + reach * 2, eye, 0], target: [0, eye, 0] };
     default:
       return { position: [reach * 0.85, reach * 0.9, reach * 1.05], target: [0, 1, 0] };
   }
