@@ -8,6 +8,8 @@ import {
   type TakeoffElement,
   type TakeoffParams,
 } from '../../engineering/quantities.ts';
+import { repositories } from '../../data/dataSource.ts';
+import type { BudgetInputs } from '../../data/repositories.ts';
 import { logActivity } from '../../services/ActivityLogger.ts';
 import { AnalysisService, type AnalysisDetail } from '../../services/AnalysisService.ts';
 import { CatalogService, nameOf } from '../../services/CatalogService.ts';
@@ -17,7 +19,7 @@ import { formatMeters } from '../../utils/format.ts';
 import { escapeHtml } from '../../utils/html.ts';
 import { View } from '../View.ts';
 
-/** What the user changed on this screen, kept per analysis in this browser. */
+/** What the user changed on this screen, saved per analysis (see BudgetRepository). */
 interface SavedInputs {
   params: Partial<TakeoffParams>;
   prices: Partial<Record<QuantityId, number>>;
@@ -46,6 +48,9 @@ export class QuantitiesView extends View {
   private inputs: SavedInputs = { params: {}, prices: {}, aiu: {} };
   private takeoff: Takeoff | null = null;
   private budget: Budget | null = null;
+  private readonly budgets = repositories().budgets();
+  /** Only who can edit the analysis saves the budget; others can try values without saving. */
+  private canSave = false;
 
   constructor(private readonly analysisId: number) {
     super();
@@ -59,18 +64,17 @@ export class QuantitiesView extends View {
     this.load();
   }
 
-  private get storageKey(): string {
-    return `renderia.budget.${this.analysisId}`;
-  }
-
   private async load(): Promise<void> {
     const page = this.root?.querySelector<HTMLElement>('[data-page]');
     if (!page) return;
     try {
-      const [detail, catalogs] = await Promise.all([
-        new AnalysisService().get(this.analysisId),
+      const service = new AnalysisService();
+      const [detail, catalogs, saved] = await Promise.all([
+        service.get(this.analysisId),
         CatalogService.getInstance().load(),
+        this.budgets.find(this.analysisId).catch(() => null),
       ]);
+      this.canSave = service.canEdit(detail.project);
       if (detail.analysis.status !== 'COMPLETED') {
         throw new Error('Este análisis no terminó bien, así que no tiene cantidades. Vuelve a analizar el plano.');
       }
@@ -87,7 +91,7 @@ export class QuantitiesView extends View {
         height: e.height,
         thickness: e.thickness,
       }));
-      this.inputs = this.readInputs();
+      this.inputs = this.readInputs(saved);
       if (!this.root) return;
       document.title = `Presupuesto · ${detail.project.name} · Render.IA`;
       this.renderPage(page);
@@ -96,22 +100,17 @@ export class QuantitiesView extends View {
     }
   }
 
-  private readInputs(): SavedInputs {
-    try {
-      const saved = JSON.parse(localStorage.getItem(this.storageKey) ?? 'null') as SavedInputs | null;
-      if (saved && typeof saved === 'object') return { params: saved.params ?? {}, prices: saved.prices ?? {}, aiu: saved.aiu ?? {} };
-    } catch {
-      // Blocked or corrupt storage: start from the defaults.
-    }
+  private readInputs(saved: SavedInputs | null): SavedInputs {
+    if (saved && typeof saved === 'object') return { params: saved.params ?? {}, prices: saved.prices ?? {}, aiu: saved.aiu ?? {} };
     return { params: {}, prices: {}, aiu: {} };
   }
 
+  /** Saves the inputs in the database (or the browser in the demo). */
   private saveInputs(): void {
-    try {
-      localStorage.setItem(this.storageKey, JSON.stringify(this.inputs));
-    } catch {
-      // Private mode: the values last for this visit only.
-    }
+    if (!this.canSave) return;
+    this.budgets.save(this.analysisId, this.inputs as BudgetInputs).catch((error) => {
+      Toast.error(`No se pudo guardar el presupuesto: ${errorMessage(error)}`);
+    });
   }
 
   private compute(): void {
@@ -133,6 +132,7 @@ export class QuantitiesView extends View {
         <div>
           <h1>Cantidades y presupuesto</h1>
           <p class="page-header__lead">${escapeHtml(project.name)}, piso ${plan.floorLevel}. Cantidades calculadas con fórmulas sobre la geometría validada.</p>
+          ${this.canSave ? '' : '<p class="page-header__note">Puedes probar otros valores, pero solo quien edita el proyecto guarda el presupuesto.</p>'}
         </div>
         <div class="page-header__actions no-print">
           <button class="button button--ghost" type="button" data-reset>Restablecer valores</button>

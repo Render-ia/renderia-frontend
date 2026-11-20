@@ -100,3 +100,16 @@ export interface ActivityRepository {
   findRecent(limit: number, userId?: number): Promise<ActivityLog[]>;
   create(userId: number | null, action: string, details: string): Promise<ActivityLog>;
 }
+
+/** What the user changed on the budget screen of one analysis: parameters, unit prices and AIU. */
+export interface BudgetInputs {
+  params: Record<string, number>;
+  prices: Record<string, number>;
+  aiu: Record<string, number>;
+}
+
+export interface BudgetRepository {
+  /** Saved inputs of the analysis, or null when nothing was saved yet. */
+  find(analysisId: number): Promise<BudgetInputs | null>;
+  save(analysisId: number, inputs: BudgetInputs): Promise<void>;
+}

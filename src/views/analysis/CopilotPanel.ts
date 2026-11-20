@@ -56,6 +56,12 @@ export class CopilotPanel {
     } catch {
       // Without capabilities the panel still works; the backend answers with a clear error if needed.
     }
+    try {
+      // The conversation is saved in the database, so it is still here on the next visit.
+      this.turns = await this.service.conversation(this.host.analysisId);
+    } catch {
+      // An old backend without saved conversations: start empty.
+    }
     this.render();
   }
 

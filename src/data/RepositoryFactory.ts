@@ -2,6 +2,7 @@ import type {
   ActivityRepository,
   AnalysisRepository,
   AuthRepository,
+  BudgetRepository,
   CatalogRepository,
   FloorPlanRepository,
   Model3DRepository,
@@ -23,4 +24,5 @@ export interface RepositoryFactory {
   analyses(): AnalysisRepository;
   models3d(): Model3DRepository;
   activity(): ActivityRepository;
+  budgets(): BudgetRepository;
 }
