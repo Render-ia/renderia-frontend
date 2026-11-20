@@ -9,6 +9,8 @@ Proyecto final de **Patrones de Software**.
 - **Integrantes:** Juan David Moreno, Felipe Cerón
 - **Backend:** [renderia-backend](https://github.com/Render-ia/renderia-backend) (Java 21 + Spring Boot)
 - **Base de datos:** [renderia-database](https://github.com/Render-ia/renderia-database) (PostgreSQL en Neon)
+- **Historias de usuario:** [`docs/user-stories.md`](docs/user-stories.md), con el rastreo de cada una al código
+- **Decisiones de diseño:** [`docs/decisions`](docs/decisions/README.md)
 
 ## Qué hace
 
