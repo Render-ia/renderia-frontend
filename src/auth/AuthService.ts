@@ -14,6 +14,14 @@ export class AuthService {
     return user;
   }
 
+  /** Demo account buttons on the login screen: the backend opens the session. */
+  async demoLogin(role: string): Promise<UserWithRole> {
+    const { token, user } = await repositories().auth().demoLogin(role);
+    this.session.start(token, user);
+    logActivity('Inicio de sesión', `${user.fullName} entró con la cuenta de prueba de ${role}.`);
+    return user;
+  }
+
   async register(data: RegisterData): Promise<UserWithRole> {
     const { token, user } = await repositories().auth().register(data);
     this.session.start(token, user);

@@ -11,6 +11,10 @@ export class ApiAuthRepository implements AuthRepository {
     return this.api.post<AuthResult>('/auth/login', { email, password });
   }
 
+  demoLogin(role: string): Promise<AuthResult> {
+    return this.api.post<AuthResult>('/auth/demo', { role });
+  }
+
   register(data: RegisterData): Promise<AuthResult> {
     return this.api.post<AuthResult>('/auth/register', data);
   }

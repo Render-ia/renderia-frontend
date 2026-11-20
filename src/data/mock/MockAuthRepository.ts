@@ -29,6 +29,14 @@ export class MockAuthRepository implements AuthRepository {
     return this.openSession(row);
   }
 
+  async demoLogin(role: string): Promise<AuthResult> {
+    await latency(250);
+    const roleRow = this.db.table('roles').find((r) => r.name === role);
+    const row = roleRow && this.db.table('users').find((u) => u.roleId === roleRow.id && u.isActive);
+    if (!row) throw new ApiError(`No hay cuenta de prueba de ${role}.`, 404);
+    return this.openSession(row);
+  }
+
   async register(data: RegisterData): Promise<AuthResult> {
     await latency(250);
     const email = data.email.trim().toLowerCase();

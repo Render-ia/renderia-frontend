@@ -22,6 +22,8 @@ export interface AuthResult {
 export interface AuthRepository {
   login(email: string, password: string): Promise<AuthResult>;
   register(data: RegisterData): Promise<AuthResult>;
+  /** Opens a session with the demo account of a role, without sending its password. */
+  demoLogin(role: string): Promise<AuthResult>;
   /** Returns the user that owns the token, or null if it expired. */
   me(token: string): Promise<UserWithRole | null>;
 }
