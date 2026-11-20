@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cameraPose, captureSize, colorFor, disciplineOf, FINISHES, isFinish } from './studio.ts';
+import { cameraPose, captureSize, colorFor, coverFinish, disciplineOf, FINISHES, isFinish } from './studio.ts';
 
 describe('3D studio presets', () => {
   it('places each facade camera on its own side, looking at the center', () => {
@@ -30,8 +30,15 @@ describe('3D studio presets', () => {
   it('colors by finish without depending on geometry', () => {
     expect(isFinish('tropical')).toBe(true);
     expect(isFinish('type')).toBe(false);
-    expect(colorFor('tropical', 'Muro', null)).toBe(FINISHES[1].colors.Muro);
+    expect(colorFor('tropical', 'Muro', null)).toBe(FINISHES.find((f) => f.mode === 'tropical')!.colors.Muro);
     expect(colorFor('material', 'Muro', 'Ladrillo')).toBe('#b0613e');
+  });
+
+  it('gives each kind of building its own presentation finish', () => {
+    expect(coverFinish('Vivienda unifamiliar')).toBe('contemporary');
+    expect(coverFinish('Edificio residencial')).toBe('concrete');
+    expect(coverFinish('Institución educativa')).toBe('rustic');
+    expect(coverFinish('Algo nuevo')).toBe('modern');
   });
 
   it('scales captures to a 4K long side keeping the aspect', () => {
