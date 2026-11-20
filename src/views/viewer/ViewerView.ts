@@ -1,3 +1,4 @@
+import { AiAssistantService, type RenderStyle } from '../../services/AiAssistantService.ts';
 import { styleFor, TYPE_ORDER } from '../../analysis/elementStyle.ts';
 import { Session } from '../../auth/Session.ts';
 import type { CatalogItem } from '../../models/Catalog.ts';
@@ -29,6 +30,24 @@ const AUDIENCE_KEY = 'renderia.viewer.audience';
 
 /** Highest cut that still leaves the model whole. */
 const MAX_CUT_HEIGHT = 3.2;
+
+const RENDER_STYLES: { value: RenderStyle; label: string }[] = [
+  { value: 'modern', label: 'Moderno' },
+  { value: 'contemporary', label: 'Contemporáneo' },
+  { value: 'minimalist', label: 'Minimalista' },
+  { value: 'tropical', label: 'Tropical' },
+  { value: 'rustic', label: 'Rústico' },
+  { value: 'traditional', label: 'Tradicional' },
+];
+
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(',')[1] ?? '');
+    reader.onerror = () => reject(new Error('No se pudo leer la captura del modelo.'));
+    reader.readAsDataURL(blob);
+  });
+}
 
 function savedAudience(): Audience {
   if (Session.getInstance().user?.role.name === 'Cliente') return 'client';
@@ -167,6 +186,29 @@ export class ViewerView extends View {
                 <input type="range" min="0.02" max="1" step="0.01" value="${this.cutDepth}" data-cut-depth />
               </label>
             </section>
+            <section class="viewer__card" aria-labelledby="ai-render-title" data-ai-render hidden>
+              <h2 id="ai-render-title">Render con IA</h2>
+              <label class="field">
+                <span class="field__label">Estilo</span>
+                <select class="select select--compact" data-render-style>${RENDER_STYLES.map(
+                  (s) => `<option value="${s.value}">${s.label}</option>`,
+                ).join('')}</select>
+              </label>
+              <label class="field">
+                <span class="field__label">Escena</span>
+                <select class="select select--compact" data-render-scene>
+                  <option value="exterior">Exterior</option>
+                  <option value="interior">Interior</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field__label">Indicaciones (opcional)</span>
+                <input class="input" maxlength="300" data-render-notes placeholder="Ej.: atardecer, jardín al frente" />
+              </label>
+              <button class="button button--small" type="button" data-render>Generar render</button>
+              <small class="viewer__note" data-render-left></small>
+              <div data-render-result></div>
+            </section>
             <div class="viewer__card viewer__info" data-info hidden></div>
           </div>
           <p class="viewer__help">Arrastra para girar. Rueda para acercar. Clic derecho para mover. Clic en un elemento para ver sus datos.</p>
@@ -205,8 +247,51 @@ export class ViewerView extends View {
     });
     page.querySelector('[data-shot]')!.addEventListener('click', (event) => this.downloadImage(event.currentTarget as HTMLButtonElement));
     page.querySelector('[data-export]')?.addEventListener('click', (event) => this.exportGlb(event.currentTarget as HTMLButtonElement));
+    page.querySelector('[data-render]')?.addEventListener('click', (event) => this.aiRender(page, event.currentTarget as HTMLButtonElement));
     this.renderLegend(page);
     this.applySection(page);
+    void this.showAiRender(page);
+  }
+
+  /** The AI render card only appears when the server has an image model turned on. */
+  private async showAiRender(page: HTMLElement): Promise<void> {
+    const ai = new AiAssistantService();
+    if (!ai.available) return;
+    try {
+      const caps = await ai.capabilities();
+      const card = page.querySelector<HTMLElement>('[data-ai-render]');
+      if (!card || !caps.renders.enabled) return;
+      card.hidden = false;
+      card.querySelector<HTMLElement>('[data-render-left]')!.textContent = `Te quedan ${caps.remaining.render} renders hoy.`;
+    } catch {
+      // Without capabilities the card stays hidden.
+    }
+  }
+
+  private async aiRender(page: HTMLElement, button: HTMLButtonElement): Promise<void> {
+    if (!this.viewer) return;
+    const card = page.querySelector<HTMLElement>('[data-ai-render]')!;
+    const style = card.querySelector<HTMLSelectElement>('[data-render-style]')!.value as RenderStyle;
+    const scene = card.querySelector<HTMLSelectElement>('[data-render-scene]')!.value as 'exterior' | 'interior';
+    const notes = card.querySelector<HTMLInputElement>('[data-render-notes]')!.value.trim();
+    const result = card.querySelector<HTMLElement>('[data-render-result]')!;
+    button.disabled = true;
+    button.textContent = 'Generando… (puede tardar)';
+    try {
+      const capture = await blobToBase64(await this.viewer.captureHighRes(1280));
+      const render = await new AiAssistantService().render(this.detail!.analysis.id, capture, style, scene, notes);
+      const url = `data:${render.mimeType};base64,${render.data}`;
+      result.innerHTML = `
+        <img class="viewer__render" src="${url}" alt="Render con IA del proyecto" />
+        <p class="viewer__note">${escapeHtml(render.disclaimer)}</p>
+        <a class="button button--ghost button--small" href="${url}" download="${this.fileBase()}-render-${style}.png">Descargar</a>`;
+      logActivity('Render con IA', `Se generó un render ${style} del análisis #${this.detail!.analysis.id}.`);
+    } catch (error) {
+      Toast.error(errorMessage(error));
+    } finally {
+      button.disabled = false;
+      button.textContent = 'Generar render';
+    }
   }
 
   /** Re-renders the controls but keeps the same 3D canvas and camera. */

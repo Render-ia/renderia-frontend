@@ -225,3 +225,100 @@
   flex: 1 1 14rem;
   margin: 0;
 }
+
+/* Engineering copilot */
+.copilot__log {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-3) 0;
+  max-height: 32rem;
+  overflow-y: auto;
+}
+
+.copilot__suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-concrete);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: var(--color-prussian);
+  background: var(--color-prussian-tint);
+}
+
+.copilot__msg {
+  max-width: 48rem;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  line-height: 1.5;
+}
+
+.copilot__msg--user {
+  justify-self: end;
+  background: var(--color-prussian-tint);
+}
+
+.copilot__msg--model {
+  border: 1px solid var(--color-concrete);
+}
+
+.copilot__thinking {
+  color: var(--color-graphite-soft);
+  font-size: var(--font-size-sm);
+}
+
+.copilot__proposal {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  border-left: 3px solid var(--color-prussian);
+  background: var(--color-prussian-tint);
+  border-radius: var(--radius-sm, 4px);
+}
+
+.copilot__proposal h4 {
+  margin: 0 0 var(--space-1);
+}
+
+.copilot__proposal ul {
+  margin: var(--space-2) 0;
+  padding-left: var(--space-4);
+}
+
+.copilot__form {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 48rem;
+}
+
+.copilot__input {
+  resize: vertical;
+  min-height: 3.5rem;
+}
+
+.copilot__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.copilot__actions .button {
+  margin-left: auto;
+}
+
+.copilot__deep {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+}
