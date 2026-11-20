@@ -11,5 +11,3 @@ Cada archivo explica una decisión: qué problema había, qué se eligió, qué 
 | [ADR_005](ADR_005-commands-for-corrections.md) | Cada corrección es un comando que se puede deshacer | Aceptada |
 | [ADR_006](ADR_006-stateless-jwt-and-limits.md) | Sesión con JWT sin estado y límites de uso en el servidor | Aceptada |
 | [ADR_007](ADR_007-deterministic-takeoff.md) | Cantidades y presupuesto calculados con fórmulas, no con IA | Aceptada |
-
-Preguntas probables del jurado: [jury-questions.md](../jury-questions.md).
