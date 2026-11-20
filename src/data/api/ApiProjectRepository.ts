@@ -1,6 +1,7 @@
 import { ApiClient } from '../../core/http/ApiClient.ts';
 import { ApiError } from '../../core/http/ApiError.ts';
 import type { Project, ProjectInput } from '../../models/Project.ts';
+import type { ProjectMember } from '../../models/ProjectMember.ts';
 import type { ProjectRepository } from '../repositories.ts';
 
 /** /projects */
@@ -10,6 +11,23 @@ export class ApiProjectRepository implements ProjectRepository {
   findAll(ownerId?: number): Promise<Project[]> {
     const query = ownerId === undefined ? '' : `?userId=${ownerId}`;
     return this.api.get<Project[]>(`/projects${query}`);
+  }
+
+  /** Without a filter the backend already returns owned and shared projects. */
+  findAccessible(_userId: number): Promise<Project[]> {
+    return this.api.get<Project[]>('/projects');
+  }
+
+  members(projectId: number): Promise<ProjectMember[]> {
+    return this.api.get<ProjectMember[]>(`/projects/${projectId}/members`);
+  }
+
+  share(projectId: number, email: string): Promise<ProjectMember> {
+    return this.api.post<ProjectMember>(`/projects/${projectId}/members`, { email });
+  }
+
+  unshare(projectId: number, userId: number): Promise<void> {
+    return this.api.delete<void>(`/projects/${projectId}/members/${userId}`);
   }
 
   async findById(id: number): Promise<Project | null> {

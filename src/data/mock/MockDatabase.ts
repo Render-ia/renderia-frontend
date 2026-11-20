@@ -15,12 +15,20 @@ export interface UserRow extends User {
   passwordHash: string;
 }
 
+/** Row of the `project_members` table: a project shared with another user. */
+export interface ProjectMemberRow {
+  id: number;
+  projectId: number;
+  userId: number;
+  createdAt: string;
+}
+
 export interface SessionRow {
   token: string;
   userId: number;
 }
 
-/** The 12 tables of schema.sql plus the demo sessions. */
+/** The 13 tables of schema.sql plus the demo sessions. */
 export interface Tables {
   roles: Role[];
   users: UserRow[];
@@ -29,6 +37,7 @@ export interface Tables {
   materials: CatalogItem[];
   aiModels: AiModel[];
   projects: Project[];
+  projectMembers: ProjectMemberRow[];
   floorPlans: FloorPlan[];
   analyses: AiAnalysis[];
   elements: StructuralElement[];
@@ -39,7 +48,8 @@ export interface Tables {
 
 type TableName = keyof Tables;
 
-const STORAGE_KEY = 'renderia.db.v1';
+// v2: five roles, project sharing and demo accounts without passwords.
+const STORAGE_KEY = 'renderia.db.v2';
 
 /**
  * In-browser copy of the PostgreSQL database, saved in localStorage. Lets the

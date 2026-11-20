@@ -4,15 +4,16 @@ import { View } from '../View.ts';
 import { authLayout, passwordField, showAuthError, slowServerNote, submitWhileWaiting, wirePasswordToggles } from './AuthLayout.ts';
 
 /**
- * Demo accounts for the class presentation. The buttons ask the backend to open
- * the session (POST /auth/demo), so no password lives in the frontend code.
- * With the real backend only Ingeniero and Estudiante exist; the administrator
- * is never a public demo account.
+ * One demo account per role, for the teacher and the jury. "Usar" asks the
+ * backend to open the session (POST /auth/demo): no password exists in this
+ * code, in the page or in the network traffic.
  */
 const DEMO_ACCOUNTS = [
-  { role: 'Administrador', email: 'admin@renderia.co', withBackend: false },
-  { role: 'Ingeniero', email: 'ingeniero@renderia.co', withBackend: true },
-  { role: 'Estudiante', email: 'estudiante@renderia.co', withBackend: true },
+  { role: 'Administrador', email: 'admin.prueba@renderia.co', mockEmail: 'admin@renderia.co', hint: 'Ve todo el sistema y el panel de administración. En la cuenta de prueba no puede cambiar datos de otros.' },
+  { role: 'Ingeniero', email: 'ingeniero@renderia.co', hint: 'Crea proyectos, analiza planos con IA, corrige el modelo y exporta.' },
+  { role: 'Revisor', email: 'revisor@renderia.co', hint: 'Revisa y valida los proyectos de todos, sin borrar ni editar.' },
+  { role: 'Cliente', email: 'cliente@renderia.co', hint: 'Ve los proyectos que le comparten, en modo cliente.' },
+  { role: 'Estudiante', email: 'estudiante@renderia.co', hint: 'Hasta 3 proyectos, con fines académicos.' },
 ];
 
 export class LoginView extends View {
@@ -84,22 +85,25 @@ export class LoginView extends View {
     });
   }
 
-  /** Quick access to the demo accounts that exist in the current data source. */
+  /** "Cuentas de prueba" panel: one row per role with a "Usar" button. */
   private demoAccounts(): string {
-    const withBackend = AppConfig.getInstance().dataSource !== 'mock';
-    const buttons = DEMO_ACCOUNTS.map((account, index) => ({ account, index }))
-      .filter(({ account }) => !withBackend || account.withBackend)
-      .map(
-        ({ account, index }) => `
-        <button class="demo-account" type="button" data-demo="${index}">
-          <strong>${account.role}</strong><span>${account.email}</span>
-        </button>`,
-      )
-      .join('');
+    const mock = AppConfig.getInstance().dataSource === 'mock';
+    const rows = DEMO_ACCOUNTS.map(
+      (account, index) => `
+        <li class="demo-account">
+          <div class="demo-account__text">
+            <strong>${account.role}</strong>
+            <span class="demo-account__email">${mock && account.mockEmail ? account.mockEmail : account.email}</span>
+            <small>${account.hint}</small>
+          </div>
+          <button class="button button--small" type="button" data-demo="${index}" aria-label="Entrar como ${account.role}">Usar</button>
+        </li>`,
+    ).join('');
     return `
-      <div class="auth__demo">
-        <p>Cuentas de prueba</p>
-        <div class="auth__demo-list">${buttons}</div>
-      </div>`;
+      <section class="auth__demo" aria-labelledby="demo-title">
+        <p id="demo-title">Cuentas de prueba</p>
+        <small class="auth__demo-note">Entra con un rol sin escribir contraseña.</small>
+        <ul class="auth__demo-list">${rows}</ul>
+      </section>`;
   }
 }

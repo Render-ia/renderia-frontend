@@ -204,34 +204,50 @@
   color: var(--color-graphite-soft);
 }
 
+.auth__demo-note {
+  display: block;
+  margin-bottom: var(--space-3);
+  color: var(--color-graphite-soft);
+  font-size: var(--font-size-sm);
+}
+
 .auth__demo-list {
   display: grid;
   gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .demo-account {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-2) var(--space-3);
-  min-height: 2.75rem;
-  align-items: center;
   border: 1px solid var(--color-concrete);
   border-radius: var(--radius-md);
-  background: transparent;
-  color: inherit;
   font-size: var(--font-size-sm);
-  text-align: left;
-  cursor: pointer;
 }
 
-.demo-account span {
+.demo-account__text {
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.demo-account__email {
+  color: var(--color-prussian);
+  overflow-wrap: anywhere;
+}
+
+.demo-account small {
   color: var(--color-graphite-soft);
+  line-height: 1.35;
 }
 
-.demo-account:hover {
-  border-color: var(--color-prussian);
-  background: var(--color-prussian-tint);
+.demo-account .button {
+  flex-shrink: 0;
 }
 
 @media (max-width: 860px) {

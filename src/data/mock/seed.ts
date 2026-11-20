@@ -4,10 +4,8 @@ import type { Tables } from './MockDatabase.ts';
  * Initial data. Catalogs and roles copy renderia-database/seed.sql; the demo
  * users, project and floor plan exist only in the browser version.
  *
- * Demo accounts (password hashes are SHA-256 of "email:password"):
- *   admin@renderia.co       Admin123*
- *   ingeniero@renderia.co   Ingeniero123*
- *   estudiante@renderia.co  Estudiante123*
+ * Demo accounts, one per role, have no password at all (empty hash): they are
+ * entered only with the "Usar" buttons of the login, like on the real backend.
  */
 export function createSeed(): Tables {
   const createdAt = '2026-10-01T14:00:00.000Z';
@@ -17,6 +15,8 @@ export function createSeed(): Tables {
       { id: 1, name: 'Administrador', description: 'Gestiona usuarios, catálogos y modelos de IA' },
       { id: 2, name: 'Ingeniero', description: 'Crea proyectos y analiza planos estructurales' },
       { id: 3, name: 'Estudiante', description: 'Usa la plataforma con fines académicos' },
+      { id: 4, name: 'Revisor', description: 'Revisa y valida los proyectos de todos, sin borrar' },
+      { id: 5, name: 'Cliente', description: 'Ve los proyectos que le comparten, en modo cliente' },
     ],
     users: [
       {
@@ -24,7 +24,7 @@ export function createSeed(): Tables {
         roleId: 1,
         fullName: 'Administrador Render.IA',
         email: 'admin@renderia.co',
-        passwordHash: '0876ca8947d69bc6b1de6edf9fde5ad6d29d0acc08ca79644d0e4fee187d7360',
+        passwordHash: '',
         isActive: true,
         createdAt,
       },
@@ -33,7 +33,7 @@ export function createSeed(): Tables {
         roleId: 2,
         fullName: 'Laura Gómez',
         email: 'ingeniero@renderia.co',
-        passwordHash: '2c3993e3fd47a709495bd32fa1594f6c36864b997481f3db51240b3130388de4',
+        passwordHash: '',
         isActive: true,
         createdAt,
       },
@@ -42,7 +42,25 @@ export function createSeed(): Tables {
         roleId: 3,
         fullName: 'Andrés Rosero',
         email: 'estudiante@renderia.co',
-        passwordHash: '47150c71585402cb8f45c07c6c20a3791a9d3705f3222e0dbf9fae973af39e27',
+        passwordHash: '',
+        isActive: true,
+        createdAt,
+      },
+      {
+        id: 4,
+        roleId: 4,
+        fullName: 'Marcela Ortiz',
+        email: 'revisor@renderia.co',
+        passwordHash: '',
+        isActive: true,
+        createdAt,
+      },
+      {
+        id: 5,
+        roleId: 5,
+        fullName: 'Carlos Benavides',
+        email: 'cliente@renderia.co',
+        passwordHash: '',
         isActive: true,
         createdAt,
       },
@@ -111,6 +129,7 @@ export function createSeed(): Tables {
         uploadedAt: createdAt,
       },
     ],
+    projectMembers: [{ id: 1, projectId: 1, userId: 5, createdAt }],
     analyses: [],
     elements: [],
     models3d: [],

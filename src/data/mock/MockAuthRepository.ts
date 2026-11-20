@@ -1,6 +1,6 @@
 import { ApiError } from '../../core/http/ApiError.ts';
 import type { RegisterData, UserWithRole } from '../../models/User.ts';
-import { randomToken, sha256Hex } from '../../utils/crypto.ts';
+import { hashPassword, randomToken, verifyPassword } from '../../utils/crypto.ts';
 import type { AuthRepository, AuthResult } from '../repositories.ts';
 import { latency, MockDatabase, now, type UserRow } from './MockDatabase.ts';
 
@@ -18,9 +18,9 @@ export class MockAuthRepository implements AuthRepository {
     await latency(250);
     const normalized = email.trim().toLowerCase();
     const row = this.db.table('users').find((u) => u.email === normalized);
-    const hash = await sha256Hex(`${normalized}:${password}`);
+    const matches = row ? await verifyPassword(password, row.passwordHash) : false;
 
-    if (!row || row.passwordHash !== hash) {
+    if (!row || !matches) {
       throw new ApiError('El correo o la contraseña no son correctos.', 401);
     }
     if (!row.isActive) {
@@ -44,8 +44,8 @@ export class MockAuthRepository implements AuthRepository {
       throw new ApiError('Ya existe una cuenta con ese correo.', 409);
     }
     const role = this.db.table('roles').find((r) => r.id === data.roleId);
-    if (!role || role.name === 'Administrador') {
-      throw new ApiError('Elige un rol válido: Ingeniero o Estudiante.', 400);
+    if (!role || !['Ingeniero', 'Estudiante', 'Cliente'].includes(role.name)) {
+      throw new ApiError('Elige un rol válido: Ingeniero, Estudiante o Cliente.', 400);
     }
 
     const row: UserRow = {
@@ -53,7 +53,7 @@ export class MockAuthRepository implements AuthRepository {
       roleId: role.id,
       fullName: data.fullName.trim(),
       email,
-      passwordHash: await sha256Hex(`${email}:${data.password}`),
+      passwordHash: await hashPassword(data.password),
       isActive: true,
       createdAt: now(),
     };

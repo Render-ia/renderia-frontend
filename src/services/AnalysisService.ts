@@ -1,3 +1,4 @@
+import { AppConfig } from '../core/config/AppConfig.ts';
 import type { AnalysisSummary } from '../analysis/AnalysisSummary.ts';
 import type { ElementChanges } from '../analysis/commands/ElementCommand.ts';
 import { Session } from '../auth/Session.ts';
@@ -118,9 +119,22 @@ export class AnalysisService {
     detail.analysis.rawResponse = saved.rawResponse ?? JSON.stringify(summary);
   }
 
-  /** Records that a person checked the proposal. */
-  async markReviewed(detail: AnalysisDetail): Promise<void> {
-    logActivity('Análisis revisado', `Se marcó como revisado el análisis #${detail.analysis.id}.`);
+  /** The owner signs off their own analyses; a reviewer can sign off anyone's. */
+  canReview(project: Project): boolean {
+    return this.canEdit(project) || Session.getInstance().can('analyses:review-any');
+  }
+
+  /** Signs the proposal off. The backend stamps who and when, and logs it. */
+  async review(detail: AnalysisDetail): Promise<void> {
+    if (!this.canReview(detail.project)) {
+      throw new ApiError('Solo el dueño del proyecto o un revisor puede marcarlo como revisado.', 403);
+    }
+    const name = Session.getInstance().user?.fullName ?? 'Usuario';
+    const saved = await this.repos.analyses().review(detail.analysis.id, name);
+    detail.analysis.rawResponse = saved.rawResponse;
+    if (AppConfig.getInstance().dataSource === 'mock') {
+      logActivity('Análisis revisado', `Se marcó como revisado el análisis #${detail.analysis.id}.`);
+    }
   }
 
   async remove(detail: AnalysisRow): Promise<void> {

@@ -106,7 +106,17 @@ export class ProjectsView extends View {
   /** Students see how many projects they have left. */
   private async updateLimitNote(): Promise<void> {
     const limit = this.session.policy.projectLimit();
-    if (!Number.isFinite(limit) || !this.root) return;
+    if (!this.root) return;
+    if (limit <= 0) {
+      this.root.querySelector<HTMLElement>('[data-new]')?.remove();
+      const note = this.root.querySelector<HTMLElement>('[data-limit]')!;
+      note.textContent = this.session.can('projects:view-all')
+        ? 'Tu rol revisa los proyectos de todos; no crea proyectos propios.'
+        : 'Aquí aparecen los proyectos que te comparten.';
+      note.hidden = false;
+      return;
+    }
+    if (!Number.isFinite(limit)) return;
     const remaining = await this.service.remainingSlots();
     const note = this.root.querySelector<HTMLElement>('[data-limit]')!;
     const button = this.root.querySelector<HTMLButtonElement>('[data-new]')!;
