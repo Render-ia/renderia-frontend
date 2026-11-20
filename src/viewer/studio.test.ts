@@ -14,6 +14,13 @@ describe('3D studio presets', () => {
     expect(cameraPose('iso', 10, 10, 0.5).position[0]).toBeGreaterThan(cameraPose('iso', 10, 10, 1.6).position[0]);
   });
 
+  it('backs away and aims higher for tall buildings', () => {
+    const low = cameraPose('iso', 24, 16, 1.6, 3);
+    const tower = cameraPose('iso', 24, 16, 1.6, 36);
+    expect(tower.position[1]).toBeGreaterThan(low.position[1]);
+    expect(tower.target[1]).toBeGreaterThan(low.target[1]);
+  });
+
   it('groups types in disciplines', () => {
     expect(disciplineOf('Muro')).toBe('architecture');
     expect(disciplineOf('Viga')).toBe('structure');
