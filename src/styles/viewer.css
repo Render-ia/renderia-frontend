@@ -302,14 +302,14 @@
 
 /* ---------- Model gallery (Visor 3D without an analysis) ---------- */
 
-.model-filters {
+.building-filters {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
   margin-bottom: var(--space-6);
 }
 
-.model-filters .chip[aria-pressed='true'] {
+.building-filters .chip[aria-pressed='true'] {
   border-color: var(--color-prussian);
   background: var(--color-prussian);
   color: var(--color-on-accent);
@@ -321,13 +321,13 @@
   opacity: 0.7;
 }
 
-.model-grid {
+.building-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
   gap: var(--space-4);
 }
 
-.model-card {
+.building-card {
   display: grid;
   grid-template-rows: auto 1fr;
   overflow: hidden;
@@ -339,25 +339,35 @@
   transition: box-shadow 150ms ease-out, transform 150ms ease-out;
 }
 
-.model-card:hover,
-.model-card:focus-visible {
+.building-card:hover,
+.building-card:focus-visible {
   box-shadow: var(--shadow-lift);
   transform: translateY(-2px);
 }
 
-.model-card__image {
+.building-card__image {
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--color-cyanotype);
 }
 
-.model-card__image img {
+.building-card__image img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: var(--space-3);
+  object-fit: cover;
 }
 
-.model-card__type {
+/* Until the 3D picture is ready, the plan is shown as a blueprint. */
+.building-card__image--pending img {
+  object-fit: contain;
+  padding: var(--space-2);
+  filter: invert(1);
+  mix-blend-mode: screen;
+  opacity: 0.7;
+}
+
+.building-card__type {
   position: absolute;
   top: var(--space-2);
   left: var(--space-2);
@@ -369,38 +379,31 @@
   font-weight: 600;
 }
 
-.model-card__body {
+.building-card__body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-3) var(--space-4) var(--space-4);
+  gap: 2px;
+  padding: var(--space-2) var(--space-3) var(--space-3);
 }
 
-.model-card__body h3 {
-  font-size: var(--font-size-md);
+.building-card__body h3 {
+  font-size: var(--font-size-sm);
+  line-height: 1.3;
 }
 
-.model-card__meta,
-.model-card__counts {
+.building-card__meta,
+.building-card__counts {
   font-size: var(--font-size-xs);
   color: var(--color-graphite-soft);
 }
 
-.model-card__open {
-  align-self: flex-start;
-  margin-top: var(--space-2);
-  font-size: var(--font-size-sm);
-  font-weight: 650;
-  color: var(--color-prussian);
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .model-card {
+  .building-card {
     transition: none;
   }
 
-  .model-card:hover,
-  .model-card:focus-visible {
+  .building-card:hover,
+  .building-card:focus-visible {
     transform: none;
   }
 }
