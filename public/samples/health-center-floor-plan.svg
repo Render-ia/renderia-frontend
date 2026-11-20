@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1512" height="957" viewBox="-80 -80 2560 1620">
+<rect x="-80" y="-80" width="2560" height="1620" fill="#ffffff"/>
+<g fill="#1f2328">
+<rect x="0" y="-7.5" width="150" height="15"/>
+<rect x="300" y="-7.5" width="450" height="15"/>
+<rect x="900" y="-7.5" width="450" height="15"/>
+<rect x="1500" y="-7.5" width="450" height="15"/>
+<rect x="2100" y="-7.5" width="300" height="15"/>
+<rect x="0" y="1392.5" width="150" height="15"/>
+<rect x="300" y="1392.5" width="450" height="15"/>
+<rect x="900" y="1392.5" width="450" height="15"/>
+<rect x="1500" y="1392.5" width="450" height="15"/>
+<rect x="2100" y="1392.5" width="300" height="15"/>
+<rect x="-7.5" y="0" width="15" height="650"/>
+<rect x="-7.5" y="750" width="15" height="650"/>
+<rect x="2392.5" y="0" width="15" height="250"/>
+<rect x="2392.5" y="400" width="15" height="600"/>
+<rect x="2392.5" y="1150" width="15" height="250"/>
+<rect x="0" y="544.0" width="200" height="12"/>
+<rect x="290" y="544.0" width="510" height="12"/>
+<rect x="890" y="544.0" width="510" height="12"/>
+<rect x="1490" y="544.0" width="510" height="12"/>
+<rect x="2090" y="544.0" width="310" height="12"/>
+<rect x="0" y="844.0" width="200" height="12"/>
+<rect x="290" y="844.0" width="510" height="12"/>
+<rect x="890" y="844.0" width="510" height="12"/>
+<rect x="1490" y="844.0" width="510" height="12"/>
+<rect x="2090" y="844.0" width="310" height="12"/>
+<rect x="594.0" y="0" width="12" height="550"/>
+<rect x="1194.0" y="0" width="12" height="550"/>
+<rect x="1794.0" y="0" width="12" height="550"/>
+<rect x="594.0" y="850" width="12" height="550"/>
+<rect x="1194.0" y="850" width="12" height="550"/>
+<rect x="1794.0" y="850" width="12" height="550"/>
+<rect x="-15.0" y="-15.0" width="30" height="30"/>
+<rect x="-15.0" y="535.0" width="30" height="30"/>
+<rect x="-15.0" y="835.0" width="30" height="30"/>
+<rect x="-15.0" y="1385.0" width="30" height="30"/>
+<rect x="585.0" y="-15.0" width="30" height="30"/>
+<rect x="585.0" y="535.0" width="30" height="30"/>
+<rect x="585.0" y="835.0" width="30" height="30"/>
+<rect x="585.0" y="1385.0" width="30" height="30"/>
+<rect x="1185.0" y="-15.0" width="30" height="30"/>
+<rect x="1185.0" y="535.0" width="30" height="30"/>
+<rect x="1185.0" y="835.0" width="30" height="30"/>
+<rect x="1185.0" y="1385.0" width="30" height="30"/>
+<rect x="1785.0" y="-15.0" width="30" height="30"/>
+<rect x="1785.0" y="535.0" width="30" height="30"/>
+<rect x="1785.0" y="835.0" width="30" height="30"/>
+<rect x="1785.0" y="1385.0" width="30" height="30"/>
+<rect x="2385.0" y="-15.0" width="30" height="30"/>
+<rect x="2385.0" y="535.0" width="30" height="30"/>
+<rect x="2385.0" y="835.0" width="30" height="30"/>
+<rect x="2385.0" y="1385.0" width="30" height="30"/>
+</g>
+<g stroke="#1f2328" stroke-width="1.5" fill="none">
+<path d="M150 -3H300M150 3H300"/>
+<path d="M750 -3H900M750 3H900"/>
+<path d="M1350 -3H1500M1350 3H1500"/>
+<path d="M1950 -3H2100M1950 3H2100"/>
+<path d="M150 1397H300M150 1403H300"/>
+<path d="M750 1397H900M750 1403H900"/>
+<path d="M1350 1397H1500M1350 1403H1500"/>
+<path d="M1950 1397H2100M1950 1403H2100"/>
+<path d="M0 650H100A100 100 0 0 1 0 750"/>
+<path d="M2397 250V400M2403 250V400"/>
+<path d="M2397 1000V1150M2403 1000V1150"/>
+<path d="M200 550V640A90 90 0 0 0 290 550"/>
+<path d="M800 550V640A90 90 0 0 0 890 550"/>
+<path d="M1400 550V640A90 90 0 0 0 1490 550"/>
+<path d="M2000 550V640A90 90 0 0 0 2090 550"/>
+<path d="M200 850V760A90 90 0 0 1 290 850"/>
+<path d="M800 850V760A90 90 0 0 1 890 850"/>
+<path d="M1400 850V760A90 90 0 0 1 1490 850"/>
+<path d="M2000 850V760A90 90 0 0 1 2090 850"/>
+</g>
+<g stroke="#5a6570" stroke-width="1.2" fill="none"><path d="M0 1460H2400M0 1450V1470M2400 1450V1470"/></g>
+<g font-family="Arial, sans-serif" font-size="26" fill="#5a6570" text-anchor="middle">
+<text x="1200.0" y="1450">24,00 m</text>
+<text x="300" y="300">Espera</text>
+<text x="900" y="300">Consultorio 1</text>
+<text x="1500" y="300">Consultorio 2</text>
+<text x="2100" y="300">Consultorio 3</text>
+<text x="1200" y="720">Pasillo</text>
+<text x="300" y="1150">Urgencias</text>
+<text x="900" y="1150">Enfermería</text>
+<text x="1500" y="1150">Laboratorio</text>
+<text x="2100" y="1150">Farmacia</text>
+</g></svg>

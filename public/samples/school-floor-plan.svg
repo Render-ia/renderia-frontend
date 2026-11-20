@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1866" height="957" viewBox="-80 -80 3160 1620">
+<rect x="-80" y="-80" width="3160" height="1620" fill="#ffffff"/>
+<g fill="#1f2328">
+<rect x="0" y="-7.5" width="150" height="15"/>
+<rect x="350" y="-7.5" width="200" height="15"/>
+<rect x="750" y="-7.5" width="150" height="15"/>
+<rect x="1100" y="-7.5" width="200" height="15"/>
+<rect x="1500" y="-7.5" width="150" height="15"/>
+<rect x="1850" y="-7.5" width="200" height="15"/>
+<rect x="2250" y="-7.5" width="200" height="15"/>
+<rect x="2650" y="-7.5" width="350" height="15"/>
+<rect x="0" y="1392.5" width="300" height="15"/>
+<rect x="550" y="1392.5" width="750" height="15"/>
+<rect x="1550" y="1392.5" width="750" height="15"/>
+<rect x="2550" y="1392.5" width="450" height="15"/>
+<rect x="-7.5" y="0" width="15" height="1200"/>
+<rect x="-7.5" y="1300" width="15" height="100"/>
+<rect x="2992.5" y="0" width="15" height="1200"/>
+<rect x="2992.5" y="1300" width="15" height="100"/>
+<rect x="0" y="1094.0" width="500" height="12"/>
+<rect x="600" y="1094.0" width="650" height="12"/>
+<rect x="1350" y="1094.0" width="650" height="12"/>
+<rect x="2100" y="1094.0" width="600" height="12"/>
+<rect x="2800" y="1094.0" width="200" height="12"/>
+<rect x="744.0" y="0" width="12" height="1100"/>
+<rect x="1494.0" y="0" width="12" height="1100"/>
+<rect x="2244.0" y="0" width="12" height="1100"/>
+<rect x="-15.0" y="-15.0" width="30" height="30"/>
+<rect x="-15.0" y="1085.0" width="30" height="30"/>
+<rect x="-15.0" y="1385.0" width="30" height="30"/>
+<rect x="735.0" y="-15.0" width="30" height="30"/>
+<rect x="735.0" y="1085.0" width="30" height="30"/>
+<rect x="735.0" y="1385.0" width="30" height="30"/>
+<rect x="1485.0" y="-15.0" width="30" height="30"/>
+<rect x="1485.0" y="1085.0" width="30" height="30"/>
+<rect x="1485.0" y="1385.0" width="30" height="30"/>
+<rect x="2235.0" y="-15.0" width="30" height="30"/>
+<rect x="2235.0" y="1085.0" width="30" height="30"/>
+<rect x="2235.0" y="1385.0" width="30" height="30"/>
+<rect x="2985.0" y="-15.0" width="30" height="30"/>
+<rect x="2985.0" y="1085.0" width="30" height="30"/>
+<rect x="2985.0" y="1385.0" width="30" height="30"/>
+</g>
+<g stroke="#1f2328" stroke-width="1.5" fill="none">
+<path d="M150 -3H350M150 3H350"/>
+<path d="M550 -3H750M550 3H750"/>
+<path d="M900 -3H1100M900 3H1100"/>
+<path d="M1300 -3H1500M1300 3H1500"/>
+<path d="M1650 -3H1850M1650 3H1850"/>
+<path d="M2050 -3H2250M2050 3H2250"/>
+<path d="M2450 -3H2650M2450 3H2650"/>
+<path d="M300 1397H550M300 1403H550"/>
+<path d="M1300 1397H1550M1300 1403H1550"/>
+<path d="M2300 1397H2550M2300 1403H2550"/>
+<path d="M0 1200H100A100 100 0 0 1 0 1300"/>
+<path d="M3000 1200H2900A100 100 0 0 0 3000 1300"/>
+<path d="M500 1100V1000A100 100 0 0 1 600 1100"/>
+<path d="M1250 1100V1000A100 100 0 0 1 1350 1100"/>
+<path d="M2000 1100V1000A100 100 0 0 1 2100 1100"/>
+<path d="M2700 1100V1000A100 100 0 0 1 2800 1100"/>
+</g>
+<g stroke="#5a6570" stroke-width="1.2" fill="none"><path d="M0 1460H3000M0 1450V1470M3000 1450V1470"/></g>
+<g font-family="Arial, sans-serif" font-size="26" fill="#5a6570" text-anchor="middle">
+<text x="1500.0" y="1450">30,00 m</text>
+<text x="375" y="550">Aula 1</text>
+<text x="1125" y="550">Aula 2</text>
+<text x="1875" y="550">Aula 3</text>
+<text x="2625" y="550">Aula 4</text>
+<text x="1500" y="1270">Corredor</text>
+</g></svg>

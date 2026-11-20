@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="685" height="1075" viewBox="-80 -80 1160 1820">
+<rect x="-80" y="-80" width="1160" height="1820" fill="#ffffff"/>
+<g fill="#1f2328">
+<rect x="0" y="-7.5" width="100" height="15"/>
+<rect x="350" y="-7.5" width="100" height="15"/>
+<rect x="550" y="-7.5" width="100" height="15"/>
+<rect x="900" y="-7.5" width="100" height="15"/>
+<rect x="0" y="1592.5" width="150" height="15"/>
+<rect x="250" y="1592.5" width="750" height="15"/>
+<rect x="-7.5" y="0" width="15" height="400"/>
+<rect x="-7.5" y="550" width="15" height="1050"/>
+<rect x="992.5" y="0" width="15" height="400"/>
+<rect x="992.5" y="550" width="15" height="1050"/>
+<rect x="0" y="1194.0" width="550" height="12"/>
+<rect x="650" y="1194.0" width="350" height="12"/>
+<rect x="394.0" y="1200" width="12" height="50"/>
+<rect x="394.0" y="1330" width="12" height="270"/>
+<rect x="-15.0" y="-15.0" width="30" height="30"/>
+<rect x="485.0" y="-15.0" width="30" height="30"/>
+<rect x="985.0" y="-15.0" width="30" height="30"/>
+<rect x="-15.0" y="585.0" width="30" height="30"/>
+<rect x="985.0" y="585.0" width="30" height="30"/>
+<rect x="-15.0" y="1185.0" width="30" height="30"/>
+<rect x="485.0" y="1185.0" width="30" height="30"/>
+<rect x="985.0" y="1185.0" width="30" height="30"/>
+<rect x="-15.0" y="1585.0" width="30" height="30"/>
+<rect x="985.0" y="1585.0" width="30" height="30"/>
+<rect x="485.0" y="585.0" width="30" height="30"/>
+</g>
+<g stroke="#1f2328" stroke-width="1.5" fill="none">
+<path d="M100 -3H350M100 3H350"/>
+<path d="M450 0V100A100 100 0 0 0 550 0"/>
+<path d="M650 -3H900M650 3H900"/>
+<path d="M150 1600V1500A100 100 0 0 1 250 1600"/>
+<path d="M-3 400V550M3 400V550"/>
+<path d="M997 400V550M1003 400V550"/>
+<path d="M550 1200V1100A100 100 0 0 1 650 1200"/>
+<path d="M400 1250H480A80 80 0 0 1 400 1330"/>
+</g>
+<g stroke="#5a6570" stroke-width="1.2" fill="none"><path d="M0 1660H1000M0 1650V1670M1000 1650V1670"/></g>
+<g font-family="Arial, sans-serif" font-size="26" fill="#5a6570" text-anchor="middle">
+<text x="500.0" y="1650">10,00 m</text>
+<text x="500" y="400">Área de ventas</text>
+<text x="200" y="1450">Baño</text>
+<text x="700" y="1400">Depósito</text>
+</g></svg>

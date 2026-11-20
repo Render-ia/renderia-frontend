@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1512" height="1193" viewBox="-80 -80 2560 2020">
+<rect x="-80" y="-80" width="2560" height="2020" fill="#ffffff"/>
+<g fill="#1f2328">
+<rect x="0" y="-7.5" width="300" height="15"/>
+<rect x="550" y="-7.5" width="500" height="15"/>
+<rect x="1300" y="-7.5" width="500" height="15"/>
+<rect x="2050" y="-7.5" width="350" height="15"/>
+<rect x="0" y="1792.5" width="500" height="15"/>
+<rect x="600" y="1792.5" width="500" height="15"/>
+<rect x="1200" y="1792.5" width="500" height="15"/>
+<rect x="1800" y="1792.5" width="600" height="15"/>
+<rect x="-7.5" y="0" width="15" height="800"/>
+<rect x="-7.5" y="1000" width="15" height="800"/>
+<rect x="2392.5" y="0" width="15" height="800"/>
+<rect x="2392.5" y="1000" width="15" height="800"/>
+<rect x="1800" y="494.0" width="600" height="12"/>
+<rect x="1794.0" y="0" width="12" height="300"/>
+<rect x="1794.0" y="400" width="12" height="100"/>
+<rect x="-15.0" y="-15.0" width="30" height="30"/>
+<rect x="-15.0" y="585.0" width="30" height="30"/>
+<rect x="-15.0" y="1185.0" width="30" height="30"/>
+<rect x="-15.0" y="1785.0" width="30" height="30"/>
+<rect x="585.0" y="-15.0" width="30" height="30"/>
+<rect x="585.0" y="585.0" width="30" height="30"/>
+<rect x="585.0" y="1185.0" width="30" height="30"/>
+<rect x="585.0" y="1785.0" width="30" height="30"/>
+<rect x="1185.0" y="-15.0" width="30" height="30"/>
+<rect x="1185.0" y="585.0" width="30" height="30"/>
+<rect x="1185.0" y="1185.0" width="30" height="30"/>
+<rect x="1185.0" y="1785.0" width="30" height="30"/>
+<rect x="1785.0" y="-15.0" width="30" height="30"/>
+<rect x="1785.0" y="585.0" width="30" height="30"/>
+<rect x="1785.0" y="1185.0" width="30" height="30"/>
+<rect x="1785.0" y="1785.0" width="30" height="30"/>
+<rect x="2385.0" y="-15.0" width="30" height="30"/>
+<rect x="2385.0" y="585.0" width="30" height="30"/>
+<rect x="2385.0" y="1185.0" width="30" height="30"/>
+<rect x="2385.0" y="1785.0" width="30" height="30"/>
+</g>
+<g stroke="#1f2328" stroke-width="1.5" fill="none">
+<path d="M300 -3H550M300 3H550"/>
+<path d="M1050 -3H1300M1050 3H1300"/>
+<path d="M1800 -3H2050M1800 3H2050"/>
+<path d="M500 1800V1700A100 100 0 0 1 600 1800"/>
+<path d="M1100 1800V1700A100 100 0 0 1 1200 1800"/>
+<path d="M1700 1800V1700A100 100 0 0 1 1800 1800"/>
+<path d="M-3 800V1000M3 800V1000"/>
+<path d="M2397 800V1000M2403 800V1000"/>
+<path d="M1800 300H1700A100 100 0 0 0 1800 400"/>
+</g>
+<g stroke="#5a6570" stroke-width="1.2" fill="none"><path d="M0 1860H2400M0 1850V1870M2400 1850V1870"/></g>
+<g font-family="Arial, sans-serif" font-size="26" fill="#5a6570" text-anchor="middle">
+<text x="1200.0" y="1850">24,00 m</text>
+<text x="1000" y="900">Almacenamiento</text>
+<text x="2100" y="250">Oficina</text>
+</g></svg>
