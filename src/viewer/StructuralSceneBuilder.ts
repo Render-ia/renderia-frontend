@@ -59,6 +59,40 @@ export class StructuralSceneBuilder {
   withElements(elements: StructuralElement[], types: CatalogItem[], materials: CatalogItem[], colorMode: ColorMode): this {
     this.measure(elements);
     this.realistic = isFinish(colorMode);
+    this.addElements(elements, types, materials, colorMode);
+    return this;
+  }
+
+  /**
+   * A building with one analyzed plan per floor: floors[0] is floor 1, floors[1]
+   * floor 2, and so on. Every floor keeps its own elements, so each one can be
+   * shown alone or the whole building at once.
+   */
+  withFloors(floors: StructuralElement[][], types: CatalogItem[], materials: CatalogItem[], colorMode: ColorMode): this {
+    const levels = floors.slice(0, MAX_STORIES);
+    this.measure(levels.flat());
+    this.realistic = isFinish(colorMode);
+    levels.forEach((elements, index) => {
+      if (index === 1) {
+        const box = new THREE.Box3().setFromObject(this.model);
+        if (!box.isEmpty()) this.storyHeight = Math.max(2.4, box.max.y - Math.min(0, box.min.y));
+      }
+      this.addElements(elements, types, materials, colorMode, index + 1, index * this.storyHeight);
+    });
+    this.stories = Math.max(1, levels.length);
+    this.size.y = this.storyHeight * this.stories;
+    this.liftFog();
+    return this;
+  }
+
+  private addElements(
+    elements: StructuralElement[],
+    types: CatalogItem[],
+    materials: CatalogItem[],
+    colorMode: ColorMode,
+    story?: number,
+    lift = 0,
+  ): void {
     const wallColor = colorFor(colorMode, 'Muro', 'Ladrillo');
     const toScene = (x: number, y: number) => new THREE.Vector2(x - this.center.x, y - this.center.y);
 
@@ -76,9 +110,12 @@ export class StructuralSceneBuilder {
         realistic: this.realistic,
         toScene,
       });
+      if (story !== undefined) {
+        object.position.y += lift;
+        object.userData.story = story;
+      }
       this.groupFor(typeName).add(object);
     }
-    return this;
   }
 
   /**
@@ -103,11 +140,16 @@ export class StructuralSceneBuilder {
       }
     }
     this.size.y = this.storyHeight * this.stories;
+    this.liftFog();
+    return this;
+  }
+
+  /** Taller buildings push the fog back so the top floors stay sharp. */
+  private liftFog(): void {
     if (this.scene.fog instanceof THREE.Fog) {
       this.scene.fog.near += this.size.y;
       this.scene.fog.far += this.size.y * 2;
     }
-    return this;
   }
 
   withGround(): this {

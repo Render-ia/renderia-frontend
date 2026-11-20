@@ -181,6 +181,14 @@ export class ModelViewer {
     });
   }
 
+  /** Shows a single floor of the building (null = every floor). */
+  showOnlyStory(story: number | null): void {
+    this.content?.model.traverse((object) => {
+      const level = object.userData.story;
+      if (typeof level === 'number') object.visible = story === null || level === story;
+    });
+  }
+
   setVisible(typeName: string, visible: boolean): void {
     const group = this.content?.groups.get(typeName);
     if (group) group.visible = visible;

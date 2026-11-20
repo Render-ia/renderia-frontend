@@ -35,4 +35,15 @@ describe('StructuralSceneBuilder stories', () => {
     expect(new StructuralSceneBuilder().withElements([wall], types, [], 'model').withStories(0).build().stories).toBe(1);
     expect(new StructuralSceneBuilder().withElements([wall], types, [], 'model').withStories(500).build().stories).toBe(30);
   });
+
+  it('puts each floor plan on its own level', () => {
+    const upper = { ...wall, id: 2, startX: 0, endX: 4 };
+    const building = new StructuralSceneBuilder().withFloors([[wall], [upper], [upper]], types, [], 'model').build();
+
+    const walls = building.groups.get('Muro')!.children;
+    expect(building.stories).toBe(3);
+    expect(walls.map((c) => c.userData.story)).toEqual([1, 2, 3]);
+    expect(walls[2].position.y - walls[1].position.y).toBeCloseTo(building.storyHeight);
+    expect(building.size.y).toBeCloseTo(building.storyHeight * 3);
+  });
 });
