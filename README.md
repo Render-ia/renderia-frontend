@@ -87,6 +87,13 @@ Si `VITE_API_URL` está vacía, en producción se usa `https://renderia-backend.
 
 En desarrollo, Vite redirige `/api` a `http://localhost:8080`, así que no hace falta configurar CORS para probar con el backend local.
 
+## Seguridad
+
+- **Cabeceras** (`vercel.json`): Content-Security-Policy estricta (solo scripts propios, conexiones solo al backend de Render), HSTS, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy` y `Permissions-Policy` sin cámara, micrófono ni ubicación. Si el backend cambia de dominio, hay que agregarlo en `connect-src` e `img-src`.
+- **Sesión**: si el token guardado ya venció no se restaura, y si el backend responde `401` a una petición con token la sesión se cierra y se vuelve al login.
+- **Sin secretos en el frontend**: todo lo que empieza por `VITE_` termina en el JavaScript público, así que aquí solo van la URL del backend y la fuente de datos. Las claves (Gemini, base de datos, JWT) viven en el backend y en el servicio de IA.
+- Todo texto que viene del servidor se escapa con `escapeHtml` antes de pintarlo.
+
 ## Scripts
 
 | Comando | Qué hace |

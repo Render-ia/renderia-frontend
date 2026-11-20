@@ -16,6 +16,7 @@ import './styles/admin.css';
 import { AuthService } from './auth/AuthService.ts';
 import { Session } from './auth/Session.ts';
 import type { Permission } from './auth/RolePolicy.ts';
+import { appEvents } from './core/events/AppEvents.ts';
 import { Router } from './core/router/Router.ts';
 import { ActivityLogger } from './services/ActivityLogger.ts';
 import { AppShell } from './ui/AppShell.ts';
@@ -73,6 +74,11 @@ async function bootstrap(host: HTMLElement): Promise<void> {
       }
       return null;
     });
+
+  appEvents.on('session:expired', () => {
+    Toast.error('Tu sesión expiró. Inicia sesión de nuevo.');
+    router.navigate('/login');
+  });
 
   router.start();
 }
