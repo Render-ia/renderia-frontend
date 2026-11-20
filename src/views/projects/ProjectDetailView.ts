@@ -15,6 +15,7 @@ import { escapeHtml } from '../../utils/html.ts';
 import { ACCEPTED_PLAN_TYPES } from '../../utils/image.ts';
 import { View } from '../View.ts';
 import { projectFields, readProjectForm } from './projectForm.ts';
+import { reportFormValidity } from '../../utils/form.ts';
 
 export class ProjectDetailView extends View {
   title = 'Proyecto';
@@ -241,7 +242,7 @@ export class ProjectDetailView extends View {
         error.hidden = false;
         return;
       }
-      if (!form.reportValidity()) return;
+      if (!reportFormValidity(form)) return;
       const data = new FormData(form);
       const chosen = file;
       run(form.querySelector('[type="submit"]')!, () =>

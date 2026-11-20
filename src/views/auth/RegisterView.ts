@@ -1,6 +1,7 @@
 import { AuthService } from '../../auth/AuthService.ts';
 import { View } from '../View.ts';
 import { authLayout, passwordField, showAuthError, slowServerNote, submitWhileWaiting, wirePasswordToggles } from './AuthLayout.ts';
+import { reportFormValidity } from '../../utils/form.ts';
 
 /** Role ids from the roles table. Administrators are only created by another admin. */
 const REGISTER_ROLES = [
@@ -58,7 +59,7 @@ export class RegisterView extends View {
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      if (!form.reportValidity()) return;
+      if (!reportFormValidity(form)) return;
       const data = new FormData(form);
 
       if (data.get('password') !== data.get('confirm')) {

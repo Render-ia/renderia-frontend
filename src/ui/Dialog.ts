@@ -1,4 +1,5 @@
 import { escapeHtml } from '../utils/html.ts';
+import { reportFormValidity } from '../utils/form.ts';
 
 export interface ConfirmOptions {
   title: string;
@@ -60,7 +61,7 @@ export class Dialog {
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      if (!form.reportValidity()) return;
+      if (!reportFormValidity(form)) return;
       submit.disabled = true;
       try {
         if (await onSubmit(new FormData(form), form)) dialog.close();
