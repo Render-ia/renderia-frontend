@@ -12,6 +12,7 @@ import './styles/projects.css';
 import './styles/analysis.css';
 import './styles/viewer.css';
 import './styles/admin.css';
+import './styles/budget.css';
 
 import { AuthService } from './auth/AuthService.ts';
 import { Session } from './auth/Session.ts';
@@ -30,6 +31,7 @@ import { NewAnalysisView } from './views/analysis/NewAnalysisView.ts';
 import { AdminView } from './views/admin/AdminView.ts';
 import { ModelPickerView } from './views/viewer/ModelPickerView.ts';
 import { ViewerView } from './views/viewer/ViewerView.ts';
+import { QuantitiesView } from './views/engineering/QuantitiesView.ts';
 import { FloorPlansView } from './views/projects/FloorPlansView.ts';
 import { ProjectDetailView } from './views/projects/ProjectDetailView.ts';
 import { ProjectsView } from './views/projects/ProjectsView.ts';
@@ -57,6 +59,7 @@ async function bootstrap(host: HTMLElement): Promise<void> {
     .register('/analyses/new', () => new NewAnalysisView(null))
     .register('/analyses/new/:planId', ({ planId }) => new NewAnalysisView(Number(planId)))
     .register('/analyses/:id', ({ id }) => new AnalysisDetailView(Number(id)))
+    .register('/analyses/:id/budget', ({ id }) => new QuantitiesView(Number(id)))
     .register('/viewer', () => new ModelPickerView())
     .register('/viewer/:id', ({ id }) => new ViewerView(Number(id)))
     .register('/admin', () => new AdminView(), { permission: 'admin:access' })

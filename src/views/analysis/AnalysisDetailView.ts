@@ -88,6 +88,7 @@ export class AnalysisDetailView extends View {
         </div>
         <div class="page-header__actions">
           ${state.hasResults ? `<a class="button" href="#/viewer/${analysis.id}">Ver modelo 3D</a>` : ''}
+          ${state.hasResults ? `<a class="button button--ghost" href="#/analyses/${analysis.id}/budget">Cantidades y presupuesto</a>` : ''}
           <a class="button button--ghost" href="#/analyses/new/${plan.id}">Analizar de nuevo</a>
           ${canManage ? '<button class="button button--ghost button--danger-text" type="button" data-delete>Eliminar</button>' : ''}
         </div>
