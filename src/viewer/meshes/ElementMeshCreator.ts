@@ -1,5 +1,8 @@
 import * as THREE from 'three';
+import { surfaceTexture, type Surface } from './textures.ts';
 import type { StructuralElement } from '../../models/StructuralElement.ts';
+
+const SURFACE_ROUGHNESS: Record<Surface, number> = { plaster: 0.92, concrete: 0.8, wood: 0.55, floor: 0.45 };
 
 /** Everything a creator needs to build the 3D piece of one element. */
 export interface MeshContext {
@@ -7,6 +10,10 @@ export interface MeshContext {
   typeName: string;
   materialName: string | null;
   color: string;
+  /** Color of the walls in the same style (sills and lintels around openings). */
+  wallColor: string;
+  /** Presentation finishes: textured, reflective surfaces instead of flat colors. */
+  realistic: boolean;
   /** Converts plan coordinates (meters, y downwards) into the scene (x, z). */
   toScene: (x: number, y: number) => THREE.Vector2;
 }
@@ -39,6 +46,24 @@ export abstract class ElementMeshCreator {
 
   protected material(color: string, options: THREE.MeshStandardMaterialParameters = {}): THREE.MeshStandardMaterial {
     return new THREE.MeshStandardMaterial({ color, roughness: 0.85, metalness: 0.02, ...options });
+  }
+
+  /**
+   * Material for a surface of `width` × `height` meters: with the finishes it
+   * gets a texture (plaster, concrete, wood) tinted by the color; otherwise
+   * it is the plain color of the technical modes.
+   */
+  protected surface(
+    context: MeshContext,
+    surface: Surface,
+    color: string,
+    width: number,
+    height: number,
+    options: THREE.MeshStandardMaterialParameters = {},
+  ): THREE.MeshStandardMaterial {
+    if (!context.realistic) return this.material(color, options);
+    const map = surfaceTexture(surface, width, height);
+    return this.material(color, { roughness: SURFACE_ROUGHNESS[surface], ...options, map });
   }
 
   /**

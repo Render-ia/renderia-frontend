@@ -75,7 +75,7 @@ export const FINISHES: { mode: FinishStyle; label: string; colors: Record<string
   {
     mode: 'modern',
     label: 'Moderno',
-    colors: { Muro: '#f2f1ee', Columna: '#d9d9d6', Viga: '#bfc3c7', Losa: '#7d858c', Puerta: '#2f3336', Ventana: '#7fb4d1' },
+    colors: { Muro: '#f2f1ee', Columna: '#d9d9d6', Viga: '#bfc3c7', Losa: '#8a6644', Puerta: '#2f3336', Ventana: '#7fb4d1' },
   },
   {
     mode: 'tropical',
@@ -90,7 +90,7 @@ export const FINISHES: { mode: FinishStyle; label: string; colors: Record<string
   {
     mode: 'minimalist',
     label: 'Minimalista',
-    colors: { Muro: '#ffffff', Columna: '#f3f3f3', Viga: '#e8e8e8', Losa: '#d6d6d6', Puerta: '#cfcac2', Ventana: '#bcd7e6' },
+    colors: { Muro: '#ffffff', Columna: '#f3f3f3', Viga: '#e8e8e8', Losa: '#d8c3a5', Puerta: '#cfcac2', Ventana: '#bcd7e6' },
   },
 ];
 

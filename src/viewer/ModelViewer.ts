@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import type { StructuralScene } from './StructuralSceneBuilder.ts';
 import { cameraPose, captureSize, type ViewName } from './studio.ts';
@@ -34,6 +35,7 @@ export class ModelViewer {
   private readonly heightPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
   private readonly depthPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0);
   private section: SectionCut = { height: null, depth: null };
+  private environment: THREE.Texture | null = null;
   private flight: { from: CameraPoseVectors; to: CameraPoseVectors; start: number } | null = null;
 
   constructor(
@@ -72,8 +74,23 @@ export class ModelViewer {
     this.onPick(null);
     if (this.content) this.disposeScene(this.content.scene);
     this.content = content;
+    // The finishes reflect a soft studio room: glass shines and surfaces get depth.
+    if (content.realistic) {
+      content.scene.environment = this.environmentMap();
+      content.scene.environmentIntensity = 0.45;
+    }
+    this.renderer.toneMappingExposure = content.realistic ? 0.8 : 1.1;
     this.applySection();
     if (resetCamera) this.resetCamera();
+  }
+
+  private environmentMap(): THREE.Texture {
+    if (!this.environment) {
+      const generator = new THREE.PMREMGenerator(this.renderer);
+      this.environment = generator.fromScene(new RoomEnvironment(), 0.04).texture;
+      generator.dispose();
+    }
+    return this.environment;
   }
 
   /** Moves the canvas to a new container (the page re-rendered its controls). */
@@ -198,6 +215,7 @@ export class ModelViewer {
     this.resizeObserver.disconnect();
     this.controls.dispose();
     if (this.content) this.disposeScene(this.content.scene);
+    this.environment?.dispose();
     this.renderer.dispose();
     this.renderer.domElement.remove();
   }
@@ -207,7 +225,10 @@ export class ModelViewer {
       if (object instanceof THREE.Mesh) {
         object.geometry.dispose();
         const materials = Array.isArray(object.material) ? object.material : [object.material];
-        materials.forEach((m) => m.dispose());
+        materials.forEach((m) => {
+          if (m instanceof THREE.MeshStandardMaterial) m.map?.dispose();
+          m.dispose();
+        });
       }
     });
   }

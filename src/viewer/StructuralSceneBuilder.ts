@@ -3,7 +3,7 @@ import type { CatalogItem } from '../models/Catalog.ts';
 import type { StructuralElement } from '../models/StructuralElement.ts';
 import { nameOf } from '../services/CatalogService.ts';
 import { ElementMeshFactory } from './meshes/ElementMeshFactory.ts';
-import { colorFor, MAX_STORIES, type ColorMode } from './studio.ts';
+import { colorFor, isFinish, MAX_STORIES, type ColorMode } from './studio.ts';
 
 export type { ColorMode } from './studio.ts';
 
@@ -26,6 +26,8 @@ export interface StructuralScene {
   /** Height of one floor in meters and how many floors are stacked. */
   storyHeight: number;
   stories: number;
+  /** Presentation finishes: textured surfaces lit by an environment map. */
+  realistic: boolean;
 }
 
 /**
@@ -41,6 +43,7 @@ export class StructuralSceneBuilder {
   private size = new THREE.Vector3(10, 3, 10);
   private storyHeight = 3;
   private stories = 1;
+  private realistic = false;
 
   constructor() {
     this.model.name = 'Render.IA';
@@ -55,6 +58,8 @@ export class StructuralSceneBuilder {
 
   withElements(elements: StructuralElement[], types: CatalogItem[], materials: CatalogItem[], colorMode: ColorMode): this {
     this.measure(elements);
+    this.realistic = isFinish(colorMode);
+    const wallColor = colorFor(colorMode, 'Muro', 'Ladrillo');
     const toScene = (x: number, y: number) => new THREE.Vector2(x - this.center.x, y - this.center.y);
 
     for (const element of elements) {
@@ -62,7 +67,15 @@ export class StructuralSceneBuilder {
       const materialName = element.materialId === null ? null : nameOf(materials, element.materialId, '');
       const color = colorFor(colorMode, typeName, materialName);
 
-      const object = this.factory.creatorFor(typeName).create({ element, typeName, materialName, color, toScene });
+      const object = this.factory.creatorFor(typeName).create({
+        element,
+        typeName,
+        materialName,
+        color,
+        wallColor,
+        realistic: this.realistic,
+        toScene,
+      });
       this.groupFor(typeName).add(object);
     }
     return this;
@@ -117,8 +130,9 @@ export class StructuralSceneBuilder {
   }
 
   withLights(): this {
-    this.scene.add(new THREE.HemisphereLight('#dfe8f5', STUDIO.background, 1.2));
-    const sun = new THREE.DirectionalLight('#fff4e0', 2.6);
+    // With the finishes the environment map adds light, so the lamps go down.
+    this.scene.add(new THREE.HemisphereLight('#dfe8f5', STUDIO.background, this.realistic ? 0.5 : 1.2));
+    const sun = new THREE.DirectionalLight('#fff4e0', this.realistic ? 1.5 : 2.6);
     const reach = Math.max(this.size.x, this.size.z, this.size.y);
     sun.position.set(reach * 0.6, reach * 1.2, reach * 0.8);
     sun.castShadow = true;
@@ -148,6 +162,7 @@ export class StructuralSceneBuilder {
       size: this.size.clone(),
       storyHeight: this.storyHeight,
       stories: this.stories,
+      realistic: this.realistic,
     };
   }
 
