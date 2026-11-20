@@ -14,6 +14,7 @@ export class ApiClient {
 
   private readonly baseUrl: string;
   private tokenProvider: () => string | null = () => null;
+  private onUnauthorized: () => void = () => {};
 
   private constructor() {
     this.baseUrl = AppConfig.getInstance().apiUrl;
@@ -47,6 +48,11 @@ export class ApiClient {
     return this.request<T>('DELETE', path);
   }
 
+  /** Called when the backend rejects the token we sent (expired or revoked). */
+  setUnauthorizedHandler(handler: () => void): void {
+    this.onUnauthorized = handler;
+  }
+
   /** Sends a multipart form (used to upload floor plan files). */
   upload<T>(path: string, form: FormData): Promise<T> {
     return this.request<T>('POST', path, form);
@@ -73,6 +79,7 @@ export class ApiClient {
     }
 
     if (!response.ok) {
+      if (response.status === 401 && token) this.onUnauthorized();
       throw new ApiError(await this.errorMessage(response), response.status);
     }
 
@@ -93,6 +100,7 @@ export class ApiClient {
     if (response.status === 401) return 'Tu sesión no es válida. Inicia sesión de nuevo.';
     if (response.status === 403) return 'No tienes permiso para hacer esto.';
     if (response.status === 404) return 'No se encontró lo que buscabas.';
+    if (response.status === 429) return 'Hiciste demasiadas solicitudes seguidas. Espera un momento.';
     return `El servidor respondió con el código ${response.status}.`;
   }
 }

@@ -3,6 +3,7 @@ import { ApiClient } from '../core/http/ApiClient.ts';
 import { LocalStore } from '../core/storage/LocalStore.ts';
 import { repositories } from '../data/dataSource.ts';
 import type { UserWithRole } from '../models/User.ts';
+import { isExpired } from './jwt.ts';
 import { policyFor } from './policies.ts';
 import type { Permission, RolePolicy } from './RolePolicy.ts';
 
@@ -22,7 +23,14 @@ export class Session {
   private currentPolicy: RolePolicy | null = null;
 
   private constructor() {
-    ApiClient.getInstance().setTokenProvider(() => this.token);
+    const client = ApiClient.getInstance();
+    client.setTokenProvider(() => this.token);
+    // The backend rejected our token: close the session instead of failing screen by screen.
+    client.setUnauthorizedHandler(() => {
+      if (!this.currentUser) return;
+      this.clear();
+      appEvents.emit('session:expired', {});
+    });
   }
 
   static getInstance(): Session {
@@ -54,6 +62,10 @@ export class Session {
   async restore(): Promise<void> {
     const saved = LocalStore.read<string | null>(STORAGE_KEY, null);
     if (!saved) return;
+    if (isExpired(saved)) {
+      this.clear();
+      return;
+    }
     this.token = saved;
     try {
       const user = await repositories().auth().me(saved);
