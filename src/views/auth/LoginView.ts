@@ -4,14 +4,15 @@ import { View } from '../View.ts';
 import { authLayout, passwordField, showAuthError, slowServerNote, submitWhileWaiting, wirePasswordToggles } from './AuthLayout.ts';
 
 /**
- * Public demo accounts for the class presentation. With the real backend only
- * Ingeniero and Estudiante exist (created from DEMO_ENGINEER_PASSWORD and
- * DEMO_STUDENT_PASSWORD); the administrator is never a public demo account.
+ * Demo accounts for the class presentation. The buttons ask the backend to open
+ * the session (POST /auth/demo), so no password lives in the frontend code.
+ * With the real backend only Ingeniero and Estudiante exist; the administrator
+ * is never a public demo account.
  */
 const DEMO_ACCOUNTS = [
-  { role: 'Administrador', email: 'admin@renderia.co', password: 'Admin123*', withBackend: false },
-  { role: 'Ingeniero', email: 'ingeniero@renderia.co', password: 'Ingeniero123*', withBackend: true },
-  { role: 'Estudiante', email: 'estudiante@renderia.co', password: 'Estudiante123*', withBackend: true },
+  { role: 'Administrador', email: 'admin@renderia.co', withBackend: false },
+  { role: 'Ingeniero', email: 'ingeniero@renderia.co', withBackend: true },
+  { role: 'Estudiante', email: 'estudiante@renderia.co', withBackend: true },
 ];
 
 export class LoginView extends View {
@@ -63,11 +64,22 @@ export class LoginView extends View {
     });
 
     container.querySelectorAll<HTMLButtonElement>('[data-demo]').forEach((button) => {
-      button.addEventListener('click', () => {
+      button.addEventListener('click', async () => {
         const account = DEMO_ACCOUNTS[Number(button.dataset.demo)];
-        form.querySelector<HTMLInputElement>('[name="email"]')!.value = account.email;
-        form.querySelector<HTMLInputElement>('[name="password"]')!.value = account.password;
-        form.requestSubmit();
+        const demoButtons = container.querySelectorAll<HTMLButtonElement>('[data-demo]');
+        if (button.disabled) return;
+        demoButtons.forEach((b) => (b.disabled = true));
+        let ok = false;
+        await submitWhileWaiting(form, 'Entrando…', async () => {
+          try {
+            await new AuthService().demoLogin(account.role);
+            ok = true;
+          } catch (error) {
+            showAuthError(form, error instanceof Error ? error.message : 'No se pudo entrar con la cuenta de prueba.');
+          }
+        });
+        demoButtons.forEach((b) => (b.disabled = false));
+        if (ok) this.onSuccess();
       });
     });
   }
