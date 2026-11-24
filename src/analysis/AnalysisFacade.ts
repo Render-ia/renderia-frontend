@@ -8,6 +8,10 @@ import { logActivity } from '../services/ActivityLogger.ts';
 import { CatalogService } from '../services/CatalogService.ts';
 import { stateOf, type AnalysisState } from './AnalysisState.ts';
 import { AnalyzerFactory } from './AnalyzerFactory.ts';
+import { SERVICE_DOWN } from './analyzers/FallbackAnalyzer.ts';
+import { AppConfig } from '../core/config/AppConfig.ts';
+import { ApiClient } from '../core/http/ApiClient.ts';
+import { ApiError } from '../core/http/ApiError.ts';
 import type { DetectedElement } from './PlanAnalyzer.ts';
 
 export interface RunOptions {
@@ -17,7 +21,14 @@ export interface RunOptions {
 }
 
 /**
- * Pattern: Facade — one call (`run`) hides the whole pipeline: create the
+ * Pattern: Facade — one call (`run`) hides the whole pipeline.
+ *
+ * With the real backend the cycle runs on the server in ONE request
+ * (POST /analyses/run): backend → database → AI service → database, and the
+ * browser only shows the result. If the AI service is asleep or down, the
+ * pipeline below runs in the browser instead, so a plan can always be analyzed.
+ *
+ * Browser pipeline: create the
  * analysis record, move it through its states, pick and run the analyzer,
  * translate names to catalog ids, save the elements, register the 3D model
  * and write the activity log.
@@ -27,6 +38,38 @@ export class AnalysisFacade {
   private readonly models3d = repositories().models3d();
 
   async run({ plan, model, onProgress }: RunOptions): Promise<AiAnalysis> {
+    const onServer = await this.runOnServer({ plan, model, onProgress });
+    if (onServer) return onServer;
+    return this.runInBrowser({ plan, model, onProgress });
+  }
+
+  /** Returns null when the server cannot run it (no backend, or the AI service is down). */
+  private async runOnServer({ plan, model, onProgress }: RunOptions): Promise<AiAnalysis | null> {
+    const runCycle = this.analyses.runOnServer?.bind(this.analyses);
+    if (AppConfig.getInstance().dataSource === 'mock' || !runCycle) return null;
+    const reachable = await ApiClient.getInstance()
+      .get<{ reachable?: boolean }>('/ai/capabilities')
+      .then((caps) => caps.reachable !== false)
+      .catch(() => false);
+    if (!reachable) return null;
+
+    onProgress?.(`El backend envía el plano a ${model.name}, guarda los elementos y arma el modelo 3D`);
+    let analysis: AiAnalysis;
+    try {
+      analysis = await runCycle(plan.id, model.id, plan.scale);
+    } catch (error) {
+      // 404: a backend without /analyses/run yet (old deploy); fall back to the browser pipeline.
+      if (error instanceof ApiError && error.status === 404) return null;
+      const message = error instanceof Error ? error.message : String(error);
+      if (SERVICE_DOWN.test(message)) return null;
+      throw error;
+    }
+    appEvents.emit('analysis:status', { analysisId: analysis.id, status: analysis.status });
+    if (analysis.status === 'FAILED' && SERVICE_DOWN.test(analysis.errorMessage ?? '')) return null;
+    return analysis;
+  }
+
+  private async runInBrowser({ plan, model, onProgress }: RunOptions): Promise<AiAnalysis> {
     const catalogs = await CatalogService.getInstance().load();
     let analysis = await this.analyses.create(plan.id, model.id);
     let state: AnalysisState = stateOf(analysis.status);

@@ -1,7 +1,7 @@
 import type { AnalysisInput, AnalysisOutput, PlanAnalyzer } from '../PlanAnalyzer.ts';
 
 /** Errors that mean the AI service is down or asleep, not that the plan is wrong. */
-const SERVICE_DOWN = /servicio de IA|despertando|no responde|c[oó]digo (429|502|503|504)|failed to fetch|network/i;
+export const SERVICE_DOWN = /servicio de IA|despertando|no responde|c[oó]digo (429|502|503|504)|failed to fetch|network/i;
 
 /**
  * Pattern: Decorator — wraps the analyzer that runs on the server and keeps

@@ -26,6 +26,11 @@ export class ApiAnalysisRepository implements AnalysisRepository {
     return this.api.post<AiAnalysis>('/analyses', { floorPlanId, aiModelId });
   }
 
+  /** POST /analyses/run: the backend orchestrates the whole cycle in one call. */
+  runOnServer(floorPlanId: number, aiModelId: number, scale: string): Promise<AiAnalysis> {
+    return this.api.post<AiAnalysis>('/analyses/run', { floorPlanId, aiModelId, scale });
+  }
+
   update(id: number, changes: Partial<Omit<AiAnalysis, 'id'>>): Promise<AiAnalysis> {
     return this.api.put<AiAnalysis>(`/analyses/${id}`, changes);
   }

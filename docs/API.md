@@ -96,6 +96,8 @@ descarga en el navegador para analizarla, así que el servidor de archivos debe 
 | GET | `/analyses` | — | `analysis[]` |
 | GET | `/analyses/{id}` | — | `analysis` |
 | POST | `/analyses` | `{ floorPlanId, aiModelId }` | `analysis` en `PENDING` |
+| POST | `/analyses/run` | `{ floorPlanId, aiModelId, scale? }` | **Ciclo completo en el backend:** crea el análisis, llama a la IA, guarda elementos y modelo 3D; `analysis` en `COMPLETED` o `FAILED` (con `errorMessage`) |
+| POST | `/analyses/{id}/run` | `{ scale? }` | Corre uno en `PENDING` o reintenta uno en `FAILED`; `409` si ya terminó |
 | PUT | `/analyses/{id}` | `{ status?, rawResponse?, errorMessage?, durationMs? }` | `analysis` |
 | DELETE | `/analyses/{id}` | — | `204` |
 | GET | `/analyses/{id}/elements` | — | `element[]` |

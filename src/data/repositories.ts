@@ -77,6 +77,11 @@ export interface AnalysisRepository {
   findAll(): Promise<AiAnalysis[]>;
   findById(id: number): Promise<AiAnalysis | null>;
   create(floorPlanId: number, aiModelId: number): Promise<AiAnalysis>;
+  /**
+   * Runs the whole cycle on the server (create → AI → elements → 3D model) and
+   * returns the finished analysis, COMPLETED or FAILED. Only the real backend has it.
+   */
+  runOnServer?(floorPlanId: number, aiModelId: number, scale: string): Promise<AiAnalysis>;
   update(id: number, changes: Partial<Omit<AiAnalysis, 'id'>>): Promise<AiAnalysis>;
   /** Signs the analysis off; the backend stamps who and when in raw_response. */
   review(id: number, reviewerName: string): Promise<AiAnalysis>;
